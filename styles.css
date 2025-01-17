@@ -93,7 +93,7 @@ header h1 {
 
 /* 보상 글자 크기 조정 */
 #rewards {
-  font-size: calc(1rem - 2px); /* 예상 시간 대비 2pt 작게 */
+  font-size: calc(1rem - 0px); /* 예상 시간 대비 2pt 작게 */
 }
 
 /* 버튼 스타일 */
@@ -137,7 +137,7 @@ button:hover {
 
 #rounds .highlight {
   color: rgb(0, 0, 0);
-  font-weight: bold;
+
 }
 
 /* 반응형 디자인 */

@@ -32,7 +32,7 @@ function calculate() {
     endTimeEl.textContent = '';
     roundsEl.textContent = '';
     estimatedTimeEl.textContent = '';
-    rewardsEl.textContent = '';
+    rewardsEl.innerHTML = ''; // 줄바꿈을 허용하기 위해 innerHTML 사용
 
     if (isNaN(meatCount) || meatCount <= 0 || meatCount % 10 !== 0) {
         errorMsgEl.textContent = '10의 배수만 입력하세요!';
@@ -41,20 +41,43 @@ function calculate() {
 
     const rounds = meatCount / 10;
     const estimatedTime = rounds * 11;
+
+    // 예상 시간 포맷팅 (60분 초과 시 시간과 분 표시)
+    let estimatedTimeText = `${estimatedTime}분`;
+    if (estimatedTime > 60) {
+        const hours = Math.floor(estimatedTime / 60);
+        const minutes = estimatedTime % 60;
+        estimatedTimeText += ` (${hours}시간 ${minutes}분)`;
+    }
+
     const endTime = new Date(Date.now() + estimatedTime * 60000);
 
-    startTimeEl.textContent = `시작 시간: ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-    endTimeEl.textContent = `종료 시간: ${endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-    roundsEl.innerHTML = `게임 판수: <span class="highlight">${rounds}</span>`;
-    estimatedTimeEl.textContent = `예상 시간: ${estimatedTime}분`;
+    // 시작 시간 포맷팅 (연, 월, 일, 시, 분)
+    const startTime = new Date();
+    const startFormatted = `${startTime.getFullYear()}년 ${String(startTime.getMonth() + 1).padStart(2, '0')}월 ${String(startTime.getDate()).padStart(2, '0')}일 ${String(startTime.getHours()).padStart(2, '0')}:${String(startTime.getMinutes()).padStart(2, '0')}`;
+
+    // 종료 시간 포맷팅 (연, 월, 일, 시, 분)
+    const endFormatted = `${endTime.getFullYear()}년 ${String(endTime.getMonth() + 1).padStart(2, '0')}월 ${String(endTime.getDate()).padStart(2, '0')}일 ${String(endTime.getHours()).padStart(2, '0')}:${String(endTime.getMinutes()).padStart(2, '0')}`;
+
+    startTimeEl.textContent = `시작 시간 : ${startFormatted}`;
+    endTimeEl.textContent = `종료 시간 : ${endFormatted}`;
+    roundsEl.innerHTML = `게임 판수 : <span class="highlight">${rounds}</span>`;
+    estimatedTimeEl.textContent = `예상 시간 : ${estimatedTimeText}`;
 
     const rewards = rewardsData[difficulty];
     const rewardsText = Object.entries(rewards)
-        .map(([key, value]) => `${key}: ${value * rounds}`)
+        .map(([key, value]) => {
+            const formattedValue = (value * rounds).toLocaleString(); // 숫자 포맷팅
+            return `${key}: ${formattedValue}`;
+        })
         .join(', ')
-        .replace(/, 골드:/, ',\n골드:'); // 골드 앞에 줄바꿈 추가
-    rewardsEl.textContent = `보상: ${rewardsText}`;
+        .replace(/, 골드:/, ',<br>골드:'); // "골드:" 앞에서 줄바꿈
+
+    rewardsEl.innerHTML = `보상 : ${rewardsText}`;
 }
+
+
+
 
 // 초기화 버튼
 document.getElementById('reset-btn').addEventListener('click', () => {
