@@ -1,187 +1,81 @@
-/* 전체 레이아웃 설정 */
-body {
-  font-family: Arial, sans-serif;
-  background-color: #ffe4b5;
-  color: #333;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  box-sizing: border-box;
-}
-
-.container {
-  width: 90%;
-  max-width: 600px;
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  box-sizing: border-box;
-}
-
-/* 헤더 스타일 */
-header h1 {
-  text-align: center;
-  color: #ff6347;
-  margin-bottom: 20px;
-  font-size: 1.8rem;
-}
-
-/* 입력 섹션 */
-.input-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.input-section label {
-  font-size: 1rem;
-  flex: 1;
-}
-
-.input-section input {
-  flex: 2;
-  padding: 8px;
-  font-size: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-}
-
-/* 난이도 버튼 섹션 */
-.difficulty-buttons {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
-  gap: 10px;
-}
-
-/* 난이도 버튼 기본 상태 */
-.difficulty-buttons label {
-  font-size: 0.9rem;
-  padding: 8px 12px;
-  background-color: #f5f5f5;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  cursor: pointer;
-  flex: 1;
-  text-align: center;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
-
-  display: flex; /* 텍스트 중앙 정렬 */
-  justify-content: center;
-  align-items: center;
-
-  user-select: none; /* 드래그 방지 */
-}
-
-.difficulty-buttons input {
-  display: none;
-}
-
-/* 선택된 버튼 스타일 */
-.difficulty-buttons input:checked + label {
-  background-color: #d0f0ff; /* 아주 연한 파란색 */
-  color: #007acc;
-  border-color: #007acc;
-  box-shadow: 0 0 8px rgba(0, 122, 204, 0.5);
-}
-
-/* 보상 글자 크기 조정 */
-#rewards {
-  font-size: calc(1rem - 0px); /* 예상 시간 대비 2pt 작게 */
-}
-
-/* 버튼 스타일 */
-#calculate-btn {
-  background: #fd694f;
-
-}
-
-#reset-btn {
-
-  background: #2bc786;
-
-}
-
-button {
-  width: 100%;
-  padding: 12px;
-  font-size: 1rem;
-
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  margin-top: 20px;
-  cursor: pointer;
-
-  display: flex; /* 텍스트 중앙 정렬 */
-  justify-content: center;
-  align-items: center;
-
-  user-select: none; /* 드래그 방지 */
-}
-
-button:hover {
-  background: #ff4500;
-}
-
-/* 결과 섹션 */
-#result p {
-  margin: 10px 0;
-}
-
-#rounds .highlight {
-  color: rgb(0, 0, 0);
-
-}
-
-/* 반응형 디자인 */
-@media (max-width: 768px) {
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+  }
+  
   .container {
-      width: 95%;
-      padding: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
   }
-
-  header h1 {
-      font-size: 1.5rem;
+  
+  .button-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
   }
-
-  .input-section label {
-      font-size: 0.9rem;
+  
+  .round-btn {
+    width: 150px;
+    height: 150px;
+    background-color: #fff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 3px solid #007bff;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
   }
-
-  .input-section input {
-      font-size: 0.9rem;
+  
+  .round-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
-
-  .difficulty-buttons label {
-      font-size: 0.85rem;
-      padding: 6px 10px;
+  
+  .round-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
-
-  button {
-      font-size: 0.9rem;
-      padding: 10px;
+  
+  .round-btn span {
+    position: absolute;
+    top: 50%; /* 수직 중앙 정렬 */
+    left: 50%; /* 수평 중앙 정렬 */
+    transform: translate(-50%, -50%); /* 중앙 위치로 정확히 맞추기 */
+    text-align: center;
+    color: #ffffff; /* 더 밝고 눈에 띄는 색으로 변경 */
+    font-size: 22px;
+    font-weight: bold;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7), 0 0 25px rgba(255, 255, 255, 0.7); /* 두 가지 음영 효과 추가 */
+    width: 100%;
   }
-}
-
-@media (max-width: 480px) {
-  header h1 {
-      font-size: 1.3rem;
+  
+  
+  @media (max-width: 768px) {
+    .button-container {
+      gap: 15px;
+    }
+  
+    .round-btn {
+      width: 120px;
+      height: 120px;
+    }
+  
+    .round-btn img {
+      width: 100%;
+      height: 100%;
+    }
   }
-
-  .difficulty-buttons label {
-      font-size: 0.75rem;
-      padding: 5px 8px;
-  }
-
-  button {
-      font-size: 0.8rem;
-      padding: 8px;
-  }
-}
+  

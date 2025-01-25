@@ -1,54 +1,43 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>그만쫌쳐들어와</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="고기 계산기, 길드 대전 배치 등 다양한 기능을 제공하는 사이트입니다.">
+  <meta name="author" content="Your Name">
+  <meta property="og:title" content="홈페이지">
+  <meta property="og:description" content="다양한 유용한 도구들을 제공하는 홈페이지">
+  <meta property="og:image" content="IMG/preview-image.png">
+  <meta property="og:url" content="https://yourwebsite.com">
+  <title>홈페이지</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="roundsstyles.css"> <!-- roundsindex의 스타일 추가 -->
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>고기 계산기</h1>
-        </header>
-        <main>
-            <div class="input-section">
-                <label for="meat-input">고기 개수:</label>
-                <input type="number" id="meat-input" step="10" placeholder="10의 배수만 입력하세요">
-            </div>
-
-            <div class="difficulty-buttons">
-                <input type="radio" id="difficulty-ss" name="difficulty" value="SS" checked>
-                <label for="difficulty-ss">SS</label>
-            
-                <input type="radio" id="difficulty-hard" name="difficulty" value="어려움">
-                <label for="difficulty-hard">어려움</label>
-            
-                <input type="radio" id="difficulty-very-hard" name="difficulty" value="매우 어려움">
-                <label for="difficulty-very-hard">매우 어려움</label>
-            
-                <input type="radio" id="difficulty-easy" name="difficulty" value="쉬움">
-                <label for="difficulty-easy">쉬움</label>
-            
-                <input type="radio" id="difficulty-hell" name="difficulty" value="불지옥">
-                <label for="difficulty-hell">불지옥</label>
-            </div>
-            
-
-            <button id="calculate-btn">계산하기</button>
-            <button id="reset-btn">초기화</button>
-
-            <div id="result">
-                <p id="error-msg" style="color: red;"></p>
-                <p id="start-time"></p>
-                <p id="end-time"></p>
-                <p id="rounds"></p>
-                <p id="estimated-time"></p>
-                <p id="rewards"></p>
-            </div>
-        </main>
-      
+  <div class="container">
+    <div class="button-container">
+      <button class="round-btn" id="btn1" onclick="navigate('roundsindex.html')">
+        <img src="IMG/A.PNG" alt="A">
+        <span>고기 계산기</span>
+      </button>
+      <button class="round-btn" id="btn2" onclick="navigate('GuildPlacement.html')">
+        <img src="IMG/B.PNG" alt="B">
+        <span>길드대전 배치</span>
+      </button>
+      <button class="round-btn" id="btn3" onclick="navigate('index3.html')">
+        <img src="IMG/C.PNG" alt="C">
+        <span>C로 이동</span>
+      </button>
+      <button class="round-btn" id="btn4" onclick="navigate('index4.html')">
+        <img src="IMG/D.PNG" alt="D">
+        <span>D로 이동</span>
+      </button>
+      <button class="round-btn" id="btn5" onclick="navigate('index5.html')">
+        <img src="IMG/E.PNG" alt="E">
+        <span>E로 이동</span>
+      </button>
     </div>
-    <script src="script.js"></script>
+  </div>
+  <script src="script.js"></script>
 </body>
 </html>

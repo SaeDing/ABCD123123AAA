@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>드래그 앤 드롭 맵</title>
+  <link rel="stylesheet" href="GuildPlacementstyle.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+  <header>
+    <!-- '드래그 앤 드롭 맵' 텍스트 제거 -->
+  </header>
+  <div id="mobile-warning" style="display: none;">
+    모바일에서는 사용 불가능합니다.
+  </div>
+  
+  <main>
+
+    <!-- 컨텐츠 -->
+    <div class="container">
+      <!-- 맵 -->
+      <div class="map-container" id="map-container">
+        <div id="wave-gold-display" style="position: absolute; top: 20px; right: 20px; font-size: 18px; font-weight: bold; color: #333;"></div>
+
+        <div class="drop-zone" style="top: 240px; left: 280px;"></div>
+        <div class="drop-zone" style="top: 325px; left: 280px;"></div>
+        <div class="drop-zone" style="top: 410px; left: 280px;"></div>
+        <div class="drop-zone" style="top: 500px; left: 280px;"></div>
+        <div class="drop-zone" style="top: 580px; left: 280px;"></div>
+        <div class="drop-zone" style="top: 665px; left: 280px;"></div>
+
+        <div class="drop-zone" style="top: 240px; left: 370px;"></div>
+        <div class="drop-zone" style="top: 325px; left: 370px;"></div>
+        <div class="drop-zone" style="top: 410px; left: 370px;"></div>
+        <div class="drop-zone" style="top: 500px; left: 370px;"></div>
+        <div class="drop-zone" style="top: 580px; left: 370px;"></div>
+        <div class="drop-zone" style="top: 665px; left: 370px;"></div>
+
+        <div class="drop-zone" style="top: 240px; left: 555px;"></div>
+        <div class="drop-zone" style="top: 325px; left: 555px;"></div>
+        <div class="drop-zone" style="top: 410px; left: 555px;"></div>
+        <div class="drop-zone" style="top: 500px; left: 555px;"></div>
+        <div class="drop-zone" style="top: 580px; left: 555px;"></div>
+        <div class="drop-zone" style="top: 665px; left: 555px;"></div>
+
+        <div class="drop-zone" style="top: 240px; left: 645px;"></div>
+        <div class="drop-zone" style="top: 325px; left: 645px;"></div>
+        <div class="drop-zone" style="top: 410px; left: 645px;"></div>
+        <div class="drop-zone" style="top: 500px; left: 645px;"></div>
+        <div class="drop-zone" style="top: 580px; left: 645px;"></div>
+        <div class="drop-zone" style="top: 665px; left: 645px;"></div>
+
+      </div>
+
+      <!-- 유닛 리스트 -->
+      <div class="image-container" id="image-container">
+        <h2>유닛 리스트</h2>
+        <H4>[두 번 누르면 취소 가능] (넣은 유닛 더블클릭으로 제거 가능)</H4>
+      </div>
+    </div>
+
+        <!-- 컨트롤 버튼 -->
+        <div class="controls">
+      
+          <div class="input-container">
+            <label for="wave">WAVE:</label>
+            <input type="number" id="wave" placeholder="Enter value" />
+            <label for="gold">Gold:</label>
+            <input type="number" id="gold" placeholder="Enter value" />
+          </div>
+          <button id="reset-button">초기화</button>
+          <button id="save-button">PNG로 저장</button>
+        </div>
+    
+        
+  </main>
+
+  <!-- <script>
+    // 모바일 화면 체크 후 경고 메시지 표시
+    if (window.innerWidth <= 768) {
+      document.getElementById('mobile-warning').style.display = 'flex'; // 모바일 경고 메시지 표시
+      document.body.style.overflow = 'hidden'; // 화면 스크롤 방지
+    }
+  </script> -->
+
+  <script src="GuildPlacementscript.js"></script>
+</body>
+</html>
