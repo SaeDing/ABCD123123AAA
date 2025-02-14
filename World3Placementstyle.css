@@ -80,7 +80,7 @@ header {
   position: relative;
   width: 800px; /* 1000px에서 30% 증가한 크기 */
   height: 700px; /* 500px에서 30% 증가한 크기 */
-  background: url('img/4.png') no-repeat center center;
+  background: url('img/5.png') no-repeat center center;
   background-size: cover; /* 배경 이미지를 컨테이너 크기에 맞게 커지도록 설정 */
   background-position: center center; /* 이미지를 중앙에 배치 */
   border: 2px solid #888;
@@ -262,6 +262,10 @@ header {
 body {
   overflow: hidden; /* 경고창이 표시되는 동안 화면 스크롤 방지 */
 }
+
+
+
+
 
 
 

@@ -54,17 +54,17 @@ const imageFiles = [
 ];
 
 
-
 const imageContainer = document.getElementById("image-container");
 const dropZones = document.querySelectorAll(".drop-zone");
 const resetButton = document.getElementById("reset-button");
 const saveButton = document.getElementById("save-button");
 
+let selectedImage = null; // 선택된 이미지 URL 저장 변수
+
 function navigate(page) {
   window.location.href = page;
 }
 
-let selectedImage = null; // 선택된 이미지 URL 저장 변수
 
 // 유닛 클릭 시 선택 처리 및 배경색 변경
 imageFiles.forEach(file => {
@@ -212,7 +212,7 @@ saveButton.addEventListener("click", () => {
 
   // 위치를 CSS에서 고정적으로 유지하도록 수정
   waveGoldDisplay.style.position = "absolute"; // 위치는 절대값
-  waveGoldDisplay.style.top = "calc(1% + 33px)"; // 이전보다 20px 더 아래로 설정
+  waveGoldDisplay.style.top = "calc(5px)"; // 이전보다 20px 더 아래로 설정
   waveGoldDisplay.style.left = "62%"; // 화면 가로 중앙
   waveGoldDisplay.style.transform = "translateX(-70%)"; // 항상 가로 중앙에 고정
 

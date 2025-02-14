@@ -78,7 +78,9 @@ function calculate() {
     rewardsEl.innerHTML = `보상 : ${rewardsText}`;
 }
 
-
+function navigate(page) {
+    window.location.href = page;
+  }
 
 
 // 초기화 버튼

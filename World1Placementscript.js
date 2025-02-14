@@ -60,6 +60,11 @@ const saveButton = document.getElementById("save-button");
 
 let selectedImage = null; // 선택된 이미지 URL 저장 변수
 
+function navigate(page) {
+  window.location.href = page;
+}
+
+
 // 유닛 클릭 시 선택 처리 및 배경색 변경
 imageFiles.forEach(file => {
   const img = document.createElement("img");
