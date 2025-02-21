@@ -9,6 +9,7 @@ const imageFiles = [
   "슈퍼시바 마딜.png",
   "죽음의 기사 물딜.png",
   "스핑 물딜.png",
+  "마녀 마딜.png",
   "캔드리 물딜.png",
   "새싹이 물딜.png",
   "눈보라 예티 마딜.png",
@@ -52,7 +53,6 @@ const imageFiles = [
   "우주인 1단 마딜.png",
   "우주인 2단 마딜.png"
 ];
-
 
 
 const imageContainer = document.getElementById("image-container");
