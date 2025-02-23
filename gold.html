@@ -98,15 +98,24 @@
         const skill4_values = [2, 2.05, 2.1, 2.21, 2.2, 2.25, 2.3, 2.35, 2.4, 2.45, 2.5, 2.52, 2.54, 2.56, 2.58, 2.6];
         const skill5_values = [0, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.4, 7.8, 8.2, 8.6, 9];
         
+  
         function populateSelect(id, values) {
             let select = document.getElementById(id);
             select.innerHTML = "";
             values.forEach((value, i) => {
                 let option = document.createElement("option");
                 option.value = i;
-                option.text = `LV.${i.toString().padStart(2, '0')} (${value})`;
+                if (id === "skill2") {
+                    option.text = `LV.${i.toString().padStart(2, '0')} (${value}%)`;
+                } else {
+                    option.text = `LV.${i.toString().padStart(2, '0')} (${value})`;
+                }
                 select.appendChild(option);
             });
+        }
+        
+        window.onload = function() {
+            populateSelect("skill2", skill2_values);
         }
         
         function updateTable() {
@@ -137,6 +146,7 @@
             ["skill1", "skill2", "skill3", "skill4", "skill5"].forEach(id => populateSelect(id, eval(id + "_values")));
             updateTable();
         }
+
     </script>
 </body>
 </html>
