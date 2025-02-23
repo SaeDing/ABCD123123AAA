@@ -129,7 +129,7 @@
             let gold = (150 + skill1) * (1 + skill2 / 100);
             for (let wave = 0; wave <= 80; wave++) {
                 if (wave > 0) {
-                    let mobCount = (wave === 1) ? 110 : 40; // 1웨이브에는 몹이 70마리 추가되어 총 110마리
+                    let mobCount = (wave === 1) ? 110 : 40; 
                     let critGold = mobCount * (((1 - (1 - (0.3 * (skill5 / 100)))**1) + (1 - (1 - (0.3 * (skill5 / 100)))**2) + (1 - (1 - (0.3 * (skill5 / 100)))**3)) / 3) * 2.5;
                     gold = gold * (1 + skill2 / 100) + 10 + skill3;
                     if (wave % 5 !== 0) {
@@ -138,7 +138,12 @@
                 }
                 let row = tableBody.insertRow();
                 row.insertCell(0).innerText = wave;
-                row.insertCell(1).innerText = Math.floor(gold);
+    
+                let goldCell = row.insertCell(1);
+                goldCell.innerText = Math.floor(gold).toLocaleString(); // 1. 천 단위 콤마 추가
+                if (gold > 400000) { 
+                    goldCell.style.color = "red"; // 2. 40만 골드 이상 빨간색 표시
+                }
             }
         }
         
