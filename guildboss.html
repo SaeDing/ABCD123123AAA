@@ -172,7 +172,7 @@
         <div id="goldMarkers" style="margin-top: 20px; font-size: 16px; font-weight: bold;"></div>
 
 
-<!-- 기존의 20만원을 넘어간 첫 웨이브 표시 부분 아래에 전후 웨이브 표시 추가 -->
+<!-- 기존의 20만원을 넘어간 첫 Wave 표시 부분 아래에 전후 Wave 표시 추가 -->
 <div id="firstWaveOver200K" style="margin-top: 20px; font-size: 16px; font-weight: bold;"></div>
 <div id="previousAndNextWaves" style="margin-top: 20px; font-size: 14px; color: #555;"></div>
 
@@ -216,7 +216,7 @@
                 updateTable();
             }
         
-            let waveGolds = []; // 각 웨이브의 골드를 저장할 배열
+            let waveGolds = []; // 각 Wave의 골드를 저장할 배열
 
             
             // 테이블 업데이트 함수
@@ -230,10 +230,10 @@
                 let skill5 = skill5_values[document.getElementById("skill5").value];
                 let gold = (150 + skill1) * (1 + skill2 / 100);
         
-                let firstWaveOver200K = null; // 20만원 넘은 첫 웨이브를 추적할 변수
-                let previousGold = null; // 이전 웨이브 골드
-                let nextGold = null; // 다음 웨이브 골드
-                let previousWaveGold = null; // 이전 웨이브의 골드를 추적하기 위한 변수
+                let firstWaveOver200K = null; // 20만원 넘은 첫 Wave를 추적할 변수
+                let previousGold = null; // 이전 Wave 골드
+                let nextGold = null; // 다음 Wave 골드
+                let previousWaveGold = null; // 이전 Wave의 골드를 추적하기 위한 변수
         
                 let isOver200K = false;
         
@@ -245,7 +245,7 @@
                         let critGold = mobCount * (((1 - (1 - (0.6 * (skill5 / 100)))**3) + (1 - (1 - (0.6 * (skill5 / 100)))**5)) / 3) * critMultiplier;
         
                         
-                        gold = gold * (1 + skill2 / 100) + skill3 + 10000;  // 1웨이브 계산 (5% 증가 + 추가 골드 + 10000)
+                        gold = gold * (1 + skill2 / 100) + skill3 + 10000;  // 1Wave 계산 (5% 증가 + 추가 골드 + 10000)
                         
 
                         
@@ -262,7 +262,7 @@
                         }
                     }
 
-    // waveGolds 배열에 각 웨이브의 골드를 저장
+    // waveGolds 배열에 각 Wave의 골드를 저장
     waveGolds[wave] = Math.floor(gold);
         
                     if (gold > 200000 && !isOver200K) {
@@ -290,16 +290,16 @@
                     }
                 }
         
-                // 첫 번째 20만원을 초과한 웨이브 표시
+                // 첫 번째 20만원을 초과한 Wave 표시
                 if (firstWaveOver200K) {
                     let firstWaveElement = document.getElementById("firstWaveOver200K");
-                    firstWaveElement.innerText = `20만원을 넘어간 첫 웨이브: 웨이브 ${firstWaveOver200K.wave}웨이브 / ${Math.floor(firstWaveOver200K.gold).toLocaleString()} 골드`;
+                    firstWaveElement.innerText = `20만원을 넘어간 Wave ${firstWaveOver200K.wave} / ${Math.floor(firstWaveOver200K.gold).toLocaleString()} 골드`;
         
                     let previousAndNextElement = document.getElementById("previousAndNextWaves");
-                    previousAndNextElement.innerText = `이전 웨이브 골드: ${firstWaveOver200K.wave - 1} / ${previousGold || 'N/A'}웨이브 골드 | 현재 웨이브 골드: ${firstWaveOver200K.wave}웨이브 / ${Math.floor(firstWaveOver200K.gold).toLocaleString()} 골드`;
+                    previousAndNextElement.innerText = `이전 Wave: ${firstWaveOver200K.wave - 1} / ${previousGold || 'N/A'} 골드 | Wave: ${firstWaveOver200K.wave} / ${Math.floor(firstWaveOver200K.gold).toLocaleString()} 골드`;
                 } else {
                     let firstWaveElement = document.getElementById("firstWaveOver200K");
-                    firstWaveElement.innerText = "20만원을 넘어간 웨이브가 없습니다.";
+                    firstWaveElement.innerText = "20만원을 넘어간 Wave가 없습니다.";
                     let previousAndNextElement = document.getElementById("previousAndNextWaves");
                     previousAndNextElement.innerText = "";
                 }
@@ -309,11 +309,11 @@
                 
                 let goldMarkers = document.getElementById("goldMarkers");
                 goldMarkers.innerHTML = `
-                    5웨이브 골드: ${waveGolds[5] ? waveGolds[5].toLocaleString() : 'N/A'}<br>
-                    10웨이브 골드: ${waveGolds[10] ? waveGolds[10].toLocaleString() : 'N/A'}<br>
-                    15웨이브 골드: ${waveGolds[15] ? waveGolds[15].toLocaleString() : 'N/A'}<br>
-                    20웨이브 골드: ${waveGolds[20] ? waveGolds[20].toLocaleString() : 'N/A'}<br>
-                    25웨이브 골드: ${waveGolds[25] ? waveGolds[25].toLocaleString() : 'N/A'}
+                    5 Wave 골드: ${waveGolds[5] ? waveGolds[5].toLocaleString() : 'N/A'}<br>
+                    10 Wave 골드: ${waveGolds[10] ? waveGolds[10].toLocaleString() : 'N/A'}<br>
+                    15 Wave 골드: ${waveGolds[15] ? waveGolds[15].toLocaleString() : 'N/A'}<br>
+                    20 Wave 골드: ${waveGolds[20] ? waveGolds[20].toLocaleString() : 'N/A'}<br>
+                    25 Wave 골드: ${waveGolds[25] ? waveGolds[25].toLocaleString() : 'N/A'}
                 `;
             }
         
