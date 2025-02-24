@@ -165,7 +165,19 @@
       margin-top: 20px;
       gap: 20px;
     }
-
+    #topScrollWrapper {
+      overflow-x: auto;
+      overflow-y: hidden; /* 세로 스크롤바 숨김 */
+      height: 16px;       /* 스크롤바 높이(브라우저마다 다를 수 있으니 적절히 조절) */
+      margin-bottom: 5px; /* 아래쪽 여유 */
+    }
+    
+    #topScrollTrack {
+      height: 1px;        /* 실제 내용 높이를 최소화해서 스크롤 트랙만 보이게 */
+      background: transparent; 
+      width: 0;           /* 초기값. JS에서 동적으로 수정 */
+    }
+    
     /* 계산기 하나를 감싸는 컨테이너 */
     .calculator-instance {
       min-width: 360px;
@@ -263,19 +275,27 @@
 </head>
 <body>
 
-<div class="container">
-  <h1>길드대전 골드 스킬 효율 계산기 (멀티 버전)</h1>
-  <div style="text-align:center; margin-bottom: 10px;">
-    <!-- 계산기 추가, CSV 다운로드 버튼 -->
-    <button class="btn" onclick="addCalculator()">스킬 효율계산기 1행 추가</button>
-    <button class="btn" onclick="downloadCSV()">CSV 다운로드</button>
+  <div class="container">
+    <h1>길드대전 골드 스킬 효율 계산기 (멀티 버전)</h1>
+    <div style="text-align:center; margin-bottom: 10px;">
+      <button class="btn" onclick="addCalculator()">스킬 효율계산기 1행 추가</button>
+      <button class="btn" onclick="downloadCSV()">CSV 다운로드</button>
+    </div>
+  
+    <!-- 상단 스크롤바 -->
+    <div id="topScrollWrapper">
+      <div id="topScrollTrack"></div>
+    </div>
+  
+    <!-- 계산기가 들어가는 실제 컨테이너 -->
+    <div id="calculatorContainer"></div>
+  
+    <!-- 요약 테이블 ... -->
+    <div id="summaryContainer">
+      ...
+    </div>
   </div>
-
-  <!-- 실제 계산기들이 들어가는 컨테이너 -->
-  <div id="calculatorContainer"></div>
-
-  <!-- 요약 테이블 -->
-  <div id="summaryContainer">
+  
     <h3>계산기 요약</h3>
     <table id="summaryTable">
       <thead>

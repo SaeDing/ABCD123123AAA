@@ -12,6 +12,29 @@ const skill5_values = [0, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.4, 7.8, 8.2,
  *****************************************************/
 let calculatorsData = [];  // 각 요소: { calcId, skillLevels, waveGolds }
 
+
+// 스크롤 상단 생성
+
+// 1) HTML 요소 참조
+const topScrollWrapper = document.getElementById('topScrollWrapper');
+const topScrollTrack   = document.getElementById('topScrollTrack');
+const calculatorContainer = document.getElementById('calculatorContainer');
+
+// 2) 스크롤 동기화
+topScrollWrapper.addEventListener('scroll', () => {
+  calculatorContainer.scrollLeft = topScrollWrapper.scrollLeft;
+});
+calculatorContainer.addEventListener('scroll', () => {
+  topScrollWrapper.scrollLeft = calculatorContainer.scrollLeft;
+});
+
+// 3) 스크롤 트랙의 width를 실제 컨테이너 내용폭에 맞추기
+function updateTopScrollTrackWidth() {
+  // calculatorContainer.scrollWidth가 실제 컨테이너의 내용 전체 너비
+  topScrollTrack.style.width = calculatorContainer.scrollWidth + 'px';
+}
+
+
 /*****************************************************
  * 3) 계산기(템플릿) 동적 생성
  *****************************************************/
@@ -53,6 +76,8 @@ function addCalculator() {
 
   // 초기 테이블 갱신
   updateTableInCalculator(selects[0]);
+
+  updateTopScrollTrackWidth();
 }
 
 /*****************************************************
