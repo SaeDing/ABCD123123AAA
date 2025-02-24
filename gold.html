@@ -22,6 +22,8 @@
         }
         h2 {
             color: #333;
+            display: inline-block;
+            margin-right: 20px;
         }
         label {
             display: block;
@@ -44,33 +46,114 @@
             background: #ffffff;
             box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1);
         }
+
+        .btn-container {
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 8px;
-            text-align: center;
+            background: #ffffff;
             border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
+
+        table, th, td {
+            border: 1px solid #e0e0e0;
+        }
+
+        th, td {
+            padding: 16px 20px;
+            text-align: center;
+            font-size: 16px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
         th {
-            background-color: #007bff;
+            background-color: #6c757d;
             color: white;
             border-radius: 12px 12px 0 0;
+        }
+
+        td {
+            background-color: #fafafa;
+            color: #333;
+            transition: background-color 0.3s ease;
+        }
+
+        td:hover {
+            background-color: #e9ecef;
+            cursor: pointer;
+        }
+
+        td.selected {
+            background-color: #dbe2e8;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        td.red {
+            color: red;
+            font-weight: bold;
+        }
+
+        table tr:hover td {
+            background-color: #e9f6ff;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            h2 {
+                font-size: 28px;
+            }
+            label {
+                font-size: 14px;
+            }
+            select {
+                padding: 12px;
+                font-size: 14px;
+            }
+            table th, td {
+                font-size: 14px;
+                padding: 12px 14px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>골드 스킬 효율 계산기</h2>
+        <label>
+            <input type="radio" name="scriptType" id="normalScript"  checked> 일반
+        </label>
+        <label>
+            <input type="radio" name="scriptType" id="guildbossScript" onchange="redirectToGoldPage()"> 길드보스
+        </label>
+        
+        <div class="btn-container">
+            <button class="btn" onclick="setSkills(15)">전부 15렙으로</button>
+            <button class="btn" onclick="setSkills(10)">전부 10렙으로</button>
+            <button class="btn" onclick="setSkills(0)">전부 0렙으로</button>
+        </div>
         <label><img src="img/a11.png" alt="아이콘" class="icon"> 있는 마족이 더 버는 법 (라운드별 % 골드 증가 1-1)</label>
         <select id="skill2" onchange="updateTable()"></select>
         <label><img src="img/b11.png" alt="아이콘" class="icon"> 한 푼만 줍쇼! (라운드별 추가 골드 지급 1-2)</label>
@@ -81,6 +164,11 @@
         <select id="skill5" onchange="updateTable()"></select>
         <label><img src="img/d11.png" alt="아이콘" class="icon"> 이 동전은 제 겁니다 (적 처치 시 추가 골드 획득 2-1)</label>
         <select id="skill4" onchange="updateTable()"></select>
+
+        <div id="goldMarkers" style="margin-top: 20px; font-size: 16px; font-weight: bold;"></div>
+        <div id="firstWaveOver200K" style="margin-top: 20px; font-size: 16px; font-weight: bold;"></div>
+        <div id="previousAndNextWaves" style="margin-top: 20px; font-size: 14px; color: #555;"></div>
+        
         <table id="goldTable">
             <thead>
                 <tr>
@@ -91,71 +179,12 @@
             <tbody></tbody>
         </table>
     </div>
-    <script>
-        const skill1_values = [0, 50, 61, 72, 83, 94, 105, 116, 127, 138, 150, 160, 170, 180, 190, 200];
-        const skill2_values = [0, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.4, 7.8, 8.2, 8.6, 9];
-        const skill3_values = [0, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17];
-        const skill4_values = [2, 2.05, 2.1, 2.21, 2.2, 2.25, 2.3, 2.35, 2.4, 2.45, 2.5, 2.52, 2.54, 2.56, 2.58, 2.6];
-        const skill5_values = [0, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.4, 7.8, 8.2, 8.6, 9];
-        
-  
-        function populateSelect(id, values) {
-            let select = document.getElementById(id);
-            select.innerHTML = "";
-            values.forEach((value, i) => {
-                let option = document.createElement("option");
-                option.value = i;
-                if (id === "skill2") {
-                    option.text = `LV.${i.toString().padStart(2, '0')} (${value}%)`;
-                } else {
-                    option.text = `LV.${i.toString().padStart(2, '0')} (${value})`;
-                }
-                select.appendChild(option);
-            });
-        }
-        
-        window.onload = function() {
-            populateSelect("skill2", skill2_values);
-        }
-        
-        function updateTable() {
-            let tableBody = document.getElementById("goldTable").getElementsByTagName("tbody")[0];
-            tableBody.innerHTML = "";
-            let skill1 = skill1_values[document.getElementById("skill1").value];
-            let skill2 = skill2_values[document.getElementById("skill2").value];
-            let skill3 = skill3_values[document.getElementById("skill3").value];
-            let skill4 = skill4_values[document.getElementById("skill4").value];
-            let skill5 = skill5_values[document.getElementById("skill5").value];
-            let gold = (150 + skill1) * (1 + skill2 / 100);
-            for (let wave = 0; wave <= 80; wave++) {
-                if (wave > 0) {
-                    let mobCount = (wave === 1) ? 110 : 40; 
-                    
-                    // 1~21 웨이브: *3.5, 21~80 웨이브: *9
-                    let critMultiplier = (wave < 21) ? 3.5 : 9;
-                    let critGold = mobCount * (((1 - (1 - (0.6 * (skill5 / 100)))**3) + (1 - (1 - (0.6 * (skill5 / 100)))**5)) / 3) * critMultiplier;
-                    
-                    gold = gold * (1 + skill2 / 100) + 10 + skill3;
-                    if (wave % 5 !== 0) {
-                        gold += mobCount * skill4 + critGold;
-                    }
-                }
-                let row = tableBody.insertRow();
-                row.insertCell(0).innerText = wave;
-    
-                let goldCell = row.insertCell(1);
-                goldCell.innerText = Math.floor(gold).toLocaleString(); // 천 단위 콤마 추가
-                if (gold > 400000) { 
-                    goldCell.style.color = "red"; // 40만 골드 초과 시 빨간색 표시
-                }
-            }
-        }
-        
-        window.onload = function() {
-            ["skill1", "skill2", "skill3", "skill4", "skill5"].forEach(id => populateSelect(id, eval(id + "_values")));
-            updateTable();
-        }
+    <script src="Gold.js"></script>
 
+    <script>
+        function redirectToGoldPage() {
+            window.location.href = 'guildboss.html';
+        }
     </script>
 </body>
 </html>
