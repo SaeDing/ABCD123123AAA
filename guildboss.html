@@ -216,10 +216,13 @@
                 updateTable();
             }
         
+            let waveGolds = []; // 각 웨이브의 골드를 저장할 배열
+
+            
             // 테이블 업데이트 함수
             function updateTable() {
                 let tableBody = document.getElementById("goldTable").getElementsByTagName("tbody")[0];
-                tableBody.innerHTML = "";
+    tableBody.innerHTML = "";
                 let skill1 = skill1_values[document.getElementById("skill1").value];
                 let skill2 = skill2_values[document.getElementById("skill2").value];
                 let skill3 = skill3_values[document.getElementById("skill3").value];
@@ -259,7 +262,8 @@
                         }
                     }
 
-
+    // waveGolds 배열에 각 웨이브의 골드를 저장
+    waveGolds[wave] = Math.floor(gold);
         
                     if (gold > 200000 && !isOver200K) {
                         firstWaveOver200K = { wave: wave, gold: gold };
@@ -289,10 +293,10 @@
                 // 첫 번째 20만원을 초과한 웨이브 표시
                 if (firstWaveOver200K) {
                     let firstWaveElement = document.getElementById("firstWaveOver200K");
-                    firstWaveElement.innerText = `20만원을 넘어간 첫 웨이브: 웨이브 ${firstWaveOver200K.wave} : ${Math.floor(firstWaveOver200K.gold).toLocaleString()} 골드`;
+                    firstWaveElement.innerText = `20만원을 넘어간 첫 웨이브: 웨이브 ${firstWaveOver200K.wave}웨이브 / ${Math.floor(firstWaveOver200K.gold).toLocaleString()} 골드`;
         
                     let previousAndNextElement = document.getElementById("previousAndNextWaves");
-                    previousAndNextElement.innerText = `이전 웨이브 골드: 웨이브 ${firstWaveOver200K.wave - 1} : ${previousGold || 'N/A'} 골드, 현재 웨이브 골드: 웨이브 ${firstWaveOver200K.wave} : ${Math.floor(firstWaveOver200K.gold).toLocaleString()} 골드, 다음 웨이브 골드: 웨이브 ${firstWaveOver200K.wave + 1} : ${nextGold || 'N/A'} 골드`;
+                    previousAndNextElement.innerText = `이전 웨이브 골드: ${firstWaveOver200K.wave - 1} / ${previousGold || 'N/A'}웨이브 골드 | 현재 웨이브 골드: ${firstWaveOver200K.wave}웨이브 / ${Math.floor(firstWaveOver200K.gold).toLocaleString()} 골드`;
                 } else {
                     let firstWaveElement = document.getElementById("firstWaveOver200K");
                     firstWaveElement.innerText = "20만원을 넘어간 웨이브가 없습니다.";
@@ -300,14 +304,16 @@
                     previousAndNextElement.innerText = "";
                 }
         
-                // 5, 10, 15, 20, 25 웨이브 골드 표시
+
+                
+                
                 let goldMarkers = document.getElementById("goldMarkers");
                 goldMarkers.innerHTML = `
-                    5웨이브 골드: ${waveGolds[5] || 'N/A'}<br>
-                    10웨이브 골드: ${waveGolds[10] || 'N/A'}<br>
-                    15웨이브 골드: ${waveGolds[15] || 'N/A'}<br>
-                    20웨이브 골드: ${waveGolds[20] || 'N/A'}<br>
-                    25웨이브 골드: ${waveGolds[25] || 'N/A'}
+                    5웨이브 골드: ${waveGolds[5] ? waveGolds[5].toLocaleString() : 'N/A'}<br>
+                    10웨이브 골드: ${waveGolds[10] ? waveGolds[10].toLocaleString() : 'N/A'}<br>
+                    15웨이브 골드: ${waveGolds[15] ? waveGolds[15].toLocaleString() : 'N/A'}<br>
+                    20웨이브 골드: ${waveGolds[20] ? waveGolds[20].toLocaleString() : 'N/A'}<br>
+                    25웨이브 골드: ${waveGolds[25] ? waveGolds[25].toLocaleString() : 'N/A'}
                 `;
             }
         
