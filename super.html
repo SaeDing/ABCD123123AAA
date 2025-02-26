@@ -578,7 +578,10 @@ const imageFiles = [
         waveGoldDisplay.style.borderRadius = "5px";
     
         const mapContainer = document.getElementById("map-container");
-    const originalHeight = mapContainer.offsetHeight; // 기존 높이 저장
+    // 🔥 캡처 전에 드롭존의 transform 초기화
+    document.querySelectorAll(".drop-zone img").forEach(img => {
+        img.style.transform = "none";
+    });
 
         // 📌 100ms 대기 후 캡처 실행 (텍스트 업데이트 반영)
         setTimeout(() => {
