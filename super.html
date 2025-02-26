@@ -580,23 +580,28 @@ const imageFiles = [
         waveGoldDisplay.style.borderRadius = "5px";
     
         const mapContainer = document.getElementById("map-container");
-    const originalHeight = mapContainer.offsetHeight; // 기존 높이 저장
-
-        // 📌 100ms 대기 후 캡처 실행 (텍스트 업데이트 반영)
+        const pageTitle = document.querySelector(".page-title");
+    
+        // 🔥 `.page-title` 높이만큼 `map-container` 위치를 내려서 조정
+        const titleHeight = pageTitle ? pageTitle.offsetHeight : 0;
+        mapContainer.style.transform = `translateY(${titleHeight}px)`;
+    
         setTimeout(() => {
-            html2canvas(document.getElementById("map-container"), {
+            html2canvas(mapContainer, {
                 windowWidth: document.documentElement.offsetWidth,
                 windowHeight: document.documentElement.offsetHeight,
                 scale: 8,  // 🔥 기존 6 → 8로 더 고해상도 설정
                 useCORS: true,
                 allowTaint: true,
                 backgroundColor: null
-                
             }).then((canvas) => {
                 const link = document.createElement("a");
                 link.download = "map.png";
                 link.href = canvas.toDataURL("image/png", 1.0);
                 link.click();
+    
+                // 🔥 캡처 후 원래 위치 복원
+                mapContainer.style.transform = "translateY(0)";
     
                 // 캡처 후 텍스트 초기화
                 waveGoldDisplay.textContent = "";
