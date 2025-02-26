@@ -295,7 +295,7 @@ body {
 
       <div class="container">
         <div class="map-container" id="map-container">
-        <img id="mapImage" src="./img/1.png" alt="Map Background">
+            <img id="mapImage" src="./img/1.png" alt="Map Background">
 
           <div id="wave-gold-display"></div>
           <!-- 드롭존 (360x360 맵 기준 좌표 재조정 예시) -->
@@ -523,6 +523,10 @@ const imageFiles = [
         waveGoldDisplay.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
         waveGoldDisplay.style.padding = "5px 10px";
         waveGoldDisplay.style.borderRadius = "5px";
+    
+        const mapContainer = document.getElementById("map-container");
+    const originalHeight = mapContainer.offsetHeight; // 기존 높이 저장
+    mapContainer.style.height = (originalHeight - 20) + "px"; // 20px 줄이기
     
         // 📌 100ms 대기 후 캡처 실행 (텍스트 업데이트 반영)
         setTimeout(() => {
