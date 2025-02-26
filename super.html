@@ -107,18 +107,23 @@ body {
     min-height: 0; /* 자식 스크롤 허용 */
   }
   
-  /* 맵 컨테이너: 상단 버튼 바로 아래 붙도록, 높이 조정 가능 */
   .map-container {
     width: 360px;
-    height: 400px;         /* 필요 시 이 높이로 조절 */
-    background: url('img/1.png') no-repeat center center;
-    background-size: contain;
-    border: none;
-    border-radius: 0;
+    height: 400px; /* 기존 310px에서 400px로 조절 */
     position: relative;
-    margin: 0;            /* 상하 여백 제거 */
+    margin: 0;
     padding: 0;
-  }
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.map-container img {
+    width: 100%; /* 컨테이너 크기에 맞게 조정 */
+    height: auto;
+    object-fit: contain; /* 🔥 원본 비율을 유지하면서 꽉 차게 표시 */
+}
   
   /* 드롭존 스타일 (기존과 동일) */
   .drop-zone {
@@ -281,7 +286,14 @@ body {
         <span>보스3</span>
       </button>
     </div>
+    <div class="container">
+        <!-- 📌 기존 background-image 제거 후 img 태그 사용 -->
+        <div class="map-container" id="map-container">
+            <img id="mapImage" src="./img/1.png" alt="Map Background">
+          <div id="wave-gold-display"></div>
+        </div>
     <main>
+        
       <div class="container">
         <div class="map-container" id="map-container">
           <div id="wave-gold-display"></div>
@@ -315,6 +327,9 @@ body {
           <div class="drop-zone" style="top:332px; left:232px;"></div>
         </div>
         <!-- 유닛 리스트 -->
+
+      
+            
         <div class="image-container" id="image-container">
           <h2>유닛 리스트</h2>
           <h4>[두 번 누르면 취소 가능] (넣은 유닛 더블클릭으로 제거 가능)</h4>
