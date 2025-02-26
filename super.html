@@ -495,6 +495,8 @@ const imageFiles = [
         }
       });
     });
+
+    
     saveButton.addEventListener("click", () => {
         const waveInput = document.getElementById("wave");
         const goldInput = document.getElementById("gold");
@@ -531,14 +533,24 @@ const imageFiles = [
                 scrollY: 0,
                 windowWidth: document.documentElement.offsetWidth,
                 windowHeight: document.documentElement.offsetHeight,
-                scale: 6,  // 🔥 기존 6 → 8로 더 고해상도 설정
+                scale: 6, // 고해상도 설정
                 useCORS: true,
                 allowTaint: true,
                 backgroundColor: null
             }).then((canvas) => {
+                // 🔥 캔버스 크기 강제 조정 (세로 길이 줄이기)
+                const newHeight = canvas.height * 0.8; // 세로 길이를 80%로 줄임
+                const newCanvas = document.createElement("canvas");
+                newCanvas.width = canvas.width;
+                newCanvas.height = newHeight;
+                const ctx = newCanvas.getContext("2d");
+    
+                ctx.drawImage(canvas, 0, 0, canvas.width, newHeight, 0, 0, newCanvas.width, newCanvas.height);
+    
+                // 저장
                 const link = document.createElement("a");
                 link.download = "map.png";
-                link.href = canvas.toDataURL("image/png", 1.0);
+                link.href = newCanvas.toDataURL("image/png", 1.0);
                 link.click();
     
                 // 캡처 후 텍스트 초기화
@@ -546,6 +558,7 @@ const imageFiles = [
             });
         }, 100);
     });
+    
     
     
 
