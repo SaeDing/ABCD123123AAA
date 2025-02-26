@@ -109,7 +109,7 @@ body {
   
   .map-container {
     width: 360px;
-    height: 400px; /* 기존 310px에서 400px로 조절 */
+    height: 400px;
     position: relative;
     margin: 0;
     padding: 0;
@@ -120,11 +120,11 @@ body {
 }
 
 .map-container img {
-    width: 100%; /* 컨테이너 크기에 맞게 조정 */
-    height: auto;
-    object-fit: contain; /* 🔥 원본 비율을 유지하면서 꽉 차게 표시 */
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
-  
+
   /* 드롭존 스타일 (기존과 동일) */
   .drop-zone {
     width: 35px;
@@ -287,15 +287,15 @@ body {
       </button>
     </div>
     <div class="container">
-        <!-- 📌 기존 background-image 제거 후 img 태그 사용 -->
-        <div class="map-container" id="map-container">
-            <img id="mapImage" src="./img/1.png" alt="Map Background">
-          <div id="wave-gold-display"></div>
-        </div>
+   
     <main>
-        
+       
+
       <div class="container">
         <div class="map-container" id="map-container">
+
+            <img id="mapImage" src="./img/1.png" alt="Map Background">
+            <div id="wave-gold-display"></div>
           <div id="wave-gold-display"></div>
           <!-- 드롭존 (360x360 맵 기준 좌표 재조정 예시) -->
           <div class="drop-zone" style="top:120px; left:101px;"></div>
@@ -494,7 +494,6 @@ const imageFiles = [
         }
       });
     });
-
     saveButton.addEventListener("click", () => {
         const waveInput = document.getElementById("wave");
         const goldInput = document.getElementById("gold");
@@ -524,7 +523,7 @@ const imageFiles = [
         waveGoldDisplay.style.padding = "5px 10px";
         waveGoldDisplay.style.borderRadius = "5px";
     
-        // 📌 200ms 대기 후 캡처 실행 (이미지 로드 반영 보장)
+        // 📌 200ms 대기 후 캡처 실행 (유닛 이미지 로드 반영)
         setTimeout(() => {
             html2canvas(document.querySelector(".fixed-container"), {  // 🔥 캡처 대상 변경
                 scrollX: 0,
@@ -547,7 +546,6 @@ const imageFiles = [
             });
         }, 200); // 🔥 200ms 대기 후 실행
     });
-    
     
     
 
