@@ -110,7 +110,7 @@ body {
   /* 맵 컨테이너: 상단 버튼 바로 아래 붙도록, 높이 조정 가능 */
   .map-container {
     width: 360px;
-    height: 310px;         /* 필요 시 이 높이로 조절 */
+    height: 400px;         /* 필요 시 이 높이로 조절 */
     background: url('img/1.png') no-repeat center center;
     background-size: contain;
     border: none;
@@ -141,7 +141,7 @@ body {
   
   /* 유닛 리스트 컨테이너: 맵 아래 영역 전부 사용 */
   .image-container {
-    flex: 0.4;            /* 남은 세로 공간 자동 채움 */
+    flex: 0.6;            /* 남은 세로 공간 자동 채움 */
     width: 360px;
     overflow-y: auto;
     background-color: #fff;
@@ -196,7 +196,7 @@ body {
     align-items: center;
     gap: 5px;
     position: absolute;
-    bottom: 150px;
+    bottom: 60px;
     left: 0;
     padding: 5px 0;
     background-color: #fff;
@@ -496,7 +496,6 @@ const imageFiles = [
       document.getElementById("wave-gold-display").textContent = "";
     });
 
-
     saveButton.addEventListener("click", () => {
         const waveInput = document.getElementById("wave");
         const goldInput = document.getElementById("gold");
@@ -526,27 +525,32 @@ const imageFiles = [
         waveGoldDisplay.style.padding = "5px 10px";
         waveGoldDisplay.style.borderRadius = "5px";
     
-        // 📌 setTimeout을 사용하여 캡처 전에 DOM 업데이트 반영
+        // 📌 100ms 대기 후 캡처 실행 (텍스트 업데이트 반영)
         setTimeout(() => {
             html2canvas(document.getElementById("map-container"), {
                 scrollX: 0,
                 scrollY: 0,
                 windowWidth: document.documentElement.offsetWidth,
                 windowHeight: document.documentElement.offsetHeight,
-                scale: 4,  // 🔥 고해상도 개선 (기본 2 → 4)
+                scale: 6,  // 🔥 스케일을 6으로 설정 (기존 2~4보다 고해상도)
                 useCORS: true,
                 allowTaint: true,
+                backgroundColor: null // 🔥 배경색을 제거하여 PNG 원본 품질 유지
             }).then((canvas) => {
                 const link = document.createElement("a");
                 link.download = "map.png";
-                link.href = canvas.toDataURL("image/png", 1.0); // 🔥 고품질 PNG 저장
+    
+                // 🔥 PNG 품질을 최대로 설정
+                link.href = canvas.toDataURL("image/png", 1.0);
+    
                 link.click();
     
                 // 캡처 후 텍스트 초기화
                 waveGoldDisplay.textContent = "";
             });
-        }, 100); // 🔥 100ms 대기 후 캡처 실행
+        }, 100);
     });
+    
     
 
   </script>
