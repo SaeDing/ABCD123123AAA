@@ -18,6 +18,7 @@ body {
     height: 100vh;
     overflow: hidden;
     user-select: none;
+    top: 30px; /* 페이지 전체를 30px 아래로 내림 */
   }
   
   .fixed-container {
@@ -38,7 +39,7 @@ body {
     padding: 0 0px;
     box-shadow: 0 2px 5px rgba(255, 255, 255);
     position: absolute;
-    top: 0;
+    top: 60px; /* 페이지 전체를 30px 아래로 내림 */
     left: 0;
     z-index: 1100;
     gap: 0; /* 버튼 사이 간격 제거 */
@@ -104,7 +105,7 @@ body {
   /* 메인 영역: 네비게이션 아래부터, 하단 컨트롤 위까지 꽉 채움 */
   main {
     position: absolute;
-    top: 40px;      /* nav-container 높이만큼 아래로 */
+    top: 100px;      /* nav-container 높이만큼 아래로 */
     bottom: 10px;   /* 하단 컨트롤 영역(60px) 피해서 */
     width: 100%;
     display: flex;
@@ -222,7 +223,7 @@ body {
     align-items: center;
  
     position: absolute;
-    bottom: 100px;
+    bottom: 70px;
     left: 10px;
     padding: 5px 0;
     background-color: #fff;
@@ -297,7 +298,7 @@ body {
 .title-text {
     position: absolute;
     /* .controls 컨테이너보다 아래에 위치 (예: .controls가 bottom: 100px에 있으므로 약간 아래로 배치) */
-    bottom: 80px;  
+    bottom: 40px;  
     left: 50%;
     transform: translateX(-50%);
     color: #181717;           /* 예쁜 검정색 */
