@@ -544,11 +544,15 @@ const imageFiles = [
     
         const mapContainer = document.getElementById("map-container");
     
-        // 🔥 현재 위치 및 스타일 저장
+        // 🔥 원래 위치 저장 (픽셀값 보관)
+        const originalTop = mapContainer.offsetTop + "px";
         const originalPosition = mapContainer.style.position;
-        const originalTop = mapContainer.style.top;
-        const originalLeft = mapContainer.style.left;
-        const originalTransform = mapContainer.style.transform;
+        
+        // 🔥 드롭존이 올라가는 현상 방지 → translateY 적용
+        const dropZones = document.querySelectorAll(".drop-zone img");
+        dropZones.forEach(img => {
+            img.style.transform = "translateY(40px)";  // 🔥 드롭존 위치 보정
+        });
     
         // 🔥 PNG 저장 전에 맵 위치 강제 조정
         mapContainer.style.position = "fixed";
@@ -571,13 +575,22 @@ const imageFiles = [
                 link.href = canvas.toDataURL("image/png", 1.0);
                 link.click();
     
+                console.log(`📷 PNG 저장 완료! 원래 위치(${originalTop})로 복구 시도`);
+    
                 // 🔥 캡처 후 원래 상태로 복구
                 setTimeout(() => {
-                    mapContainer.style.position = originalPosition;
+                    mapContainer.style.position = originalPosition || "relative";
                     mapContainer.style.top = originalTop;
-                    mapContainer.style.left = originalLeft;
-                    mapContainer.style.transform = originalTransform;
-                }, 50); // 50ms 대기 후 복구 (안정적인 애니메이션 효과)
+                    mapContainer.style.left = "0";
+                    mapContainer.style.transform = "none";
+    
+                    // 🔥 드롭존 위치 원상복구
+                    dropZones.forEach(img => {
+                        img.style.transform = "translateY(0px)";
+                    });
+    
+                    console.log("🎯 원래 위치 복구 완료!");
+                }, 0); // 0ms → 다음 이벤트 루프에서 실행되도록 설정
     
                 // 캡처 후 텍스트 초기화
                 waveGoldDisplay.textContent = "";
