@@ -526,8 +526,8 @@ const imageFiles = [
     
         const mapContainer = document.getElementById("map-container");
     const originalHeight = mapContainer.offsetHeight; // 기존 높이 저장
-    mapContainer.style.height = (originalHeight - 20) + "px"; // 20px 줄이기
-    
+    mapContainer.style.height = (originalHeight - 30) + "px"; // 20px 줄이기
+
         // 📌 100ms 대기 후 캡처 실행 (텍스트 업데이트 반영)
         setTimeout(() => {
             html2canvas(document.getElementById("map-container"), {
