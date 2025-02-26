@@ -526,7 +526,8 @@ const imageFiles = [
                 scale: 8,  // 🔥 기존 6 → 8로 더 고해상도 설정
                 useCORS: true,
                 allowTaint: true,
-                backgroundColor: null
+                backgroundColor: "#FFFFFF",
+                foreignObjectRendering: true,  // 🔥 SVG 기반 렌더링 활성화
             }).then((canvas) => {
                 const link = document.createElement("a");
                 link.download = "map.png";
