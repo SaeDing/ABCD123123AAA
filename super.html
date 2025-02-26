@@ -116,20 +116,17 @@ body {
     width: 360px;
     height: 400px;
     overflow: hidden;
-    display: flex;  /* 🔥 추가 */
-    justify-content: center;
-    align-items: center;
-}
-
-#mapImage {
+  }
+  
+  #mapImage {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
-
+    height: 90%;
+    /* object-fit: contain;  <- 제거 */
+    /* object-position: center; <- 제거 */
+  }
 
   /* 드롭존 스타일 (기존과 동일) */
   .drop-zone {
@@ -316,8 +313,8 @@ body {
 
           <div id="wave-gold-display"></div>
           <!-- 드롭존 (360x360 맵 기준 좌표 재조정 예시) -->
-          <div class="drop-zone" style="top:75px; left:75px;"></div>
-          <div class="drop-zone" style="top:125px; left:75px;"></div>
+          <div class="drop-zone" style="top:55px; left:75px;"></div>
+          <div class="drop-zone" style="top:105px; left:75px;"></div>
           <div class="drop-zone" style="top:175px; left:75px;"></div>
           <div class="drop-zone" style="top:225px; left:75px;"></div>
           <div class="drop-zone" style="top:275px; left:75px;"></div>
