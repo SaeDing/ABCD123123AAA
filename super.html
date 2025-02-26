@@ -495,21 +495,6 @@ const imageFiles = [
       });
     });
 
-    resetButton.addEventListener("click", () => {
-      dropZones.forEach(zone => {
-        zone.innerHTML = "";
-        zone.style.visibility = "hidden";
-        zone.style.border = "1px dashed rgba(102, 102, 102, 0.3)";
-        zone.style.backgroundColor = "rgba(200, 200, 200, 0.7)";
-      });
-      document.querySelectorAll(".image-container img").forEach(image => {
-        image.style.backgroundColor = "";
-      });
-      selectedImage = null;
-      document.getElementById("wave").value = "";
-      document.getElementById("gold").value = "";
-      document.getElementById("wave-gold-display").textContent = "";
-    });
     saveButton.addEventListener("click", () => {
         const waveInput = document.getElementById("wave");
         const goldInput = document.getElementById("gold");
@@ -539,17 +524,18 @@ const imageFiles = [
         waveGoldDisplay.style.padding = "5px 10px";
         waveGoldDisplay.style.borderRadius = "5px";
     
-        // 📌 100ms 대기 후 캡처 실행 (텍스트 업데이트 반영)
+        // 📌 200ms 대기 후 캡처 실행 (이미지 로드 반영 보장)
         setTimeout(() => {
-            html2canvas(document.getElementById("map-container"), {
+            html2canvas(document.querySelector(".fixed-container"), {  // 🔥 캡처 대상 변경
                 scrollX: 0,
                 scrollY: 0,
                 windowWidth: document.documentElement.offsetWidth,
                 windowHeight: document.documentElement.offsetHeight,
-                scale: 10,  // 🔥 기존 6 → 8로 더 고해상도 설정
+                scale: 10,  // 🔥 기존 6 → 10으로 고해상도 설정
                 useCORS: true,
                 allowTaint: true,
-                backgroundColor: null
+                backgroundColor: null,
+                foreignObjectRendering: true  // 🔥 추가 (캡처 누락 방지)
             }).then((canvas) => {
                 const link = document.createElement("a");
                 link.download = "map.png";
@@ -559,7 +545,7 @@ const imageFiles = [
                 // 캡처 후 텍스트 초기화
                 waveGoldDisplay.textContent = "";
             });
-        }, 100);
+        }, 200); // 🔥 200ms 대기 후 실행
     });
     
     
