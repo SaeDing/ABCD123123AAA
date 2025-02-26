@@ -286,15 +286,33 @@ body {
         <div class="map-container" id="map-container">
           <div id="wave-gold-display"></div>
           <!-- 드롭존 (360x360 맵 기준 좌표 재조정 예시) -->
-          <div class="drop-zone" style="top:100px; left:101px;"></div>
-          <div class="drop-zone" style="top:142px; left:101px;"></div>
-          <div class="drop-zone" style="top:185px; left:101px;"></div>
-          <div class="drop-zone" style="top:230px; left:101px;"></div>
-          <div class="drop-zone" style="top:270px; left:101px;"></div>
-          <div class="drop-zone" style="top:312px; left:101px;"></div>
-
-          <!-- 필요하다면 좌표도 재조정해 주세요. -->
-          <!-- ... 나머지 drop-zone들 동일한 방식으로 조정 ... -->
+          <div class="drop-zone" style="top:120px; left:101px;"></div>
+          <div class="drop-zone" style="top:162px; left:101px;"></div>
+          <div class="drop-zone" style="top:205px; left:101px;"></div>
+          <div class="drop-zone" style="top:250px; left:101px;"></div>
+          <div class="drop-zone" style="top:290px; left:101px;"></div>
+          <div class="drop-zone" style="top:332px; left:101px;"></div>
+          <!-- 두 번째 열 (left: 약 133px) -->
+          <div class="drop-zone" style="top:120px; left:133px;"></div>
+          <div class="drop-zone" style="top:162px; left:133px;"></div>
+          <div class="drop-zone" style="top:205px; left:133px;"></div>
+          <div class="drop-zone" style="top:250px; left:133px;"></div>
+          <div class="drop-zone" style="top:290px; left:133px;"></div>
+          <div class="drop-zone" style="top:332px; left:133px;"></div>
+          <!-- 세 번째 열 (left: 약 200px) -->
+          <div class="drop-zone" style="top:120px; left:200px;"></div>
+          <div class="drop-zone" style="top:162px; left:200px;"></div>
+          <div class="drop-zone" style="top:205px; left:200px;"></div>
+          <div class="drop-zone" style="top:250px; left:200px;"></div>
+          <div class="drop-zone" style="top:290px; left:200px;"></div>
+          <div class="drop-zone" style="top:332px; left:200px;"></div>
+          <!-- 네 번째 열 (left: 약 232px) -->
+          <div class="drop-zone" style="top:120px; left:232px;"></div>
+          <div class="drop-zone" style="top:162px; left:232px;"></div>
+          <div class="drop-zone" style="top:205px; left:232px;"></div>
+          <div class="drop-zone" style="top:250px; left:232px;"></div>
+          <div class="drop-zone" style="top:290px; left:232px;"></div>
+          <div class="drop-zone" style="top:332px; left:232px;"></div>
         </div>
         <!-- 유닛 리스트 -->
         <div class="image-container" id="image-container">
@@ -514,6 +532,14 @@ const imageFiles = [
         waveGoldDisplay.textContent = "";
       });
     });
+
+    document.addEventListener("touchmove", function(e) {
+        // 이벤트가 발생한 요소가 .image-container 내부에 있는지 확인
+        if (!e.target.closest(".image-container")) {
+          e.preventDefault(); // 스크롤 차단
+        }
+      }, { passive: false });
+
   </script>
 </body>
 </html>
