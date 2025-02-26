@@ -106,23 +106,24 @@ body {
     padding: 0;
     min-height: 0; /* 자식 스크롤 허용 */
   }
-  
-.map-container {
+
+  .map-container {
+    position: relative;
     width: 360px;
     height: 400px;
-    position: relative;
-    margin: 0;
-    padding: 0;
+    overflow: hidden;
+    display: flex;  /* 🔥 추가 */
+    justify-content: center;
+    align-items: center;
+}
 
-        background: url('img/1.png') no-repeat center center;
-        background-size: contain;
-        
-        /* 🔥 이미지 품질 향상 */
-        image-rendering: crisp-edges;
-        image-rendering: -webkit-optimize-contrast;
-        image-rendering: pixelated;
-    
-    
+#mapImage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 
@@ -294,7 +295,8 @@ body {
 
       <div class="container">
         <div class="map-container" id="map-container">
- 
+        <img id="mapImage" src="./img/1.png" alt="Map Background">
+
           <div id="wave-gold-display"></div>
           <!-- 드롭존 (360x360 맵 기준 좌표 재조정 예시) -->
           <div class="drop-zone" style="top:120px; left:101px;"></div>
