@@ -220,10 +220,10 @@ body {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 5px;
+ 
     position: absolute;
-    bottom: 60px;
-    left: 2px;
+    bottom: 100px;
+    left: 10px;
     padding: 5px 0;
     background-color: #fff;
     border-top: 1px solid #ddd;
@@ -293,6 +293,19 @@ body {
     position: relative;  /* 🔥 PNG 저장에서 제외되도록 */
 
 }
+
+.title-text {
+    position: absolute;
+    /* .controls 컨테이너보다 아래에 위치 (예: .controls가 bottom: 100px에 있으므로 약간 아래로 배치) */
+    bottom: 80px;  
+    left: 50%;
+    transform: translateX(-50%);
+    color: #181717;           /* 예쁜 검정색 */
+    font-size: 12px;       /* 작게 */
+    font-weight: normal;   /* 필요에 따라 굵기 조절 */
+    text-align: center;
+}
+
 
   </style>
 </head>
@@ -380,7 +393,9 @@ body {
       <button id="reset-button">초기화</button>
       <button id="save-button">PNG로 저장</button>
     </div>
+    
   </div>
+  <div class="title-text">길드 대전 배치표</div>
   <script>
 // img 폴더에 있는 파일명 리스트
 const imageFiles = [
@@ -576,7 +591,7 @@ resetButton.addEventListener("click", () => {
         waveGoldDisplay.textContent = displayText;
         waveGoldDisplay.style.color = "white";
         waveGoldDisplay.style.position = "absolute";
-        waveGoldDisplay.style.top = "50px";
+        waveGoldDisplay.style.top = "9px";
         waveGoldDisplay.style.right = "0px";
         waveGoldDisplay.style.fontSize = "9px";
         waveGoldDisplay.style.fontWeight = "bold";
@@ -633,7 +648,10 @@ mapImage.onload = () => {
   });
 };
 
-
+document.addEventListener('dragstart', function(e) {
+    e.preventDefault();
+  });
+  
   </script>
 </body>
 </html>
