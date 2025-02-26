@@ -543,31 +543,48 @@ const imageFiles = [
         waveGoldDisplay.style.borderRadius = "5px";
     
         const mapContainer = document.getElementById("map-container");
-
-        // 📌 100ms 대기 후 캡처 실행 (텍스트 업데이트 반영)
+    
+        // 🔥 현재 위치 및 스타일 저장
+        const originalPosition = mapContainer.style.position;
+        const originalTop = mapContainer.style.top;
+        const originalLeft = mapContainer.style.left;
+        const originalTransform = mapContainer.style.transform;
+    
+        // 🔥 PNG 저장 전에 맵 위치 강제 조정
+        mapContainer.style.position = "fixed";
+        mapContainer.style.top = "0px";
+        mapContainer.style.left = "50%";
+        mapContainer.style.transform = "translateX(-50%)";
+    
+        // 📌 300ms 대기 후 캡처 실행 (위치 변경이 적용될 시간 확보)
         setTimeout(() => {
-            html2canvas(document.getElementById("map-container"), {
+            html2canvas(mapContainer, {
                 windowWidth: document.documentElement.offsetWidth,
                 windowHeight: document.documentElement.offsetHeight,
                 scale: 8,  // 🔥 기존 6 → 8로 더 고해상도 설정
                 useCORS: true,
                 allowTaint: true,
                 backgroundColor: null
-                
             }).then((canvas) => {
                 const link = document.createElement("a");
                 link.download = "map.png";
                 link.href = canvas.toDataURL("image/png", 1.0);
                 link.click();
     
+                // 🔥 캡처 후 원래 상태로 복구
+                setTimeout(() => {
+                    mapContainer.style.position = originalPosition;
+                    mapContainer.style.top = originalTop;
+                    mapContainer.style.left = originalLeft;
+                    mapContainer.style.transform = originalTransform;
+                }, 50); // 50ms 대기 후 복구 (안정적인 애니메이션 효과)
+    
                 // 캡처 후 텍스트 초기화
                 waveGoldDisplay.textContent = "";
             });
-        }, 100);
+        }, 300); // 300ms 대기 후 캡처 실행
     });
     
-    
-
   </script>
 </body>
 </html>
