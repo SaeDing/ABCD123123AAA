@@ -588,6 +588,7 @@ resetButton.addEventListener("click", () => {
             html2canvas(document.getElementById("map-container"), {
                 scrollX: 0,
                 scrollY: 0,
+                height: imageHeight,  // 캡처 영역 높이를 이미지 높이로 제한
                 windowWidth: document.documentElement.offsetWidth,
                 windowHeight: document.documentElement.offsetHeight,
                 scale: 10,  // 🔥 기존 6 → 8로 더 고해상도 설정
