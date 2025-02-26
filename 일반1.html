@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <!-- 확대/축소를 막기 위한 meta viewport 설정 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>길드대전 배치 템플릿 (360×740)</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+ /* 화면 전체 컨테이너 */
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f9f9f9;
+    height: 100vh;
+    overflow: hidden;
+    user-select: none;
+  }
+  
+  .fixed-container {
+    width: 360px;
+    height: 740px;
+    position: relative;
+    background-color: #f9f9f9;
+    overflow: hidden;
+    border: 1px solid #ccc;
+  }
+  .nav-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 30px;
+    background: #ffffff; /* 네비게이션 바 배경색 */
+    padding: 0 0px;
+    box-shadow: 0 2px 5px rgba(255, 255, 255);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1100;
+    gap: 0; /* 버튼 사이 간격 제거 */
+}
+
+  
+  .nav-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #9c2121;
+    /* 필요하면 margin-left 등 추가 가능 */
+  }
+  
+  .nav-buttons {
+    display: flex;
+    align-items: center;
+    gap: 1px; /* 버튼들 간격 */
+  }
+  
+  
+  .round-btn {
+    width: 50px;
+    height: 44px;
+    background-color: #ffffff; /* 버튼 배경색 */
+    border: none;             /* 테두리 제거 */
+    border-radius: 0px;
+    display: flex;
+    
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .round-btn:hover {
+    background-color: #1abc9c; /* 호버 시 색상 */
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .round-btn img {
+    width: 100%;
+    height: 70%;
+    object-fit: cover;
+    border-radius: 0;
+  }
+  
+  .round-btn span {
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    color: #000000;
+    font-size: 8px;
+    font-weight: bold;
+    pointer-events: none;
+  }
+  
+  
+  /* 메인 영역: 네비게이션 아래부터, 하단 컨트롤 위까지 꽉 채움 */
+  main {
+    position: absolute;
+    top: 40px;      /* nav-container 높이만큼 아래로 */
+    bottom: 10px;   /* 하단 컨트롤 영역(60px) 피해서 */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* 내부 컨테이너: 맵 + 유닛 리스트를 세로로 배치 */
+  .container {
+    flex: 1;               /* 세로 공간 전부 사용 */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;                /* 맵과 유닛 리스트 사이 여백 0 */
+    margin: 0;
+    padding: 0;
+    min-height: 0; /* 자식 스크롤 허용 */
+    
+  }
+
+  .map-container {
+    position: relative;
+    width: 360px;
+    height: 360px;
+    overflow: hidden;
+  }
+  
+  #mapImage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* object-fit: contain;  <- 제거 */
+    /* object-position: center; <- 제거 */
+  }
+
+  /* 드롭존 스타일 (기존과 동일) */
+  .drop-zone {
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    border: 1px dashed rgba(102, 102, 102, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    visibility: hidden;
+    background-color: rgba(255, 255, 255, 0.8);
+    transition: background-color 0.3s ease;
+    border-radius: 6px;
+  }
+  
+  .drop-zone:hover {
+    background-color: rgba(255, 165, 0, 0.7);
+  }
+  
+  /* 유닛 리스트 컨테이너: 맵 아래 영역 전부 사용 */
+  .image-container {
+    flex: 0.6;            /* 남은 세로 공간 자동 채움 */
+    width: 360px;
+    overflow-y: auto;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.1);
+    padding: 5px;
+    margin: 0px;          /* 맵과의 간격 0 */
+
+        -webkit-overflow-scrolling: touch; /* iOS에서 내부 스크롤을 부드럽게 허용 */
+    
+      
+
+  }
+  
+  .image-container h2 {
+    text-align: center;
+    margin-bottom: 5px;
+    font-size: 16px;
+    color: #444;
+  }
+  
+  .image-container h4 {
+    font-size: 10px;
+    font-weight: normal;
+    color: #333;
+    text-align: right;
+    margin: 2px 0 5px 0;
+  }
+  
+  .image-container img {
+    width: 35px;
+    height: 35px;
+    margin: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    object-fit: cover;
+    cursor: grab;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+  }
+  
+  .image-container img:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* 하단 컨트롤 버튼 영역 */
+  .controls {
+    width: 360px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+ 
+    position: absolute;
+    bottom: 100px;
+    left: 10px;
+    padding: 5px 0;
+    background-color: #fff;
+    border-top: 1px solid #ddd;
+  }
+  
+  .controls .input-container {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+  }
+  
+  .controls .input-container label {
+    font-size: 12px;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  .controls .input-container input {
+    padding: 4px 6px;
+    font-size: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 60px;
+    text-align: center;
+    transition: all 0.3s;
+  }
+  
+  .controls .input-container input:focus {
+    border-color: #4caf50;
+    outline: none;
+    box-shadow: 0 0 4px rgba(76, 175, 80, 0.5);
+  }
+  
+  .controls button {
+    padding: 6px 10px;
+    border: none;
+    font-size: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  #reset-button {
+    background-color: #ff6f61;
+    color: white;
+  }
+  
+  #reset-button:hover {
+    background-color: #ff4d42;
+  }
+  
+  #save-button {
+    background-color: #4caf50;
+    color: white;
+  }
+  
+  #save-button:hover {
+    background-color: #45a049;
+  }
+  .page-title {
+    text-align: center;
+    font-size: 17px;  /* 🔥 글자 크기 */
+  
+    color: #333;  /* 🔥 글자 색상 */
+    background-color: #f1f1f1;  /* 🔥 배경색 */
+    border-bottom: 2px solid #ccc;  /* 🔥 구분선 */
+    position: relative;  /* 🔥 PNG 저장에서 제외되도록 */
+
+}
+
+.title-text {
+    position: absolute;
+    /* .controls 컨테이너보다 아래에 위치 (예: .controls가 bottom: 100px에 있으므로 약간 아래로 배치) */
+    bottom: 80px;  
+    left: 50%;
+    transform: translateX(-50%);
+    color: #181717;           /* 예쁜 검정색 */
+    font-size: 12px;       /* 작게 */
+    font-weight: normal;   /* 필요에 따라 굵기 조절 */
+    text-align: center;
+}
+
+
+  </style>
+</head>
+<body>
+    
+    <div class="fixed-container">
+        <!-- 상단 네비게이션 버튼 (가로 배열) -->
+        <div class="nav-container">
+          <button class="round-btn" id="btn1" onclick="navigate('roundsindex.html')">
+            <img src="https://github.com/SaeDing/NoInvadePls/blob/main/img/a.PNG?raw=true" alt="A">
+            <span>고기</span>
+          </button>
+          <button class="round-btn" id="btn2" onclick="navigate('GuildPlacement.html')">
+            <img src="https://github.com/SaeDing/NoInvadePls/blob/main/img/b.png?raw=true" alt="B">
+            <span>길드</span>
+          </button>
+          <button class="round-btn" id="btn3" onclick="navigate('World1Placement.html')">
+            <img src="https://github.com/SaeDing/NoInvadePls/blob/main/img/c.PNG?raw=true" alt="C">
+            <span>보스1</span>
+          </button>
+          <button class="round-btn" id="btn4" onclick="navigate('World3Placement.html')">
+            <img src="https://github.com/SaeDing/NoInvadePls/blob/main/img/5.png?raw=true" alt="D">
+            <span>보스2</span>
+          </button>
+          <button class="round-btn" id="btn4" onclick="navigate('World3Placement.html')">
+            <img src="https://github.com/SaeDing/NoInvadePls/blob/main/img/5.png?raw=true" alt="D">
+            <span>보스3</span>
+          </button>
+          <button class="round-btn" id="btn4" onclick="navigate('World3Placement.html')">
+            <img src="https://github.com/SaeDing/NoInvadePls/blob/main/img/5.png?raw=true" alt="D">
+            <span>일반</span>
+          </button>
+          <button class="round-btn" id="btn4" onclick="navigate('World3Placement.html')">
+            <img src="https://github.com/SaeDing/NoInvadePls/blob/main/img/5.png?raw=true" alt="D">
+            <span>어려움</span>
+          </button>
+        </div>
+      <!-- 상단 타이틀 -->
+
+    <div class="container">
+   
+    <main>
+       
+
+      <div class="container">
+        <div class="map-container" id="map-container">
+            <img id="mapImage" src="./img/2m.png" alt="Map Background">
+
+          <div id="wave-gold-display"></div>
+          <!-- 드롭존 (360x360 맵 기준 좌표 재조정 예시) -->
+          <div class="drop-zone" style="top:70px; left:66.5px;"></div>
+          <div class="drop-zone" style="top:100px; left:66.5px;"></div>
+          <div class="drop-zone" style="top:130px; left:66.5px;"></div>
+          
+          <div class="drop-zone" style="top:70px; left:101.5px;"></div>
+          <div class="drop-zone" style="top:100px; left:101.5px;"></div>
+          <div class="drop-zone" style="top:130px; left:101.5px;"></div>
+          
+          <div class="drop-zone" style="top:70px; left:136.5px;"></div>
+          <div class="drop-zone" style="top:100px; left:136.5px;"></div>
+          <div class="drop-zone" style="top:130px; left:136.5px;"></div>
+          
+          <div class="drop-zone" style="top:70px; left:171.5px;"></div>
+          <div class="drop-zone" style="top:100px; left:171.5px;"></div>
+          <div class="drop-zone" style="top:130px; left:171.5px;"></div>
+          
+          <div class="drop-zone" style="top:70px; left:206.5px;"></div>
+          <div class="drop-zone" style="top:100px; left:206.5px;"></div>
+          <div class="drop-zone" style="top:130px; left:206.5px;"></div>
+          
+          <div class="drop-zone" style="top:70px; left:241.5px;"></div>
+          <div class="drop-zone" style="top:100px; left:241.5px;"></div>
+          <div class="drop-zone" style="top:130px; left:241.5px;"></div>
+          
+          <div class="drop-zone" style="top:70px; left:276.5px;"></div>
+          <div class="drop-zone" style="top:100px; left:276.5px;"></div>
+          <div class="drop-zone" style="top:130px; left:276.5px;"></div>
+          
+          
+      <!-- 밑에줄 -->
+      <div class="drop-zone" style="top:205px; left:66.5px;"></div>
+      <div class="drop-zone" style="top:235px; left:66.5px;"></div>
+      <div class="drop-zone" style="top:265px; left:66.5px;"></div>
+      
+      <div class="drop-zone" style="top:205px; left:101.5px;"></div>
+      <div class="drop-zone" style="top:235px; left:101.5px;"></div>
+      <div class="drop-zone" style="top:265px; left:101.5px;"></div>
+      
+      <div class="drop-zone" style="top:205px; left:136.5px;"></div>
+      <div class="drop-zone" style="top:235px; left:136.5px;"></div>
+      <div class="drop-zone" style="top:265px; left:136.5px;"></div>
+      
+      <div class="drop-zone" style="top:205px; left:171.5px;"></div>
+      <div class="drop-zone" style="top:235px; left:171.5px;"></div>
+      <div class="drop-zone" style="top:265px; left:171.5px;"></div>
+      
+      <div class="drop-zone" style="top:205px; left:206.5px;"></div>
+      <div class="drop-zone" style="top:235px; left:206.5px;"></div>
+      <div class="drop-zone" style="top:265px; left:206.5px;"></div>
+      
+      <div class="drop-zone" style="top:205px; left:241.5px;"></div>
+      <div class="drop-zone" style="top:235px; left:241.5px;"></div>
+      <div class="drop-zone" style="top:265px; left:241.5px;"></div>
+      
+      <div class="drop-zone" style="top:205px; left:276.5px;"></div>
+      <div class="drop-zone" style="top:235px; left:276.5px;"></div>
+      <div class="drop-zone" style="top:265px; left:276.5px;"></div>
+      
+      
+        </div>
+        <!-- 유닛 리스트 -->
+
+      
+            
+        <div class="image-container" id="image-container">
+          <h2>유닛 리스트</h2>
+          <h4>[두 번 누르면 취소 가능] (넣은 유닛 더블클릭으로 제거 가능)</h4>
+        </div>
+      </div>
+    </main>
+    <!-- 하단 컨트롤 버튼 영역 -->
+    <div class="controls">
+      <div class="input-container">
+        <label for="wave">WAVE:</label>
+        <input type="number" id="wave" placeholder="값 입력" />
+        <label for="gold">Gold:</label>
+        <input type="number" id="gold" placeholder="값 입력" />
+      </div>
+      <button id="reset-button">초기화</button>
+      <button id="save-button">PNG로 저장</button>
+    </div>
+    
+  </div>
+  <div class="title-text">길드 대전 배치표</div>
+  <script>
+// img 폴더에 있는 파일명 리스트
+const imageFiles = [
+  "우주인 3단 마딜.png",
+  "보루 변신 물딜.png",
+  "라이양 변신 마딜.png",
+  "빅토리어스 마딜.png",
+  "미믹 물딜.png",
+  "눈보라 예티 변신 마딜.png",
+  "슈퍼시바 마딜.png",
+  "죽음의 기사 물딜.png",
+  "스핑 물딜.png",
+  "마녀 마딜.png",
+  "캔드리 물딜.png",
+  "새싹이 물딜.png",
+  "눈보라 예티 마딜.png",
+  "해골룡 변신 마딜.png",
+  "개굴 단장 변신 마딜.png",
+  "그린딩딩 물딜.png",
+  "빅헤드 물딜.png",
+  "역병의사 마딜.png",
+  "라이양 마딜.png",
+  "로큰롤스 마딜.png",
+  "메카 좀비 마딜.png",
+  "선인장 건맨 물딜.png",
+  "메카콩 마딜.png",
+  "스시 선생 물딜.png",
+  "카우보이 밥 물딜.png",
+  "할로윈퀸 마딜.png",
+  "오우거 전사 물딜.png",
+  "돌팔이 마딜.png",
+  "미라씨 물딜.png",
+  "꼬꼬질라 물딜.png",
+  "포크몬 물딜.png",
+  "악마 토끼 마딜.png",
+  "샤키 물딜.png",
+  "스리슬쩍냥 물딜.png",
+  "해골 궁수 물딜.png",
+  "식빵 복서 물딜.png",
+  "크레이지 핫도그 물딜.png",
+  "오크라이더 물딜.png",
+  "잭 오 마딜.png",
+  "잭 오 변신 마딜.png",
+  "전투 달팽이 물딜.png",
+  "전투 달팽이 변신 물딜.png",
+  "데드베어 마딜.png",
+  "보루 물딜.png",
+  "드라큐 마딜.png",
+  "드라큐 변신 마딜.png",
+  "크레이지 핫도그 변신 물딜.png",
+  "프랑키 물딜.png",
+  "해골룡 마딜.png",
+  "개굴 단장 마딜.png",
+  "우주인 1단 마딜.png",
+  "우주인 2단 마딜.png"
+];
+    const imageContainer = document.getElementById("image-container");
+    const dropZones = document.querySelectorAll(".drop-zone");
+    const resetButton = document.getElementById("reset-button");
+    const saveButton = document.getElementById("save-button");
+    function navigate(page) {
+      window.location.href = page;
+    }
+    let selectedImage = null;
+
+    // 유닛 클릭 시 선택 및 배경색 변경
+    imageFiles.forEach(file => {
+      const img = document.createElement("img");
+      img.src = `img/${file}`;
+      img.alt = file;
+      img.draggable = false;
+      img.addEventListener("click", () => {
+        if (img.style.backgroundColor === "lightpink") {
+          img.style.backgroundColor = "";
+          selectedImage = null;
+          dropZones.forEach(zone => {
+            const zoneImage = zone.querySelector("img");
+            zone.style.border = "none";
+            zone.style.backgroundColor = "rgba(0, 0, 0, 0)";
+            if (!zoneImage) {
+              zone.style.visibility = "hidden";
+            }
+          });
+          return;
+        }
+        document.querySelectorAll(".image-container img").forEach(image => {
+          image.style.backgroundColor = "";
+        });
+        img.style.backgroundColor = "lightpink";
+        selectedImage = img.src;
+        dropZones.forEach(zone => {
+          zone.style.visibility = "visible";
+          zone.style.border = "1px dashed rgba(150, 150, 150, 0.8)";
+          zone.style.backgroundColor = "rgba(255, 255, 255, 0.8)";
+        });
+      });
+      imageContainer.appendChild(img);
+    });
+
+    // 드롭존 이벤트: 클릭 시 이미지 추가, 더블클릭/더블탭 시 이미지 제거
+    dropZones.forEach(zone => {
+      zone.addEventListener("click", () => {
+        if (selectedImage) {
+          if (zone.querySelector("img")) {
+            zone.querySelector("img").remove();
+          }
+          const img = document.createElement("img");
+          img.src = selectedImage;
+          img.alt = "dropped-image";
+          img.style.width = "162%";
+          img.style.height = "162%";
+          zone.appendChild(img);
+          document.querySelectorAll(".image-container img").forEach(image => {
+            image.style.backgroundColor = "";
+          });
+          selectedImage = null;
+          dropZones.forEach(zone => {
+            zone.style.border = "none";
+            zone.style.backgroundColor = "rgba(0, 0, 0, 0)";
+          });
+        }
+      });
+      // 데스크톱: 더블클릭
+      zone.addEventListener("dblclick", () => {
+        const img = zone.querySelector("img");
+        if (img) {
+          img.remove();
+        }
+      });
+      // 모바일: 터치 후 더블탭 감지
+      zone.addEventListener("touchend", function(e) {
+        const currentTime = new Date().getTime();
+        const tapLength = currentTime - (zone.lastTap || 0);
+        if (tapLength > 0 && tapLength < 300) {
+          const img = zone.querySelector("img");
+          if (img) {
+            img.remove();
+          }
+          zone.lastTap = 0;
+          e.preventDefault();
+          return false;
+        } else {
+          zone.lastTap = currentTime;
+        }
+      });
+    });
+    
+    
+
+resetButton.addEventListener("click", () => {
+    dropZones.forEach(zone => {
+      zone.innerHTML = ""; // 드롭존 비우기
+      zone.style.visibility = "hidden";
+      zone.style.border = "0.2px dashed rgba(102, 102, 102, 0.3)";
+      zone.style.backgroundColor = "rgba(200, 200, 200, 0.7)";
+    });
+  
+    // 선택 상태 초기화
+    document.querySelectorAll(".image-container img").forEach(image => {
+      image.style.backgroundColor = ""; // 배경색 초기화
+    });
+    selectedImage = null; // 선택 상태 초기화
+  
+    // wave와 gold 입력값 초기화
+    const waveInput = document.getElementById("wave");
+    const goldInput = document.getElementById("gold");
+    waveInput.value = "";
+    goldInput.value = "";
+  
+    // wave와 gold 값 초기화
+    const waveGoldDisplay = document.getElementById("wave-gold-display");
+    waveGoldDisplay.textContent = ""; // 텍스트 초기화
+  });
+
+    saveButton.addEventListener("click", () => {
+        const waveInput = document.getElementById("wave");
+        const goldInput = document.getElementById("gold");
+        const waveValue = waveInput.value.trim();
+        const goldValue = goldInput.value.trim();
+    
+        // WAVE & GOLD 텍스트 설정
+        let displayText = "";
+        if (waveValue) {
+            displayText += `WAVE: ${waveValue}`;
+        }
+        if (goldValue) {
+            if (displayText) displayText += " | ";
+            displayText += `Gold: ${goldValue}`;
+        }
+    
+        // 텍스트 표시 영역 업데이트
+        const waveGoldDisplay = document.getElementById("wave-gold-display");
+        waveGoldDisplay.textContent = displayText;
+        waveGoldDisplay.style.color = "white";
+        waveGoldDisplay.style.position = "absolute";
+        waveGoldDisplay.style.top = "9px";
+        waveGoldDisplay.style.right = "0px";
+        waveGoldDisplay.style.fontSize = "9px";
+        waveGoldDisplay.style.fontWeight = "bold";
+        waveGoldDisplay.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+        waveGoldDisplay.style.padding = "5px 10px";
+        waveGoldDisplay.style.borderRadius = "5px";
+    
+        // 📌 100ms 대기 후 캡처 실행 (텍스트 업데이트 반영)
+        setTimeout(() => {
+            const mapImageElement = document.getElementById("mapImage");
+            const imageHeight = mapImageElement.clientHeight; // 실제 이미지 높이 (예: 360px)
+            html2canvas(document.getElementById("map-container"), {
+                scrollX: 0,
+                scrollY: 0,
+                height: imageHeight,  // 캡처 영역 높이를 이미지 높이로 제한
+                windowWidth: document.documentElement.offsetWidth,
+                windowHeight: document.documentElement.offsetHeight,
+                scale: 10,  // 🔥 기존 6 → 8로 더 고해상도 설정
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: null
+            }).then((canvas) => {
+                const link = document.createElement("a");
+                link.download = "map.png";
+                link.href = canvas.toDataURL("image/png", 1.0);
+                link.click();
+    
+                // 캡처 후 텍스트 초기화
+                waveGoldDisplay.textContent = "";
+            });
+        }, 100);
+    });
+    
+    // 드롭존과 관련된 요소 선택
+const mapContainer = document.getElementById("map-container");
+const mapImage = document.getElementById("mapImage");
+
+
+// mapImage의 실제 표시 영역 계산 후 드롭존 위치 보정
+mapImage.onload = () => {
+  // mapImage의 실제 영역 정보
+  const imageRect = mapImage.getBoundingClientRect();
+  const containerRect = mapContainer.getBoundingClientRect();
+  // container 내 이미지의 offset 계산
+  const offsetX = imageRect.left - containerRect.left;
+  const offsetY = imageRect.top - containerRect.top;
+
+  // 각 드롭존 위치 보정
+  dropZones.forEach(zone => {
+    const origTop = parseInt(zone.style.top, 10);
+    const origLeft = parseInt(zone.style.left, 10);
+    zone.style.top = (origTop + offsetY) + "px";
+    zone.style.left = (origLeft + offsetX) + "px";
+  });
+};
+
+document.addEventListener('dragstart', function(e) {
+    e.preventDefault();
+  });
+  
+  </script>
+</body>
+</html>
