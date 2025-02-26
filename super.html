@@ -107,18 +107,22 @@ body {
     min-height: 0; /* 자식 스크롤 허용 */
   }
   
-  .map-container {
+.map-container {
     width: 360px;
     height: 400px;
     position: relative;
     margin: 0;
     padding: 0;
-    background: url('img/1.png') no-repeat center center;
-    background-size: 100% auto;  /* 🔥 배경 이미지를 100% 크기로 설정 */
-    background-repeat: no-repeat;
-    background-position: center;
-    image-rendering: crisp-edges; /* 🔥 픽셀 깨짐 방지 */
-    image-rendering: -webkit-optimize-contrast;
+
+        background: url('img/1.png') no-repeat center center;
+        background-size: contain;
+        
+        /* 🔥 이미지 품질 향상 */
+        image-rendering: crisp-edges;
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: pixelated;
+    
+    
 }
 
 
@@ -527,7 +531,7 @@ const imageFiles = [
                 useCORS: true,
                 allowTaint: true,
                 backgroundColor: null
-                foreignObjectRendering: true,  // 🔥 SVG 기반 렌더링 활성화
+                
             }).then((canvas) => {
                 const link = document.createElement("a");
                 link.download = "map.png";
