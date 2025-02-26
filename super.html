@@ -544,21 +544,12 @@ const imageFiles = [
     
         // 📌 100ms 대기 후 캡처 실행 (텍스트 업데이트 반영)
         setTimeout(() => {
-            // 드롭존 보정을 위한 코드 추가 시작
-            const originalTops = [];
-            dropZones.forEach(zone => {
-              originalTops.push(zone.style.top);
-              const currentTop = parseInt(zone.style.top, 10);
-              zone.style.top = (currentTop + 30) + "px";
-            });
-            // 드롭존 보정을 위한 코드 추가 끝
-        
             html2canvas(document.getElementById("map-container"), {
                 scrollX: 0,
                 scrollY: 0,
                 windowWidth: document.documentElement.offsetWidth,
                 windowHeight: document.documentElement.offsetHeight,
-                scale: 10,
+                scale: 10,  // 🔥 기존 6 → 8로 더 고해상도 설정
                 useCORS: true,
                 allowTaint: true,
                 backgroundColor: null
@@ -567,20 +558,37 @@ const imageFiles = [
                 link.download = "map.png";
                 link.href = canvas.toDataURL("image/png", 1.0);
                 link.click();
-        
-                // 캡처 후 원래 드롭존 위치 복원
-                dropZones.forEach((zone, index) => {
-                  zone.style.top = originalTops[index];
-                });
-        
+    
                 // 캡처 후 텍스트 초기화
                 waveGoldDisplay.textContent = "";
             });
         }, 100);
-        
     });
     
-    
+    // 드롭존과 관련된 요소 선택
+const mapContainer = document.getElementById("map-container");
+const mapImage = document.getElementById("mapImage");
+
+
+// mapImage의 실제 표시 영역 계산 후 드롭존 위치 보정
+mapImage.onload = () => {
+  // mapImage의 실제 영역 정보
+  const imageRect = mapImage.getBoundingClientRect();
+  const containerRect = mapContainer.getBoundingClientRect();
+  // container 내 이미지의 offset 계산
+  const offsetX = imageRect.left - containerRect.left;
+  const offsetY = imageRect.top - containerRect.top;
+
+  // 각 드롭존 위치 보정
+  dropZones.forEach(zone => {
+    const origTop = parseInt(zone.style.top, 10);
+    const origLeft = parseInt(zone.style.left, 10);
+    zone.style.top = (origTop + offsetY) + "px";
+    zone.style.left = (origLeft + offsetX) + "px";
+  });
+};
+
+
   </script>
 </body>
 </html>
