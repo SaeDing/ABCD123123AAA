@@ -22,7 +22,36 @@ body {
     gap: 20px;
     justify-content: center;
 }
+.nav-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    background: #ffffff; /* 네비게이션 바 배경색 */
+    padding: 0 0px;
+    box-shadow: 0 2px 5px rgba(255, 255, 255);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1100;
+    gap: 0; /* 버튼 사이 간격 제거 */
+}
 
+  
+  .nav-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #9c2121;
+    /* 필요하면 margin-left 등 추가 가능 */
+  }
+  
+  .nav-buttons {
+    display: flex;
+    align-items: center;
+    gap: 1px; /* 버튼들 간격 */
+  }
+  
 .round-btn {
     width: 150px;
     height: 150px;
