@@ -202,14 +202,14 @@ button:hover {
 
 
 .round-btn {
-  width: 75px; /* 기존의 반 크기 */
-  height: 75px;
+  width: 50px; /* 기존의 반 크기 */
+  height: 50px;
   background-color: #fff;
-  border-radius: 50%;
+  border-radius: 0%;
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 2px solid #007bff; /* 테두리 크기도 줄이기 */
+  border: 2px solid #ffffff; /* 테두리 크기도 줄이기 */
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   position: relative;

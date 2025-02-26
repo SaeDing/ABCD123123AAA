@@ -56,11 +56,11 @@ body {
     width: 150px;
     height: 150px;
     background-color: #fff;
-    border-radius: 50%;
+    border-radius: 0%;
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 3px solid #007bff;
+    border: 3px solid #ffffff;
     cursor: pointer;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     position: relative;
