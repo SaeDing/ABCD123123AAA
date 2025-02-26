@@ -109,15 +109,18 @@ body {
   
   .map-container {
     width: 360px;
-    height: 400px;         /* 필요 시 이 높이로 조절 */
-    background: url('img/1.png') no-repeat center center;
-    background-size: contain;
-    border: none;
-    border-radius: 0;
+    height: 400px;
     position: relative;
-    margin: 0;            /* 상하 여백 제거 */
+    margin: 0;
     padding: 0;
-  }
+    background: url('img/1.png') no-repeat center center;
+    background-size: 100% auto;  /* 🔥 배경 이미지를 100% 크기로 설정 */
+    background-repeat: no-repeat;
+    background-position: center;
+    image-rendering: crisp-edges; /* 🔥 픽셀 깨짐 방지 */
+    image-rendering: -webkit-optimize-contrast;
+}
+
 
   /* 드롭존 스타일 (기존과 동일) */
   .drop-zone {
