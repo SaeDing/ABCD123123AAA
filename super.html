@@ -28,48 +28,62 @@ body {
     overflow: hidden;
     border: 1px solid #ccc;
   }
-  
   .nav-container {
-    display: flex; /* 🔥 가로 정렬 */
-    flex-direction: row; /* 🔥 기본값이지만 명확하게 설정 */
-    justify-content: space-around; /* 🔥 버튼들을 동일 간격 배치 */
-    align-items: center; /* 🔥 버튼들 세로 정렬 */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     width: 100%;
-    height: 60px; /* 🔥 네비게이션 바 높이 */
-    background-color: #fff;
-    border-bottom: 2px solid #ddd;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    height: 30px;
+    background: #ffffff; /* 네비게이션 바 배경색 */
+    padding: 0 0px;     /* 좌우 여백 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     position: absolute;
     top: 0;
     left: 0;
     z-index: 1100;
-    justify-content: space-evenly;
-    align-items: center;
-    margin: 0;
-}
-
-
-
-  .round-btn {
-    width: 50px; /* 🔥 버튼 크기 조정 */
-    height: 50px;
-    background-color: #fff;
-    border-radius: 50%;
+  }
+  
+  .nav-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #9c2121;
+    /* 필요하면 margin-left 등 추가 가능 */
+  }
+  
+  .nav-buttons {
     display: flex;
+    align-items: center;
+    gap: 1px; /* 버튼들 간격 */
+  }
+  
+  
+  .round-btn {
+    width: 44px;
+    height: 44px;
+    background-color: #ffffff; /* 버튼 배경색 */
+    border: none;             /* 테두리 제거 */
+    border-radius: 0px;
+    display: flex;
+    
     justify-content: center;
     align-items: center;
-    border: 2px solid #007bff;
     cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
     position: relative;
     overflow: hidden;
-}
+  }
+  
+  .round-btn:hover {
+    background-color: #1abc9c; /* 호버 시 색상 */
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
   
   .round-btn img {
     width: 100%;
-    height: 100%;
+    height: 70%;
     object-fit: cover;
-    border-radius: 50%;
+    border-radius: 0;
   }
   
   .round-btn span {
@@ -78,11 +92,12 @@ body {
     left: 50%;
     transform: translateX(-50%);
     text-align: center;
-    color: #007bff;
+    color: #000000;
     font-size: 8px;
     font-weight: bold;
     pointer-events: none;
   }
+  
   
   /* 메인 영역: 네비게이션 아래부터, 하단 컨트롤 위까지 꽉 채움 */
   main {
@@ -315,31 +330,31 @@ body {
           <!-- 드롭존 (360x360 맵 기준 좌표 재조정 예시) -->
           <div class="drop-zone" style="top:55px; left:75px;"></div>
           <div class="drop-zone" style="top:105px; left:75px;"></div>
-          <div class="drop-zone" style="top:175px; left:75px;"></div>
-          <div class="drop-zone" style="top:225px; left:75px;"></div>
-          <div class="drop-zone" style="top:275px; left:75px;"></div>
-          <div class="drop-zone" style="top:325px; left:75px;"></div>
+          <div class="drop-zone" style="top:155px; left:75px;"></div>
+          <div class="drop-zone" style="top:205px; left:75px;"></div>
+          <div class="drop-zone" style="top:260px; left:75px;"></div>
+          <div class="drop-zone" style="top:310px; left:75px;"></div>
           <!-- 두 번째 열 (left: 약 133px) -->
-          <div class="drop-zone" style="top:75px; left:120px;"></div>
-          <div class="drop-zone" style="top:125px; left:120px;"></div>
-          <div class="drop-zone" style="top:175px; left:120px;"></div>
-          <div class="drop-zone" style="top:225px; left:120px;"></div>
-          <div class="drop-zone" style="top:275px; left:120px;"></div>
-          <div class="drop-zone" style="top:325px; left:120px;"></div>
+          <div class="drop-zone" style="top:55px; left:120px;"></div>
+          <div class="drop-zone" style="top:105px; left:120px;"></div>
+          <div class="drop-zone" style="top:155px; left:120px;"></div>
+          <div class="drop-zone" style="top:205px; left:120px;"></div>
+          <div class="drop-zone" style="top:260px; left:120px;"></div>
+          <div class="drop-zone" style="top:310px; left:120px;"></div>
           <!-- 세 번째 열 (left: 약 200px) -->
-          <div class="drop-zone" style="top:75px; left:206px;"></div>
-          <div class="drop-zone" style="top:125px; left:206px;"></div>
-          <div class="drop-zone" style="top:175px; left:206px;"></div>
-          <div class="drop-zone" style="top:225px; left:206px;"></div>
-          <div class="drop-zone" style="top:275px; left:206px;"></div>
-          <div class="drop-zone" style="top:325px; left:206px;"></div>
+          <div class="drop-zone" style="top:55px; left:206px;"></div>
+          <div class="drop-zone" style="top:105px; left:206px;"></div>
+          <div class="drop-zone" style="top:155px; left:206px;"></div>
+          <div class="drop-zone" style="top:210px; left:206px;"></div>
+          <div class="drop-zone" style="top:260px; left:206px;"></div>
+          <div class="drop-zone" style="top:310px; left:206px;"></div>
           <!-- 네 번째 열 (left: 약 232px) -->
-          <div class="drop-zone" style="top:75px; left:255px;"></div>
-          <div class="drop-zone" style="top:125px; left:255px;"></div>
-          <div class="drop-zone" style="top:175px; left:255px;"></div>
-          <div class="drop-zone" style="top:225px; left:255px;"></div>
-          <div class="drop-zone" style="top:275px; left:255px;"></div>
-          <div class="drop-zone" style="top:325px; left:255px;"></div>
+          <div class="drop-zone" style="top:55px; left:255px;"></div>
+          <div class="drop-zone" style="top:105px; left:255px;"></div>
+          <div class="drop-zone" style="top:155px; left:255px;"></div>
+          <div class="drop-zone" style="top:210px; left:255px;"></div>
+          <div class="drop-zone" style="top:260px; left:255px;"></div>
+          <div class="drop-zone" style="top:310px; left:255px;"></div>
         </div>
         <!-- 유닛 리스트 -->
 
