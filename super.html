@@ -29,23 +29,62 @@ body {
     border: 1px solid #ccc;
   }
   
-  /* 상단 네비게이션(버튼들) - 높이 최소화, 패딩 제거 */
-  .nav-container {
+/* 네비게이션 바 스타일 */
+.nav-container {
     position: absolute;
-    top: 0;
+    bottom: 0; /* 하단에 고정 */
     left: 0;
     width: 100%;
-    height: 40px;  /* 버튼 영역 높이 */
+    height: 60px;  /* 높이 증가 */
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-around;
     align-items: center;
     background-color: #fff;
-    border-bottom: 1px solid #ddd;
+    border-top: 2px solid #ddd;
     z-index: 1100;
-    padding: 0;  /* 상하 여백 제거 */
-    margin: 0;
-  }
-  
+    box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* 네비게이션 버튼 스타일 */
+.nav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px 0;
+    font-size: 12px;
+    color: #666;
+    transition: all 0.3s ease;
+}
+
+.nav-btn img {
+    width: 28px;  /* 아이콘 크기 조정 */
+    height: 28px;
+    object-fit: contain;
+    margin-bottom: 3px;
+}
+
+/* 활성화된 버튼 */
+.nav-btn.active {
+    color: #007bff;
+    font-weight: bold;
+    border-top: 3px solid #007bff; /* 선택된 탭 강조 */
+    padding-top: 2px;
+}
+
+.nav-btn:hover {
+    color: #0056b3;
+}
+
+/* 터치 시 반응 효과 */
+.nav-btn:active {
+    transform: scale(0.95);
+}
+
   .round-btn {
     width: 38px;
     height: 38px;
@@ -199,7 +238,7 @@ body {
   .controls {
     width: 360px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     gap: 5px;
     position: absolute;
@@ -241,7 +280,7 @@ body {
   .controls button {
     padding: 6px 10px;
     border: none;
-    font-size: 14px;
+    font-size: 10px;
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.3s;
@@ -264,30 +303,46 @@ body {
   #save-button:hover {
     background-color: #45a049;
   }
+  .page-title {
+    text-align: center;
+    font-size: 17px;  /* 🔥 글자 크기 */
   
+    color: #333;  /* 🔥 글자 색상 */
+    background-color: #f1f1f1;  /* 🔥 배경색 */
+    padding: 1px 0;  /* 🔥 위아래 여백 */
+    width: 100%;
+    border-bottom: 2px solid #ccc;  /* 🔥 구분선 */
+    position: relative;  /* 🔥 PNG 저장에서 제외되도록 */
+    z-index: 1200;
+}
+
   </style>
 </head>
 <body>
+    
   <div class="fixed-container">
     <!-- 상단 네비게이션 버튼 (가로 배열) -->
     <div class="nav-container">
-      <button class="round-btn" id="btn1" onclick="navigate('roundsindex.html')">
-        <img src="https://github.com/SaeDing/NoInvadePls/blob/main/img/a.PNG?raw=true" alt="A">
-        <span>고기</span>
-      </button>
-      <button class="round-btn" id="btn2" onclick="navigate('GuildPlacement.html')">
-        <img src="https://github.com/SaeDing/NoInvadePls/blob/main/img/b.png?raw=true" alt="B">
-        <span>길드</span>
-      </button>
-      <button class="round-btn" id="btn3" onclick="navigate('World1Placement.html')">
-        <img src="https://github.com/SaeDing/NoInvadePls/blob/main/img/c.PNG?raw=true" alt="C">
-        <span>보스1</span>
-      </button>
-      <button class="round-btn" id="btn4" onclick="navigate('World3Placement.html')">
-        <img src="https://github.com/SaeDing/NoInvadePls/blob/main/img/5.png?raw=true" alt="D">
-        <span>보스3</span>
-      </button>
-    </div>
+        <button class="nav-btn active" id="btn1" onclick="navigate('roundsindex.html')">
+          <img src="https://github.com/SaeDing/NoInvadePls/blob/main/img/a.PNG?raw=true" alt="A">
+          <span>고기</span>
+        </button>
+        <button class="nav-btn" id="btn2" onclick="navigate('GuildPlacement.html')">
+          <img src="https://github.com/SaeDing/NoInvadePls/blob/main/img/b.png?raw=true" alt="B">
+          <span>길드</span>
+        </button>
+        <button class="nav-btn" id="btn3" onclick="navigate('World1Placement.html')">
+          <img src="https://github.com/SaeDing/NoInvadePls/blob/main/img/c.PNG?raw=true" alt="C">
+          <span>보스1</span>
+        </button>
+        <button class="nav-btn" id="btn4" onclick="navigate('World3Placement.html')">
+          <img src="https://github.com/SaeDing/NoInvadePls/blob/main/img/5.png?raw=true" alt="D">
+          <span>보스3</span>
+        </button>
+      </div>
+      <!-- 상단 타이틀 -->
+<div class="page-title">길드 대전 배치표</div>
+
     <div class="container">
    
     <main>
@@ -299,33 +354,33 @@ body {
 
           <div id="wave-gold-display"></div>
           <!-- 드롭존 (360x360 맵 기준 좌표 재조정 예시) -->
-          <div class="drop-zone" style="top:120px; left:101px;"></div>
-          <div class="drop-zone" style="top:162px; left:101px;"></div>
-          <div class="drop-zone" style="top:205px; left:101px;"></div>
-          <div class="drop-zone" style="top:250px; left:101px;"></div>
-          <div class="drop-zone" style="top:290px; left:101px;"></div>
-          <div class="drop-zone" style="top:332px; left:101px;"></div>
+          <div class="drop-zone" style="top:75px; left:75px;"></div>
+          <div class="drop-zone" style="top:125px; left:75px;"></div>
+          <div class="drop-zone" style="top:175px; left:75px;"></div>
+          <div class="drop-zone" style="top:225px; left:75px;"></div>
+          <div class="drop-zone" style="top:275px; left:75px;"></div>
+          <div class="drop-zone" style="top:325px; left:75px;"></div>
           <!-- 두 번째 열 (left: 약 133px) -->
-          <div class="drop-zone" style="top:120px; left:133px;"></div>
-          <div class="drop-zone" style="top:162px; left:133px;"></div>
-          <div class="drop-zone" style="top:205px; left:133px;"></div>
-          <div class="drop-zone" style="top:250px; left:133px;"></div>
-          <div class="drop-zone" style="top:290px; left:133px;"></div>
-          <div class="drop-zone" style="top:332px; left:133px;"></div>
+          <div class="drop-zone" style="top:75px; left:120px;"></div>
+          <div class="drop-zone" style="top:125px; left:120px;"></div>
+          <div class="drop-zone" style="top:175px; left:120px;"></div>
+          <div class="drop-zone" style="top:225px; left:120px;"></div>
+          <div class="drop-zone" style="top:275px; left:120px;"></div>
+          <div class="drop-zone" style="top:325px; left:120px;"></div>
           <!-- 세 번째 열 (left: 약 200px) -->
-          <div class="drop-zone" style="top:120px; left:200px;"></div>
-          <div class="drop-zone" style="top:162px; left:200px;"></div>
-          <div class="drop-zone" style="top:205px; left:200px;"></div>
-          <div class="drop-zone" style="top:250px; left:200px;"></div>
-          <div class="drop-zone" style="top:290px; left:200px;"></div>
-          <div class="drop-zone" style="top:332px; left:200px;"></div>
+          <div class="drop-zone" style="top:75px; left:206px;"></div>
+          <div class="drop-zone" style="top:125px; left:206px;"></div>
+          <div class="drop-zone" style="top:175px; left:206px;"></div>
+          <div class="drop-zone" style="top:225px; left:206px;"></div>
+          <div class="drop-zone" style="top:275px; left:206px;"></div>
+          <div class="drop-zone" style="top:325px; left:206px;"></div>
           <!-- 네 번째 열 (left: 약 232px) -->
-          <div class="drop-zone" style="top:120px; left:232px;"></div>
-          <div class="drop-zone" style="top:162px; left:232px;"></div>
-          <div class="drop-zone" style="top:205px; left:232px;"></div>
-          <div class="drop-zone" style="top:250px; left:232px;"></div>
-          <div class="drop-zone" style="top:290px; left:232px;"></div>
-          <div class="drop-zone" style="top:332px; left:232px;"></div>
+          <div class="drop-zone" style="top:75px; left:255px;"></div>
+          <div class="drop-zone" style="top:125px; left:255px;"></div>
+          <div class="drop-zone" style="top:175px; left:255px;"></div>
+          <div class="drop-zone" style="top:225px; left:255px;"></div>
+          <div class="drop-zone" style="top:275px; left:255px;"></div>
+          <div class="drop-zone" style="top:325px; left:255px;"></div>
         </div>
         <!-- 유닛 리스트 -->
 
