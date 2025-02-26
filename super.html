@@ -542,30 +542,14 @@ const imageFiles = [
         waveGoldDisplay.style.padding = "5px 10px";
         waveGoldDisplay.style.borderRadius = "5px";
     
-        const mapContainer = document.getElementById("map-container");
-    
-        // 🔥 원래 위치 저장 (픽셀값 보관)
-        const originalTop = mapContainer.offsetTop + "px";
-        const originalPosition = mapContainer.style.position;
-        
-        // 🔥 드롭존이 올라가는 현상 방지 → translateY 적용
-        const dropZones = document.querySelectorAll(".drop-zone img");
-        dropZones.forEach(img => {
-            img.style.transform = "translateY(40px)";  // 🔥 드롭존 위치 보정
-        });
-    
-        // 🔥 PNG 저장 전에 맵 위치 강제 조정
-        mapContainer.style.position = "fixed";
-        mapContainer.style.top = "0px";
-        mapContainer.style.left = "50%";
-        mapContainer.style.transform = "translateX(-50%)";
-    
-        // 📌 300ms 대기 후 캡처 실행 (위치 변경이 적용될 시간 확보)
+        // 📌 100ms 대기 후 캡처 실행 (텍스트 업데이트 반영)
         setTimeout(() => {
-            html2canvas(mapContainer, {
+            html2canvas(document.getElementById("map-container"), {
+                scrollX: 0,
+                scrollY: 0,
                 windowWidth: document.documentElement.offsetWidth,
                 windowHeight: document.documentElement.offsetHeight,
-                scale: 8,  // 🔥 기존 6 → 8로 더 고해상도 설정
+                scale: 10,  // 🔥 기존 6 → 8로 더 고해상도 설정
                 useCORS: true,
                 allowTaint: true,
                 backgroundColor: null
@@ -575,28 +559,12 @@ const imageFiles = [
                 link.href = canvas.toDataURL("image/png", 1.0);
                 link.click();
     
-                console.log(`📷 PNG 저장 완료! 원래 위치(${originalTop})로 복구 시도`);
-    
-                // 🔥 캡처 후 원래 상태로 복구
-                setTimeout(() => {
-                    mapContainer.style.position = originalPosition || "relative";
-                    mapContainer.style.top = originalTop;
-                    mapContainer.style.left = "0";
-                    mapContainer.style.transform = "none";
-    
-                    // 🔥 드롭존 위치 원상복구
-                    dropZones.forEach(img => {
-                        img.style.transform = "translateY(0px)";
-                    });
-    
-                    console.log("🎯 원래 위치 복구 완료!");
-                }, 0); // 0ms → 다음 이벤트 루프에서 실행되도록 설정
-    
                 // 캡처 후 텍스트 초기화
                 waveGoldDisplay.textContent = "";
             });
-        }, 300); // 300ms 대기 후 캡처 실행
+        }, 100);
     });
+    
     
   </script>
 </body>
