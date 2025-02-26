@@ -496,49 +496,58 @@ const imageFiles = [
       document.getElementById("wave-gold-display").textContent = "";
     });
 
+
     saveButton.addEventListener("click", () => {
-      const waveInput = document.getElementById("wave");
-      const goldInput = document.getElementById("gold");
-      const waveValue = waveInput.value.trim();
-      const goldValue = goldInput.value.trim();
-      let displayText = "";
-      if (waveValue) {
-        displayText += `WAVE: ${waveValue}`;
-      }
-      if (goldValue) {
-        if (displayText) displayText += " | ";
-        displayText += `Gold: ${goldValue}`;
-      }
-      const waveGoldDisplay = document.getElementById("wave-gold-display");
-      waveGoldDisplay.textContent = displayText;
-      waveGoldDisplay.style.color = "white";
-      waveGoldDisplay.style.position = "absolute";
-      waveGoldDisplay.style.top = "5px";
-      waveGoldDisplay.style.right = "5px";
-
-      html2canvas(document.getElementById("map-container"), {
-        scrollX: 0,
-        scrollY: 0,
-        windowWidth: document.documentElement.offsetWidth,
-        windowHeight: document.documentElement.offsetHeight,
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-      }).then((canvas) => {
-        const link = document.createElement("a");
-        link.download = "map.png";
-        link.href = canvas.toDataURL();
-        link.click();
-        waveGoldDisplay.textContent = "";
-      });
-    });
-
-    document.addEventListener("touchmove", function(e) {
-        // 이벤트가 발생한 요소가 .image-container 내부에 있는지 확인
-        if (!e.target.closest(".image-container")) {
-          e.preventDefault(); // 스크롤 차단
+        const waveInput = document.getElementById("wave");
+        const goldInput = document.getElementById("gold");
+        const waveValue = waveInput.value.trim();
+        const goldValue = goldInput.value.trim();
+    
+        // WAVE & GOLD 텍스트 설정
+        let displayText = "";
+        if (waveValue) {
+            displayText += `WAVE: ${waveValue}`;
         }
-      }, { passive: false });
+        if (goldValue) {
+            if (displayText) displayText += " | ";
+            displayText += `Gold: ${goldValue}`;
+        }
+    
+        // 텍스트 표시 영역 업데이트
+        const waveGoldDisplay = document.getElementById("wave-gold-display");
+        waveGoldDisplay.textContent = displayText;
+        waveGoldDisplay.style.color = "white";
+        waveGoldDisplay.style.position = "absolute";
+        waveGoldDisplay.style.top = "50px";
+        waveGoldDisplay.style.right = "0px";
+        waveGoldDisplay.style.fontSize = "9px";
+        waveGoldDisplay.style.fontWeight = "bold";
+        waveGoldDisplay.style.backgroundColor = "rgba(0, 0, 0, 0.5)"; // 가독성 향상
+        waveGoldDisplay.style.padding = "5px 10px";
+        waveGoldDisplay.style.borderRadius = "5px";
+    
+        // 📌 setTimeout을 사용하여 캡처 전에 DOM 업데이트 반영
+        setTimeout(() => {
+            html2canvas(document.getElementById("map-container"), {
+                scrollX: 0,
+                scrollY: 0,
+                windowWidth: document.documentElement.offsetWidth,
+                windowHeight: document.documentElement.offsetHeight,
+                scale: 4,  // 🔥 고해상도 개선 (기본 2 → 4)
+                useCORS: true,
+                allowTaint: true,
+            }).then((canvas) => {
+                const link = document.createElement("a");
+                link.download = "map.png";
+                link.href = canvas.toDataURL("image/png", 1.0); // 🔥 고품질 PNG 저장
+                link.click();
+    
+                // 캡처 후 텍스트 초기화
+                waveGoldDisplay.textContent = "";
+            });
+        }, 100); // 🔥 100ms 대기 후 캡처 실행
+    });
+    
 
   </script>
 </body>
