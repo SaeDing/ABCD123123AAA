@@ -109,24 +109,15 @@ body {
   
   .map-container {
     width: 360px;
-    height: 400px;
-    position: relative;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-}
-
-.map-container img {
-    width: 360px;  /* 명확한 크기 지정 */
-    height: 400px;
-    object-fit: contain;
+    height: 400px;         /* 필요 시 이 높이로 조절 */
+    background: url('img/1.png') no-repeat center center;
+    background-size: contain;
     border: none;
     border-radius: 0;
     position: relative;
-}
+    margin: 0;            /* 상하 여백 제거 */
+    padding: 0;
+  }
 
   /* 드롭존 스타일 (기존과 동일) */
   .drop-zone {
@@ -296,7 +287,7 @@ body {
 
       <div class="container">
         <div class="map-container" id="map-container">
-        <img id="mapImage" src="./img/1.png" alt="Map Background">
+ 
           <div id="wave-gold-display"></div>
           <!-- 드롭존 (360x360 맵 기준 좌표 재조정 예시) -->
           <div class="drop-zone" style="top:120px; left:101px;"></div>
@@ -495,8 +486,6 @@ const imageFiles = [
         }
       });
     });
- 
-    
     saveButton.addEventListener("click", () => {
         const waveInput = document.getElementById("wave");
         const goldInput = document.getElementById("gold");
@@ -526,35 +515,19 @@ const imageFiles = [
         waveGoldDisplay.style.padding = "5px 10px";
         waveGoldDisplay.style.borderRadius = "5px";
     
+        // 📌 100ms 대기 후 캡처 실행 (텍스트 업데이트 반영)
         setTimeout(() => {
-            const targetElement = document.getElementById("map-container");
-    
-            // 🎯 원본 비율 유지하도록 크기 고정
-            const originalWidth = targetElement.clientWidth;
-            const originalHeight = targetElement.clientHeight;
-            const fixedAspectRatio = originalWidth / originalHeight; // 🎯 강제 비율 고정
-    
-            html2canvas(targetElement, {
-                scrollX: 0,
-                scrollY: 0,
-                width: originalWidth,
-                height: Math.round(originalWidth / fixedAspectRatio), // 🎯 정확한 비율로 조정
-                scale: 1, // 🎯 강제 비율 유지
+            html2canvas(document.getElementById("map-container"), {
+                windowWidth: document.documentElement.offsetWidth,
+                windowHeight: document.documentElement.offsetHeight,
+                scale: 8,  // 🔥 기존 6 → 8로 더 고해상도 설정
                 useCORS: true,
                 allowTaint: true,
                 backgroundColor: null
             }).then((canvas) => {
-                const finalCanvas = document.createElement("canvas");
-                const ctx = finalCanvas.getContext("2d");
-    
-                // 🎯 캡처된 이미지 크기 강제 보정 (비율이 틀어지는 문제 해결)
-                finalCanvas.width = originalWidth;
-                finalCanvas.height = Math.round(originalWidth / fixedAspectRatio); // 🎯 정확한 비율 유지
-                ctx.drawImage(canvas, 0, 0, finalCanvas.width, finalCanvas.height);
-    
                 const link = document.createElement("a");
                 link.download = "map.png";
-                link.href = finalCanvas.toDataURL("image/png", 1.0);
+                link.href = canvas.toDataURL("image/png", 1.0);
                 link.click();
     
                 // 캡처 후 텍스트 초기화
