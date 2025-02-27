@@ -33,6 +33,7 @@
             position: absolute; /* 절대 위치로 설정하여 부모 컨테이너의 맨 위에 고정 */
             top: 0; /* 부모 컨테이너의 상단에 맞추기 */
             left: 0; /* 부모 컨테이너의 왼쪽에 맞추기 */
+            z-index: 0; /* 이미지의 z-index를 낮춰 버튼이 위로 오게 만듦 */
         }
         
         .content {
@@ -198,7 +199,6 @@
     transition: all 0.2s ease-in-out;
   }
    
-   
 /* 강화 성공 시 반짝이는 애니메이션 */
 .button.success {
     animation: sparkle 1s ease-out;
@@ -358,11 +358,11 @@
             border-radius: 5px; /* 모서리 둥글게 */
             text-align: center; /* 텍스트 중앙 정렬 */
 
-           
-
-
-
         }
+
+        
+  
+
         .round-btn {
             margin-top: 10px;
             padding: 5px 10px;
@@ -388,20 +388,24 @@
         .round-btn span {
             font-size: 14px;
         }
-        
-        
+
+       
 
     </style>
 </head>
 <body>
+    <!-- 스피커 아이콘 버튼 -->
+   
     <div class="container">
         <div class="content">
             <div class="top-section">
                 <div class="container">
-                    <img src="mm.png" class="item-img" alt="아이템 이미지">
-                    <img src="mma.png" class="mma-img" alt="아이템 이미지">
+                    <img src="mmm.png" class="item-img" alt="아이템 이미지">
+                    <img src="mmb.png" class="mma-img" alt="아이템 이미지">
+                    
                 </div>
                 <div class="name">강화 레벨별 실패 횟수</div>
+                
                 <div class="successcount20" id="failure-counts">
                     <div>Lv.0: <span id="fail-0">0</span>회 실패</div>
                     <div>Lv.1: <span id="fail-1">0</span>회 실패</div>
@@ -424,7 +428,7 @@
                     <p>Lv. <span id="item-level">0</span> 사념</p>
                     <div class="material-info">
                         <div><img src="gold-icon.png" alt="골드 아이콘"> <span id="gold-amount">0</span></div>
-                        <div><img src="soulstone.png" alt="사념석 아이콘"> <span id="soulstone-amount">0</span></div>
+                        <div><img src="artifactstone.png" alt="아티팩트석 아이콘"> <span id="soulstone-amount">0</span></div>
                         <div style="display: none;">
                             <img src="dia.png" alt="다이아 아이콘">
                             <span id="diamond-amount">0</span>
@@ -443,12 +447,8 @@
                     <option value="8">Lv.8</option>
                     <option value="9">Lv.9</option>
                     <option value="10">Lv.10</option>
-                    <option value="11">Lv.11</option>
-                    <option value="12">Lv.12</option>
-                    <option value="13">Lv.13</option>
-                    <option value="14">Lv.14</option>
-                    <option value="15">Lv.15</option>
                 </select>
+                
             </div>
             <div class="buttons-container">
                 <button id="muteButton">
@@ -460,7 +460,7 @@
             <div class="log" id="log"></div>
             <div class="total-info">
                 <p id="total-gold">총 골드 사용량: 0</p>
-                <p id="total-soulstone">총 사념석 사용량: 0</p>
+                <p id="total-soulstone">총 아티팩트석 사용량: 0</p>
                 <p id="total-diamond">총 다이아 사용량: 0</p>
             </div>
             <div class="successcount">
@@ -482,26 +482,23 @@
             </div>
             <div class="material-info-container" id="material-info-container">
                 <button class="close-info" id="close-info">X</button>
-                <p>Lv0: 13000 사념석 15개 (90%)</p>
-                <p>Lv1: 14000 사념석 15개 (80%)</p>
-                <p>Lv2: 15000 사념석 20개 (70%)</p>
-                <p>Lv3: 16000 사념석 20개 (60%)</p>
-                <p>Lv4: 17000 사념석 25개 (50%)</p>
-                <p>Lv5: 18000 사념석 25개 (46%)</p>
-                <p>Lv6: 19000 사념석 30개 (42%)</p>
-                <p>Lv7: 20000 사념석 30개 (38%)</p>
-                <p>Lv8: 21000 사념석 35개 (34%)</p>
-                <p>Lv9: 22000 사념석 35개 (30%)</p>
-                <p>Lv10: 23000 사념석 40개 (26%)</p>
-                <p>Lv11: 24000 사념석 40개 (22%)</p>
-                <p>Lv12: 25000 사념석 45개 (18%)</p>
-                <p>Lv13: 26000 사념석 45개 (14%)</p>
-                <p>Lv14: 27000 사념석 50개 (10%)</p>
-                <p>Lv15: MAX</p>
+                <p>Lv0: 18000 아티팩트석 20000개 (90%)</p>
+                <p>Lv1: 20000 아티팩트석 20000개 (80%)</p>
+                <p>Lv2: 22000 아티팩트석 20000개 (70%)</p>
+                <p>Lv3: 24000 아티팩트석 20000개 (60%)</p>
+                <p>Lv4: 26000 아티팩트석 20000개 (50%)</p>
+                <p>Lv5: 28000 아티팩트석 20000개 (46%)</p>
+                <p>Lv6: 30000 아티팩트석 20000개 (42%)</p>
+                <p>Lv7: 32000 아티팩트석 20000개 (38%)</p>
+                <p>Lv8: 34000 아티팩트석 20000개 (34%)</p>
+                <p>Lv9: 36000 아티팩트석 20000개 (30%)</p>
+                <p>Lv10: MAX</p>
             </div>
         </div>
     </div>
     <script>
+
+
 
         let isMuted = false; // 소리 끄기 상태를 추적하는 변수
 
@@ -517,7 +514,6 @@
             audio1.volume = isMuted ? 0 : 0.05; // mute 상태에 따라 볼륨 설정
             audio1.play(); // 오디오 재생
         }
-
         const enhanceButton = document.getElementById("enhance-button");
         const enhanceAllButton = document.getElementById("enhance-all-button");
         const resetButton = document.getElementById("reset-button");
@@ -539,18 +535,18 @@
         const totalGoldUsedText = document.getElementById("total-gold");
         const totalSoulstoneUsedText = document.getElementById("total-soulstone");
         const totalDiamondUsedText = document.getElementById("total-diamond");
-        let failureCounts = Array(15).fill(0); // 각 레벨별 실패 횟수를 저장하는 배열
+        let failureCounts = Array(10).fill(0); // 각 레벨별 실패 횟수를 저장하는 배열
         let totalGoldUsed = 0;      // 총 골드 사용량
-        let totalSoulstoneUsed = 0; // 총 사념석 사용량
+        let totalSoulstoneUsed = 0; // 총 아티팩트석 사용량
     
         const probabilities = [
-            90, 80, 70, 60, 50, 46, 42, 38, 34, 30, 26, 22, 18, 14, 10,0
+            100, 90, 80, 70, 60, 50, 45, 40, 35, 30, 0
         ];
         const soulstoneRequired = [
-            15, 15, 20, 20, 25, 25, 30, 30, 35, 35, 40, 40, 45, 45, 50,50
+            20000, 20000, 20000, 20000, 20000, 20000, 20000, 20000, 20000, 20000,20000
         ];
         const goldRequired = [
-            13000, 14000, 15000, 16000, 17000, 18000, 19000, 20000, 21000, 22000, 23000, 24000, 25000, 26000, 27000,27000
+            18000, 20000, 22000, 24000, 26000, 28000, 30000, 32000, 34000, 36000, 36000
         ];
     
         let currentLevel = 0;
@@ -565,27 +561,27 @@
     
         function updateUI() {
             // 현재 레벨이 15일 경우 undefined 방지 (NaN 방지)
-            const currentGold = currentLevel < 15 ? goldRequired[currentLevel] : 0;
-            const currentSoulstone = currentLevel < 15 ? soulstoneRequired[currentLevel] : 0;
+            const currentGold = currentLevel < 10 ? goldRequired[currentLevel] : 0;
+            const currentSoulstone = currentLevel < 10 ? soulstoneRequired[currentLevel] : 0;
     
             // 다이아 사용량을 480으로 나누고 소수점 자르는 방법
-            const totalDiamond = soulstoneUsed * 100;
-            const fullDiCount = Math.floor(totalDiamond / 480); // 다이아 사용량을 480으로 나눈 값 (소수점 버림)
+            const totalDiamond = soulstoneUsed * 1;
+            const fullDiCount = Math.floor(totalDiamond / 20000); // 다이아 사용량을 480으로 나눈 값 (소수점 버림)
     
             // 현재 레벨 표시
             itemLevel.textContent = currentLevel;
     
-            // Lv.15가 되면 현재 레벨의 골드/사념석만 숨기고, 총 사용량은 유지
-            document.getElementById("gold-amount").textContent = currentLevel < 15 ? formatNumber(currentGold) : "";
-            document.getElementById("soulstone-amount").textContent = currentLevel < 15 ? formatNumber(currentSoulstone) : "";
+            // Lv.15가 되면 현재 레벨의 골드/아티팩트석만 숨기고, 총 사용량은 유지
+            document.getElementById("gold-amount").textContent = currentLevel < 10 ? formatNumber(currentGold) : "";
+            document.getElementById("soulstone-amount").textContent = currentLevel < 10 ? formatNumber(currentSoulstone) : "";
     
             // 현재 레벨의 다이아 사용량 (Lv.15면 표시 안함)
-            document.getElementById("diamond-amount").textContent = currentLevel < 15 ? formatNumber(totalDiamond) : "";
+            document.getElementById("diamond-amount").textContent = currentLevel < 10 ? formatNumber(totalDiamond) : "";
     
             // 총 사용량은 항상 유지 (NaN 방지)
             totalGold.textContent = `총 골드 사용량: ${formatNumber(goldUsed)}`;
-            totalSoulstone.textContent = `총 사념석 사용량: ${formatNumber(soulstoneUsed)}`;
-            document.getElementById("total-diamond").textContent = `총 다이아 사용량: ${formatNumber(totalDiamond)} 풀디 ${fullDiCount}판`;
+            totalSoulstone.textContent = `총 아티팩트석 사용량: ${formatNumber(soulstoneUsed)}`;
+            document.getElementById("total-diamond").textContent = `길드 기부&출석 필요횟수  ${fullDiCount}일`;
     
             // 성공과 실패 횟수 표시
             document.getElementById("success-count").textContent = successCount;
@@ -593,7 +589,7 @@
     
             // 레벨별 실패 횟수 표시 (failureCounts 배열을 사용)
             let failureText = "";
-            for (let i = 0; i < 15; i++) {
+            for (let i = 0; i < 10; i++) {
                 failureText += `Lv.${String(i + 1).padStart(2, '0')}(${failureCounts[i]})`;  // 2자리 레벨 표시
                 if ((i + 1) % 5 === 0) {
                     failureText += "\n";  // 5개 레벨마다 줄바꿈
@@ -607,13 +603,13 @@
             enhanceButton.textContent = currentLevel === 15 ? "Lv.MAX" : `강화 (확률: ${probabilities[currentLevel]}%)`;
     
             // Max 레벨이면 강화 버튼과 한 번에 강화 버튼 비활성화
-            enhanceButton.disabled = currentLevel === 15;
-            enhanceAllButton.disabled = currentLevel === 15;
+            enhanceButton.disabled = currentLevel === 10;
+            enhanceAllButton.disabled = currentLevel === 10;
         }
     
         enhanceButton.addEventListener("click", () => {
             playAudio();
-            if (currentLevel < 15) {
+            if (currentLevel < 10) {
                 const success = Math.random() * 100 < probabilities[currentLevel];
                 log.innerHTML += `<p>Lv.${currentLevel} 강화 ${success ? '성공! 🎉' : '실패! 😢'}</p>`;
     
@@ -643,7 +639,7 @@
     
         enhanceAllButton.addEventListener("click", () => {
             playAudio();
-            for (let i = currentLevel; i < 15; i++) {
+            for (let i = currentLevel; i < 10; i++) {
                 let success = false;
                 while (!success) {
                     success = Math.random() * 100 < probabilities[i];
@@ -660,9 +656,9 @@
                 }
             }
             // Force level to 15 if it's not already at max
-            currentLevel = 15;
-            soulstoneUsed += soulstoneRequired[14];
-            goldUsed += goldRequired[14];
+            currentLevel = 10;
+            soulstoneUsed += soulstoneRequired[9];
+            goldUsed += goldRequired[9];
             updateUI(); // Update UI with new values
             log.scrollTop = log.scrollHeight;
         });
@@ -677,6 +673,7 @@
             log.innerHTML = '';
             successCount = 0;
             failureCount = 0;
+            
             updateUI();
         });
     
@@ -689,16 +686,7 @@
             failureCount = 0;
             updateUI();
         });
-    
-        materialInfoBtn.addEventListener("click", () => {
-            materialInfoContainer.classList.toggle("show");
-        });
-    
-        closeInfo.addEventListener("click", () => {
-            materialInfoContainer.classList.remove("show");
-        });
-    
-         // 소리 끄기/켜기 버튼 클릭 이벤트
+     // 소리 끄기/켜기 버튼 클릭 이벤트
      document.getElementById('muteButton').addEventListener('click', () => {
         isMuted = !isMuted; // mute 상태를 토글
         const speakerIcon = document.getElementById('speakerIcon');
@@ -724,7 +712,9 @@
         function navigate(url) {
             window.location.href = url;  // 'index.html' 페이지로 이동
         }
+        
     </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- FontAwesome을 사용하기 위해 아래 링크를 포함 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </body>
 </html>
