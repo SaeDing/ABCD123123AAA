@@ -255,15 +255,19 @@
 
         
         .material-info-button {
-            
             margin-top: 10px;
             padding: 5px 10px;
-            background-color: #333533;
+            background-color: #a1f5af;
             border-radius: 3px;
             color: white;
             cursor: pointer;
             font-weight: bold;
-            width: 50%;
+            font-size: 14px; /* 글자 크기 조정 */
+            width: 50%; /* 크기 동일하게 설정 */
+            text-align: center; /* 텍스트 중앙 정렬 */
+            display: flex;
+            justify-content: center; /* 버튼 내용 중앙 정렬 */
+            align-items: center; /* 버튼 내용 수직 중앙 정렬 */
         }
         .material-info-container {
             
@@ -358,6 +362,33 @@
 
 
         }
+        .round-btn {
+            margin-top: 10px;
+            padding: 5px 10px;
+            background-color: #586359; /* 버튼 배경색 */
+            border: 2px solid #586359; /* 버튼 테두리 색상도 배경색과 동일하게 */
+            border-radius: 3px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px; /* 글자 크기 조정 */
+            width: 50%; /* 크기 동일하게 설정 */
+            text-align: center; /* 텍스트 중앙 정렬 */
+            display: flex;
+            justify-content: center; /* 버튼 내용 중앙 정렬 */
+            align-items: center; /* 버튼 내용 수직 중앙 정렬 */
+        }
+        
+        .round-btn img {
+            width: 20px;
+            margin-right: 5px;
+        }
+        
+        .round-btn span {
+            font-size: 14px;
+        }
+        
+        
 
     </style>
 </head>
@@ -433,8 +464,15 @@
             </div>
           
             <div class="buttons-container">
+                <button class="round-btn" id="home-btn" onclick="navigate('index.html')"> 
+                    <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/A.PNG?raw=true" alt="B">
+                    <span>홈</span>
+                </button>
                 <div class="material-info-button" id="material-info-btn">재료 정보</div>
                 <button class="reset-button" id="reset-button">초기화</button>
+                <!-- 홈 버튼 추가 -->
+
+
             </div>
             <div class="material-info-container" id="material-info-container">
                 <button class="close-info" id="close-info">X</button>
@@ -636,6 +674,11 @@
         });
     
         updateUI();
+
+        function navigate(url) {
+            window.location.href = url;  // 'index.html' 페이지로 이동
+        }
+        
     </script>
     
 </body>

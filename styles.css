@@ -16,16 +16,11 @@ body {
     height: 100vh;
 }
 
-.button-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-}
 .nav-container {
     display: flex;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    justify-content: space-between;
     width: 100%;
     height: 100%;
     background: #ffffff; /* 네비게이션 바 배경색 */
@@ -35,28 +30,31 @@ body {
     top: 0;
     left: 0;
     z-index: 1100;
-    gap: 0; /* 버튼 사이 간격 제거 */
+    gap: 10px; /* 버튼 간격 추가 */
 }
 
-  
-  .nav-title {
+/* 타이틀 스타일 */
+.nav-title {
     font-size: 14px;
     font-weight: bold;
     color: #9c2121;
-    /* 필요하면 margin-left 등 추가 가능 */
-  }
-  
-  .nav-buttons {
+    margin-bottom: 20px; /* 타이틀 아래 여백 추가 */
+}
+
+/* 버튼을 담고 있는 컨테이너 */
+.button-container {
     display: flex;
-    align-items: center;
-    gap: 1px; /* 버튼들 간격 */
-  }
-  
+    flex-wrap: wrap; /* 버튼들을 자동으로 줄바꿈 */
+    justify-content: center;
+    gap: 20px; /* 버튼들 간의 간격 */
+}
+
+/* 버튼 스타일 */
 .round-btn {
-    width: 150px;
-    height: 150px;
+    width: 120px; /* 버튼 크기 설정 */
+    height: 120px;
     background-color: #fff;
-    border-radius: 0%;
+    border-radius: 50%; /* 원형 버튼 */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -65,45 +63,61 @@ body {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     position: relative;
     overflow: hidden;
+    box-sizing: border-box;
 }
 
 .round-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: scale(1.1); /* 호버 시 버튼 확대 효과 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 호버 시 그림자 효과 */
 }
 
 .round-btn img {
     width: 100%;
     height: 100%;
     object-fit: cover; /* 이미지가 버튼에 꽉 차게 조정 */
-    border-radius: 50%; /* 버튼과 이미지 모두 동그랗게 */
+    border-radius: 50%; /* 이미지도 원형으로 맞추기 */
 }
 
 .round-btn span {
     position: absolute;
     top: 50%; /* 수직 중앙 정렬 */
     left: 50%; /* 수평 중앙 정렬 */
-    transform: translate(-50%, -50%); /* 중앙 위치로 정확히 맞추기 */
+    transform: translate(-50%, -50%); /* 정확히 중앙 위치 맞추기 */
     text-align: center;
     color: #ffffff; /* 글자 색상 */
-    font-size: 22px;
+    font-size: 16px; /* 폰트 크기 수정 */
     font-weight: bold;
-    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7), 0 0 25px rgba(255, 255, 255, 0.7); /* 음영 효과 */
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7), 0 0 25px rgba(255, 255, 255, 0.7); /* 텍스트 음영 효과 */
     width: 100%;
 }
 
 @media (max-width: 768px) {
     .button-container {
-        gap: 15px;
+        gap: 15px; /* 작은 화면에서 버튼들 사이의 간격 축소 */
     }
 
     .round-btn {
-        width: 120px;
-        height: 120px;
+        width: 100px; /* 모바일에서는 버튼 크기 축소 */
+        height: 100px;
     }
 
     .round-btn img {
         width: 100%;
         height: 100%;
+    }
+
+    .nav-container {
+        gap: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .round-btn {
+        width: 80px; /* 더 작은 화면에서는 버튼을 더 작게 */
+        height: 80px;
+    }
+
+    .round-btn span {
+        font-size: 14px; /* 모바일에서 텍스트 크기 축소 */
     }
 }
