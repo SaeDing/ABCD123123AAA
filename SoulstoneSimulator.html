@@ -640,7 +640,6 @@
                 log.scrollTop = log.scrollHeight;
             }
         });
-    
         enhanceAllButton.addEventListener("click", () => {
             playAudio();
             for (let i = currentLevel; i < 15; i++) {
@@ -661,11 +660,15 @@
             }
             // Force level to 15 if it's not already at max
             currentLevel = 15;
-            soulstoneUsed += soulstoneRequired[14];
-            goldUsed += goldRequired[14];
+
+            // ❌ 불필요한 중복 재화 제거
+            // soulstoneUsed += soulstoneRequired[14];
+            // goldUsed += goldRequired[14];
+
             updateUI(); // Update UI with new values
             log.scrollTop = log.scrollHeight;
         });
+
     
         // 초기화 버튼 이벤트
         resetButton.addEventListener("click", () => {
@@ -698,6 +701,13 @@
             materialInfoContainer.classList.remove("show");
         });
     
+        materialInfoBtn.addEventListener("click", () => {
+            materialInfoContainer.classList.toggle("show");
+        });
+    
+        closeInfo.addEventListener("click", () => {
+            materialInfoContainer.classList.remove("show");
+        });
          // 소리 끄기/켜기 버튼 클릭 이벤트
      document.getElementById('muteButton').addEventListener('click', () => {
         isMuted = !isMuted; // mute 상태를 토글
