@@ -641,13 +641,48 @@
             }
         });
     
+        enhanceButton.addEventListener("click", () => {
+            playAudio();
+            if (currentLevel < 10) {
+                const success = Math.random() * 100 < probabilities[currentLevel];
+                log.innerHTML += `<p>Lv.${currentLevel} 강화 ${success ? '성공! 🎉' : '실패! 😢'}</p>`;
+    
+                if (success) {
+                    currentLevel++;
+                    successCount++;
+                    enhanceButton.classList.add("success"); // 성공 시 반짝임 애니메이션 추가
+                    setTimeout(() => {
+                        enhanceButton.classList.remove("success");
+                    }, 1000); // 반짝임 애니메이션 지속 시간
+                } else {
+                    playAudio1();
+                    failureCounts[currentLevel]++; // 현재 레벨의 실패 횟수 증가
+                    failureCount++; // 전체 실패 횟수 증가
+                    enhanceButton.classList.add("failure"); // 실패 시 흔들림 애니메이션 추가
+                    setTimeout(() => {
+                        enhanceButton.classList.remove("failure"); // 애니메이션 끝난 후 failure 클래스 제거
+                    }, 500); // 흔들림 애니메이션 지속 시간 (0.5초)
+                }
+    
+                soulstoneUsed += soulstoneRequired[currentLevel];
+                goldUsed += goldRequired[currentLevel];
+                updateUI();
+                log.scrollTop = log.scrollHeight;
+            }
+        });
+    
         enhanceAllButton.addEventListener("click", () => {
             playAudio();
             for (let i = currentLevel; i < 10; i++) {
                 let success = false;
+                let tempUsed = 0;  // 강화 시도 중 누적된 사용량 추적
+        
                 while (!success) {
                     success = Math.random() * 100 < probabilities[i];
                     log.innerHTML += `<p>Lv.${i} 강화 ${success ? '성공! 🎉' : '실패! 😢'}</p>`;
+                    
+                    tempUsed += soulstoneRequired[i];  // 실패할 때마다 소모량 증가
+                    
                     if (success) {
                         currentLevel = i + 1; // 성공 시 레벨을 업데이트
                         successCount++; // 성공 횟수 증가
@@ -655,17 +690,21 @@
                         failureCounts[i]++; // 실패 횟수 증가
                         failureCount++; // 전체 실패 횟수 증가
                     }
-                    soulstoneUsed += soulstoneRequired[i];
-                    goldUsed += goldRequired[i];
                 }
+        
+                soulstoneUsed += tempUsed;  // 최종적으로 한 번만 반영
+                goldUsed += goldRequired[i];  // 골드 사용량도 반영
             }
-            // Force level to 15 if it's not already at max
+        
+            // 마지막 성공 후 추가로 soulstoneUsed가 증가하는 것을 방지하기 위해 제거
+            // soulstoneUsed += soulstoneRequired[9];  <-- 이 코드 삭제
+        
+            // 최종적으로 10강까지 강화를 끝마쳤으면 정확하게 반영
             currentLevel = 10;
-            soulstoneUsed += soulstoneRequired[9];
-            goldUsed += goldRequired[9];
-            updateUI(); // Update UI with new values
+            updateUI();
             log.scrollTop = log.scrollHeight;
         });
+        
     
         // 초기화 버튼 이벤트
         resetButton.addEventListener("click", () => {
