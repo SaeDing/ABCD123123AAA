@@ -547,8 +547,11 @@
             const currentSoulstone = currentLevel < 15 ? soulstoneRequired[currentLevel] : 0;
     
             // 다이아 사용량을 480으로 나누고 소수점 자르는 방법
-            const totalDiamond = soulstoneUsed * 100;
-            const fullDiCount = Math.floor(totalDiamond / 480); // 다이아 사용량을 480으로 나눈 값 (소수점 버림)
+            const currentDiamondUsed = soulstoneRequired[currentLevel] * 100; // 현재 레벨에서의 다이아 사용량 (사념석 개수 * 100)
+            const fullDiCount = Math.floor(currentDiamondUsed / 480); // 다이아 사용량을 480으로 나눈 값 (소수점 버림)
+    
+            // 총 다이아 사용량 업데이트
+            totalDiamondUsed = soulstoneUsed * 100;
     
             // 현재 레벨 표시
             itemLevel.textContent = currentLevel;
@@ -558,12 +561,12 @@
             document.getElementById("soulstone-amount").textContent = currentLevel < 15 ? formatNumber(currentSoulstone) : "";
     
             // 현재 레벨의 다이아 사용량 (Lv.15면 표시 안함)
-            document.getElementById("diamond-amount").textContent = currentLevel < 15 ? formatNumber(totalDiamond) : "";
+            document.getElementById("diamond-amount").textContent = currentLevel < 15 ? formatNumber(currentDiamondUsed) : "";
     
             // 총 사용량은 항상 유지 (NaN 방지)
             totalGold.textContent = `총 골드 사용량: ${formatNumber(goldUsed)}`;
             totalSoulstone.textContent = `총 사념석 사용량: ${formatNumber(soulstoneUsed)}`;
-            document.getElementById("total-diamond").textContent = `총 다이아 사용량: ${formatNumber(totalDiamond)} 풀디 ${fullDiCount}판`;
+            document.getElementById("total-diamond").textContent = `총 다이아 사용량: ${formatNumber(totalDiamondUsed)} 풀디 ${fullDiCount}판`;
     
             // 성공과 실패 횟수 표시
             document.getElementById("success-count").textContent = successCount;
@@ -617,6 +620,7 @@
             }
         });
     
+    
         enhanceAllButton.addEventListener("click", () => {
             for (let i = currentLevel; i < 15; i++) {
                 let success = false;
@@ -641,7 +645,6 @@
             updateUI(); // Update UI with new values
             log.scrollTop = log.scrollHeight;
         });
-    
         // 초기화 버튼 이벤트
         resetButton.addEventListener("click", () => {
             // 초기화 버튼을 누를 때 currentLevel을 levelSelect의 선택된 값으로 설정
