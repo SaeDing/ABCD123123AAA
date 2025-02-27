@@ -604,7 +604,7 @@
             document.getElementById("failure-counts").textContent = failureText.trim();  // 공백 제거하여 출력
     
             // 강화 버튼 텍스트 업데이트
-            enhanceButton.textContent = currentLevel === 15 ? "Lv.MAX" : `강화 (확률: ${probabilities[currentLevel]}%)`;
+            enhanceButton.textContent = currentLevel === 10 ? "Lv.MAX" : `강화 (확률: ${probabilities[currentLevel]}%)`;
     
             // Max 레벨이면 강화 버튼과 한 번에 강화 버튼 비활성화
             enhanceButton.disabled = currentLevel === 10;
