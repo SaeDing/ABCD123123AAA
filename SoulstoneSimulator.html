@@ -319,6 +319,46 @@
             display: flex;
             justify-content: space-between;
         }
+
+        .successcount20 {
+            position: absolute;
+            left: 0px;
+            
+            font-size: 16px;
+            color: #000000;
+            margin-top: 25px;
+            
+            background-color: rgba(250, 245, 245, 0.5); /* 반투명 검정색 배경 */
+            border-radius: 5px; /* 모서리 둥글게 */
+            text-align: center; /* 텍스트 중앙 정렬 */
+        }
+
+        .successcount20 div {
+            margin: 5px 0;
+        }
+
+        .successcount20 span {
+            color: #000000; /* 성공 횟수, 실패 횟수의 텍스트 색상 */
+            font-size: 18px; /* 숫자 크기 */
+        }
+        .name {
+            position: absolute;
+            left: 50%;
+            top: 13px;
+            font-size: 16px;
+            color: #ffffff;
+            transform: translate(-50%, -50%); /* 중앙 정렬 보정 */
+            
+          
+            border-radius: 5px; /* 모서리 둥글게 */
+            text-align: center; /* 텍스트 중앙 정렬 */
+
+           
+
+
+
+        }
+
     </style>
 </head>
 <body>
@@ -329,7 +369,26 @@
                     <img src="mm.png" class="item-img" alt="아이템 이미지">
                     <img src="mma.png" class="mma-img" alt="아이템 이미지">
                 </div>
+                <div class="name">강화 레벨별 실패 횟수</div>
+                <div class="successcount20" id="failure-counts">
+                    <div>Lv.0: <span id="fail-0">0</span>회 실패</div>
+                    <div>Lv.1: <span id="fail-1">0</span>회 실패</div>
+                    <div>Lv.2: <span id="fail-2">0</span>회 실패</div>
+                    <div>Lv.3: <span id="fail-3">0</span>회 실패</div>
+                    <div>Lv.4: <span id="fail-4">0</span>회 실패</div>
+                    <div>Lv.5: <span id="fail-5">0</span>회 실패</div>
+                    <div>Lv.6: <span id="fail-6">0</span>회 실패</div>
+                    <div>Lv.7: <span id="fail-7">0</span>회 실패</div>
+                    <div>Lv.8: <span id="fail-8">0</span>회 실패</div>
+                    <div>Lv.9: <span id="fail-9">0</span>회 실패</div>
+                    <div>Lv.10: <span id="fail-10">0</span>회 실패</div>
+                    <div>Lv.11: <span id="fail-11">0</span>회 실패</div>
+                    <div>Lv.12: <span id="fail-12">0</span>회 실패</div>
+                    <div>Lv.13: <span id="fail-13">0</span>회 실패</div>
+                    <div>Lv.14: <span id="fail-14">0</span>회 실패</div>
+                </div>
                 <div class="item-info">
+                    
                     <p>Lv. <span id="item-level">0</span> 사념</p>
                     <div class="material-info">
                         <div><img src="gold-icon.png" alt="골드 아이콘"> <span id="gold-amount">0</span></div>
@@ -422,9 +481,11 @@ const diamondAmount = document.getElementById("diamond-amount");
 const totalGoldUsedText = document.getElementById("total-gold");
 const totalSoulstoneUsedText = document.getElementById("total-soulstone");
 const totalDiamondUsedText = document.getElementById("total-diamond");
-
+let failureCounts = Array(15).fill(0); // 각 레벨별 실패 횟수를 저장하는 배열
 let totalGoldUsed = 0;      // 총 골드 사용량
 let totalSoulstoneUsed = 0; // 총 사념석 사용량
+
+
 
         const probabilities = [
             90, 80, 70, 60, 50, 46, 42, 38, 34, 30, 26, 22, 18, 14, 10,0
@@ -470,6 +531,18 @@ let totalSoulstoneUsed = 0; // 총 사념석 사용량
             document.getElementById("success-count").textContent = successCount;
             document.getElementById("failure-count").textContent = failureCount;
         
+            // 레벨별 실패 횟수 표시 (failureCounts 배열을 사용)
+            let failureText = "";
+            for (let i = 0; i < 15; i++) {
+                failureText += `Lv.${String(i + 1).padStart(2, '0')}(${failureCounts[i]})`;  // 2자리 레벨 표시
+                if ((i + 1) % 5 === 0) {
+                    failureText += "\n";  // 5개 레벨마다 줄바꿈
+                } else {
+                    failureText += " | ";  // 각 레벨마다 구분
+                }
+            }
+            document.getElementById("failure-counts").textContent = failureText.trim();  // 공백 제거하여 출력
+        
             // 강화 버튼 텍스트 업데이트
             enhanceButton.textContent = currentLevel === 15 ? "Lv.MAX" : `강화 (확률: ${probabilities[currentLevel]}%)`;
         
@@ -477,6 +550,9 @@ let totalSoulstoneUsed = 0; // 총 사념석 사용량
             enhanceButton.disabled = currentLevel === 15;
             enhanceAllButton.disabled = currentLevel === 15;
         }
+        
+  
+
         
         
         
@@ -499,7 +575,9 @@ let totalSoulstoneUsed = 0; // 총 사념석 사용량
                         enhanceButton.classList.remove("success");
                     }, 1000); // 반짝임 애니메이션 지속 시간
                 } else {
-                    failureCount++;
+                    
+                    failureCounts[currentLevel]++; // 현재 레벨의 실패 횟수 증가
+            failureCount++; // 전체 실패 횟수 증가
                     enhanceButton.classList.add("failure"); // 실패 시 흔들림 애니메이션 추가
                     setTimeout(() => {
                         enhanceButton.classList.remove("failure"); // 애니메이션 끝난 후 failure 클래스 제거
@@ -525,7 +603,8 @@ let totalSoulstoneUsed = 0; // 총 사념석 사용량
                         currentLevel = i + 1; // 성공 시 레벨을 업데이트
                         successCount++; // 성공 횟수 증가
                     } else {
-                        failureCount++; // 실패 횟수 증가
+                        failureCounts[i]++; // 실패 횟수 증가
+                        failureCount++; // 전체 실패 횟수 증가
                     }
                     soulstoneUsed += soulstoneRequired[i];
                     goldUsed += goldRequired[i];
@@ -546,27 +625,25 @@ let totalSoulstoneUsed = 0; // 총 사념석 사용량
 resetButton.addEventListener("click", () => {
     // 초기화 버튼을 누를 때 currentLevel을 levelSelect의 선택된 값으로 설정
     currentLevel = parseInt(levelSelect.value);
-
+    failureCounts.fill(0); // 모든 레벨의 실패 횟수 초기화
     soulstoneUsed = 0;
     goldUsed = 0;
     log.innerHTML = '';
     successCount = 0;
-            failureCount = 0;
+    failureCount = 0;
     updateUI();
 });
 
-        levelSelect.addEventListener("change", () => {
-            currentLevel = parseInt(levelSelect.value);
-        
-            // 총 사용량을 0으로 초기화
-            soulstoneUsed = 0;
-            goldUsed = 0;
-            log.innerHTML = '';
-            successCount = 0;
-            failureCount = 0;
-            updateUI();
-        });
-        
+       levelSelect.addEventListener("change", () => {
+    currentLevel = parseInt(levelSelect.value);
+    soulstoneUsed = 0;
+    goldUsed = 0;
+    log.innerHTML = '';
+    successCount = 0;
+    failureCount = 0;
+    updateUI();
+});
+
 
         materialInfoBtn.addEventListener("click", () => {
             materialInfoContainer.classList.toggle("show");
