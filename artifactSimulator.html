@@ -641,35 +641,7 @@
             }
         });
     
-        enhanceButton.addEventListener("click", () => {
-            playAudio();
-            if (currentLevel < 10) {
-                const success = Math.random() * 100 < probabilities[currentLevel];
-                log.innerHTML += `<p>Lv.${currentLevel} 강화 ${success ? '성공! 🎉' : '실패! 😢'}</p>`;
-    
-                if (success) {
-                    currentLevel++;
-                    successCount++;
-                    enhanceButton.classList.add("success"); // 성공 시 반짝임 애니메이션 추가
-                    setTimeout(() => {
-                        enhanceButton.classList.remove("success");
-                    }, 1000); // 반짝임 애니메이션 지속 시간
-                } else {
-                    playAudio1();
-                    failureCounts[currentLevel]++; // 현재 레벨의 실패 횟수 증가
-                    failureCount++; // 전체 실패 횟수 증가
-                    enhanceButton.classList.add("failure"); // 실패 시 흔들림 애니메이션 추가
-                    setTimeout(() => {
-                        enhanceButton.classList.remove("failure"); // 애니메이션 끝난 후 failure 클래스 제거
-                    }, 500); // 흔들림 애니메이션 지속 시간 (0.5초)
-                }
-    
-                soulstoneUsed += soulstoneRequired[currentLevel];
-                goldUsed += goldRequired[currentLevel];
-                updateUI();
-                log.scrollTop = log.scrollHeight;
-            }
-        });
+  
     
         enhanceAllButton.addEventListener("click", () => {
             playAudio();
