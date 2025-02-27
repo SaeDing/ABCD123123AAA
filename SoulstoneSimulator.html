@@ -98,7 +98,7 @@
 
 .successcount {
     position: absolute;
-    bottom: -290px; /* 화면 상단에서 20px 떨어지게 위치 */
+    bottom: -270px; /* 화면 상단에서 20px 떨어지게 위치 */
     right: 20px; /* 화면 가로 중앙에 위치 */
     
     font-size: 16px; /* 글씨 크기 */
@@ -457,7 +457,6 @@
             </div>
         </div>
     </div>
-
     <script>
         const enhanceButton = document.getElementById("enhance-button");
         const enhanceAllButton = document.getElementById("enhance-all-button");
@@ -470,23 +469,20 @@
         const totalGold = document.getElementById("total-gold");
         const totalSoulstone = document.getElementById("total-soulstone");
         const levelSelect = document.getElementById("level-select");
-
-
+    
         // 현재 레벨별 재료 정보
-const goldAmount = document.getElementById("gold-amount");
-const soulstoneAmount = document.getElementById("soulstone-amount");
-const diamondAmount = document.getElementById("diamond-amount");
-
-// 총 사용량 관련 요소
-const totalGoldUsedText = document.getElementById("total-gold");
-const totalSoulstoneUsedText = document.getElementById("total-soulstone");
-const totalDiamondUsedText = document.getElementById("total-diamond");
-let failureCounts = Array(15).fill(0); // 각 레벨별 실패 횟수를 저장하는 배열
-let totalGoldUsed = 0;      // 총 골드 사용량
-let totalSoulstoneUsed = 0; // 총 사념석 사용량
-
-
-
+        const goldAmount = document.getElementById("gold-amount");
+        const soulstoneAmount = document.getElementById("soulstone-amount");
+        const diamondAmount = document.getElementById("diamond-amount");
+    
+        // 총 사용량 관련 요소
+        const totalGoldUsedText = document.getElementById("total-gold");
+        const totalSoulstoneUsedText = document.getElementById("total-soulstone");
+        const totalDiamondUsedText = document.getElementById("total-diamond");
+        let failureCounts = Array(15).fill(0); // 각 레벨별 실패 횟수를 저장하는 배열
+        let totalGoldUsed = 0;      // 총 골드 사용량
+        let totalSoulstoneUsed = 0; // 총 사념석 사용량
+    
         const probabilities = [
             90, 80, 70, 60, 50, 46, 42, 38, 34, 30, 26, 22, 18, 14, 10,0
         ];
@@ -496,41 +492,45 @@ let totalSoulstoneUsed = 0; // 총 사념석 사용량
         const goldRequired = [
             13000, 14000, 15000, 16000, 17000, 18000, 19000, 20000, 21000, 22000, 23000, 24000, 25000, 26000, 27000,27000
         ];
-
+    
         let currentLevel = 0;
         let soulstoneUsed = 0;
         let goldUsed = 0;
         let successCount = 0;
         let failureCount = 0;
+    
         function formatNumber(num) {
             return num.toLocaleString(); // 숫자에 콤마 추가
         }
+    
         function updateUI() {
             // 현재 레벨이 15일 경우 undefined 방지 (NaN 방지)
             const currentGold = currentLevel < 15 ? goldRequired[currentLevel] : 0;
             const currentSoulstone = currentLevel < 15 ? soulstoneRequired[currentLevel] : 0;
-        
+    
+            // 다이아 사용량을 480으로 나누고 소수점 자르는 방법
+            const totalDiamond = soulstoneUsed * 100;
+            const fullDiCount = Math.floor(totalDiamond / 480); // 다이아 사용량을 480으로 나눈 값 (소수점 버림)
+    
             // 현재 레벨 표시
             itemLevel.textContent = currentLevel;
-        
+    
             // Lv.15가 되면 현재 레벨의 골드/사념석만 숨기고, 총 사용량은 유지
             document.getElementById("gold-amount").textContent = currentLevel < 15 ? formatNumber(currentGold) : "";
             document.getElementById("soulstone-amount").textContent = currentLevel < 15 ? formatNumber(currentSoulstone) : "";
-        
+    
             // 현재 레벨의 다이아 사용량 (Lv.15면 표시 안함)
-            const currentDiamond = currentLevel < 15 ? currentSoulstone * 100 : "";
-            document.getElementById("diamond-amount").textContent = currentLevel < 15 ? formatNumber(currentDiamond) : "";
-        
+            document.getElementById("diamond-amount").textContent = currentLevel < 15 ? formatNumber(totalDiamond) : "";
+    
             // 총 사용량은 항상 유지 (NaN 방지)
             totalGold.textContent = `총 골드 사용량: ${formatNumber(goldUsed)}`;
             totalSoulstone.textContent = `총 사념석 사용량: ${formatNumber(soulstoneUsed)}`;
-            const totalDiamond = soulstoneUsed * 100;
-            document.getElementById("total-diamond").textContent = `총 다이아 사용량: ${formatNumber(totalDiamond)}`;
-        
+            document.getElementById("total-diamond").textContent = `총 다이아 사용량: ${formatNumber(totalDiamond)} 풀디 ${fullDiCount}판`;
+    
             // 성공과 실패 횟수 표시
             document.getElementById("success-count").textContent = successCount;
             document.getElementById("failure-count").textContent = failureCount;
-        
+    
             // 레벨별 실패 횟수 표시 (failureCounts 배열을 사용)
             let failureText = "";
             for (let i = 0; i < 15; i++) {
@@ -542,31 +542,20 @@ let totalSoulstoneUsed = 0; // 총 사념석 사용량
                 }
             }
             document.getElementById("failure-counts").textContent = failureText.trim();  // 공백 제거하여 출력
-        
+    
             // 강화 버튼 텍스트 업데이트
             enhanceButton.textContent = currentLevel === 15 ? "Lv.MAX" : `강화 (확률: ${probabilities[currentLevel]}%)`;
-        
+    
             // Max 레벨이면 강화 버튼과 한 번에 강화 버튼 비활성화
             enhanceButton.disabled = currentLevel === 15;
             enhanceAllButton.disabled = currentLevel === 15;
         }
-        
-  
-
-        
-        
-        
-        
-        
-        function formatNumber(num) {
-            return num.toLocaleString(); // 숫자에 콤마 추가
-        }
-
+    
         enhanceButton.addEventListener("click", () => {
             if (currentLevel < 15) {
                 const success = Math.random() * 100 < probabilities[currentLevel];
                 log.innerHTML += `<p>Lv.${currentLevel} 강화 ${success ? '성공! 🎉' : '실패! 😢'}</p>`;
-        
+    
                 if (success) {
                     currentLevel++;
                     successCount++;
@@ -575,24 +564,21 @@ let totalSoulstoneUsed = 0; // 총 사념석 사용량
                         enhanceButton.classList.remove("success");
                     }, 1000); // 반짝임 애니메이션 지속 시간
                 } else {
-                    
                     failureCounts[currentLevel]++; // 현재 레벨의 실패 횟수 증가
-            failureCount++; // 전체 실패 횟수 증가
+                    failureCount++; // 전체 실패 횟수 증가
                     enhanceButton.classList.add("failure"); // 실패 시 흔들림 애니메이션 추가
                     setTimeout(() => {
                         enhanceButton.classList.remove("failure"); // 애니메이션 끝난 후 failure 클래스 제거
                     }, 500); // 흔들림 애니메이션 지속 시간 (0.5초)
                 }
-        
+    
                 soulstoneUsed += soulstoneRequired[currentLevel];
                 goldUsed += goldRequired[currentLevel];
                 updateUI();
                 log.scrollTop = log.scrollHeight;
             }
         });
-        
-        
-
+    
         enhanceAllButton.addEventListener("click", () => {
             for (let i = currentLevel; i < 15; i++) {
                 let success = false;
@@ -617,43 +603,40 @@ let totalSoulstoneUsed = 0; // 총 사념석 사용량
             updateUI(); // Update UI with new values
             log.scrollTop = log.scrollHeight;
         });
-        
-
-        
-
+    
         // 초기화 버튼 이벤트
-resetButton.addEventListener("click", () => {
-    // 초기화 버튼을 누를 때 currentLevel을 levelSelect의 선택된 값으로 설정
-    currentLevel = parseInt(levelSelect.value);
-    failureCounts.fill(0); // 모든 레벨의 실패 횟수 초기화
-    soulstoneUsed = 0;
-    goldUsed = 0;
-    log.innerHTML = '';
-    successCount = 0;
-    failureCount = 0;
-    updateUI();
-});
-
-       levelSelect.addEventListener("change", () => {
-    currentLevel = parseInt(levelSelect.value);
-    soulstoneUsed = 0;
-    goldUsed = 0;
-    log.innerHTML = '';
-    successCount = 0;
-    failureCount = 0;
-    updateUI();
-});
-
-
+        resetButton.addEventListener("click", () => {
+            // 초기화 버튼을 누를 때 currentLevel을 levelSelect의 선택된 값으로 설정
+            currentLevel = parseInt(levelSelect.value);
+            failureCounts.fill(0); // 모든 레벨의 실패 횟수 초기화
+            soulstoneUsed = 0;
+            goldUsed = 0;
+            log.innerHTML = '';
+            successCount = 0;
+            failureCount = 0;
+            updateUI();
+        });
+    
+        levelSelect.addEventListener("change", () => {
+            currentLevel = parseInt(levelSelect.value);
+            soulstoneUsed = 0;
+            goldUsed = 0;
+            log.innerHTML = '';
+            successCount = 0;
+            failureCount = 0;
+            updateUI();
+        });
+    
         materialInfoBtn.addEventListener("click", () => {
             materialInfoContainer.classList.toggle("show");
         });
-
+    
         closeInfo.addEventListener("click", () => {
             materialInfoContainer.classList.remove("show");
         });
-
+    
         updateUI();
     </script>
+    
 </body>
 </html>
