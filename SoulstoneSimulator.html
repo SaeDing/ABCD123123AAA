@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>강화 시뮬레이터</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+
+        
+        
+        body {
+            font-family: 'Malgun Gothic', '맑은 고딕', 'Malgun', 'Helvetica', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5efef;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+           
+            overflow: hidden;
+        }
+        .container {
+            width: 360px;
+            height: 360px;
+            position: relative; /* 부모 요소에 relative 포지션을 설정 */
+        }
+        
+        .item-img {
+            width: 360px; /* mm.png 크기 */
+            height: 360px; /* mm.png 크기 */
+            position: absolute; /* 절대 위치로 설정하여 부모 컨테이너의 맨 위에 고정 */
+            top: 0; /* 부모 컨테이너의 상단에 맞추기 */
+            left: 0; /* 부모 컨테이너의 왼쪽에 맞추기 */
+        }
+        
+        .content {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+        .top-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .item-img {
+            width: 360px; /* mm.png 크기 */
+            height: 360px; /* mm.png 크기 */
+            position: absolute; /* 절대 위치로 설정하여 부모 컨테이너의 맨 위에 고정 */
+            top: 0; /* 부모 컨테이너의 상단에 맞추기 */
+            left: 0; /* 부모 컨테이너의 왼쪽에 맞추기 */
+        }
+
+.mma-img {
+    
+    position: absolute; /* mma.png를 중앙에 위치시키기 위해 절대 포지션 */
+    top: 50%; /* 부모의 세로 중앙에 위치 */
+    left: 50%; /* 부모의 가로 중앙에 위치 */
+    transform: translate(-50%, -50%); /* 정확하게 중앙 정렬 */
+    width: 60px; /* mma.png 크기 */
+    height: 60px; /* mma.png 크기 */
+}
+.item-info {
+    position: absolute;
+    top: 250px;
+    left: 50%;
+    transform: translateX(-50%); /* 중앙 정렬 */
+    text-align: center;
+    font-size: 18px;
+    color: white;
+    width: 90%;
+    background-color: rgba(0, 0, 0, 0.5); /* 반투명 검정색 배경 */
+    border-radius: 15px; /* 모서리 깎기 */
+    padding: 10px; /* 텍스트와 배경의 여백 */
+}
+
+
+.material-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 5px;
+    text-align: center; /* 가운데 정렬 */
+    color: white;
+    z-index: 1; /* 다른 요소들 위에 표시되도록 */
+}
+
+.material-info div {
+    margin: 0 10px;
+    
+}
+
+
+
+.successcount {
+    position: absolute;
+    bottom: -290px; /* 화면 상단에서 20px 떨어지게 위치 */
+    right: 20px; /* 화면 가로 중앙에 위치 */
+    
+    font-size: 16px; /* 글씨 크기 */
+    
+    color: #292727; /* 텍스트 색상 */
+    
+    border-radius: 10px; /* 테두리 둥글게 */
+    padding: 10px; /* 내부 여백 */
+    z-index: 10; /* 다른 요소들 위에 표시되도록 */
+}
+
+.successcount div {
+    margin: 5px 0; /* 각 항목 간의 간격 */
+}
+
+.successcount span {
+    color: #000000; /* 성공 횟수, 실패 횟수의 텍스트 색상 */
+    font-size: 18px; /* 숫자 크기 */
+}
+
+
+
+
+
+
+
+.material-info img {
+    width: 20px;
+    margin-right: 5px;
+}
+
+.material-info span {
+    
+    font-size: 14px;
+}
+
+
+.button-container {
+    position: relative; /* 버튼들이 밀리지 않도록 */
+    z-index: 2; /* 버튼을 다른 요소들 위에 배치 */
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%); /* 중앙 정렬 */
+    width: 80%;
+    display: flex;
+    justify-content: center;
+    
+}
+@keyframes sparkle {
+    0% {
+        box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff;
+    }
+    50% {
+        box-shadow: 0 0 5px #f39c12, 0 0 10px #f39c12, 0 0 15px #f39c12;
+    }
+    100% {
+        box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff;
+    }
+}
+
+/* 흔들리는 애니메이션 (강화 실패 시) */
+@keyframes shake {
+    0% {
+        transform: translateX(0); /* 원래 위치 */
+    }
+    25% {
+        transform: translateX(-10px); /* 왼쪽으로 10px 이동 */
+    }
+    50% {
+        transform: translateX(10px); /* 오른쪽으로 10px 이동 */
+    }
+    75% {
+        transform: translateX(-10px); /* 왼쪽으로 10px 이동 */
+    }
+    100% {
+        transform: translateX(0); /* 원래 위치로 돌아옴 */
+    }
+}
+
+/* 실패 시 버튼 흔들리기 */
+.button.failure {
+    animation: shake 0.5s ease-in-out; /* 흔들리는 애니메이션 */
+}
+
+
+.button {
+    display: inline-block;
+    
+    padding: 10px 20px;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 5px;
+    border: 2px solid #edf035;
+    background-color: #f0f34b;
+    color: rgb(20, 20, 20);
+    transition: all 0.2s ease-in-out;
+  }
+   
+/* 강화 성공 시 반짝이는 애니메이션 */
+.button.success {
+    animation: sparkle 1s ease-out;
+}
+
+/* 강화 실패 시 연기 나는 애니메이션 */
+.button.failure {
+    animation: smoke 1s ease-in-out infinite;
+}
+
+
+
+        .button.failure {
+            animation: smoke 1s ease-in-out infinite;
+        }
+        @keyframes smoke {
+            0% {
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            }
+            100% {
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.2), 0 0 30px rgba(0, 0, 0, 0.3);
+            }
+        }
+        .log {
+            height: 80px; /* 고정된 높이 설정 */
+            width: 100%; /* 부모 요소에 맞게 100% 너비 설정 */
+            overflow-y: auto; /* 스크롤 가능하게 설정 */
+
+            background-color: white;
+
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            color: black;
+            font-size: 14px;
+            box-sizing: border-box; /* 내부 패딩을 포함하여 크기 설정 */
+            position: absolute; /* 다른 요소들과 겹치지 않게 위치 설정 */
+            bottom: -200px; /* 화면 하단에 고정 */
+            z-index: 2; /* 다른 요소들 위에 표시되도록 */
+        }
+        
+        .log p {
+            margin: 5px 0;
+        }
+        
+        .log::-webkit-scrollbar {
+            width: 5px;
+        }
+        
+        .log::-webkit-scrollbar-thumb {
+            background-color: #888;
+            border-radius: 10px;
+        }
+        
+        
+
+        
+        .material-info-button {
+            
+            margin-top: 10px;
+            padding: 5px 10px;
+            background-color: #333533;
+            border-radius: 3px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            width: 50%;
+        }
+        .material-info-container {
+            
+            display: none;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 250px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            z-index: 3;  /* 다른 요소들보다 위에 표시되도록 z-index 설정 */
+        }
+        .material-info-container.show {
+            display: block;
+        }
+        .close-info {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        select {
+            padding: 10px;
+            font-size: 16px;
+            margin-top: 10px;
+            width: 100%;
+            border-radius: 10px;
+        }
+        .total-info {
+            margin-top: 80px;
+            color: rgb(5, 5, 5);
+            font-size: 16px;
+        }
+        .reset-button {
+            margin-top: 10px;
+            padding: 5px 10px;
+            background-color: #df4b23;
+            border-radius: 3px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            width: 50%;
+            border: 2px solid #df4b23; /* 테두리 색상 변경 */
+        }
+        
+        .buttons-container {
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <div class="top-section">
+                <div class="container">
+                    <img src="mm.png" class="item-img" alt="아이템 이미지">
+                    <img src="mma.png" class="mma-img" alt="아이템 이미지">
+                </div>
+                <div class="item-info">
+                    <p>Lv. <span id="item-level">0</span> 사념</p>
+                    <div class="material-info">
+                        <div><img src="gold-icon.png" alt="골드 아이콘"> <span id="gold-amount">0</span></div>
+                        <div><img src="soulstone.png" alt="사념석 아이콘"> <span id="soulstone-amount">0</span></div>
+                        <div><img src="dia.png" alt="다이아 아이콘"><span id="diamond-amount">0</span></div>
+                    </div>
+                    
+                </div>
+                <select id="level-select">
+                    <option value="0">Lv.0</option>
+                    <option value="1">Lv.1</option>
+                    <option value="2">Lv.2</option>
+                    <option value="3">Lv.3</option>
+                    <option value="4">Lv.4</option>
+                    <option value="5">Lv.5</option>
+                    <option value="6">Lv.6</option>
+                    <option value="7">Lv.7</option>
+                    <option value="8">Lv.8</option>
+                    <option value="9">Lv.9</option>
+                    <option value="10">Lv.10</option>
+                    <option value="11">Lv.11</option>
+                    <option value="12">Lv.12</option>
+                    <option value="13">Lv.13</option>
+                    <option value="14">Lv.14</option>
+                    <option value="15">Lv.15</option>
+                </select>
+            </div>
+            <div class="buttons-container">
+                <button class="button" id="enhance-button">강화 (확률: 90%)</button>
+                <button class="button" id="enhance-all-button">한 번에 강화하기</button>
+            </div>
+            <div class="log" id="log"></div>
+            <div class="total-info">
+                <p id="total-gold">총 골드 사용량: 0</p>
+                <p id="total-soulstone">총 사념석 사용량: 0</p>
+                <p id="total-diamond">총 다이아 사용량: 0</p>
+            </div>
+            <div class="successcount">
+                <div>성공 횟수: <span id="success-count">0</span></div>
+                <div>실패 횟수: <span id="failure-count">0</span></div>
+
+            </div>
+          
+            <div class="buttons-container">
+                <div class="material-info-button" id="material-info-btn">재료 정보</div>
+                <button class="reset-button" id="reset-button">초기화</button>
+            </div>
+            <div class="material-info-container" id="material-info-container">
+                <button class="close-info" id="close-info">X</button>
+                <p>Lv0: 13000 사념석 15개 (90%)</p>
+                <p>Lv1: 14000 사념석 15개 (80%)</p>
+                <p>Lv2: 15000 사념석 20개 (70%)</p>
+                <p>Lv3: 16000 사념석 20개 (60%)</p>
+                <p>Lv4: 17000 사념석 25개 (50%)</p>
+                <p>Lv5: 18000 사념석 25개 (46%)</p>
+                <p>Lv6: 19000 사념석 30개 (42%)</p>
+                <p>Lv7: 20000 사념석 30개 (38%)</p>
+                <p>Lv8: 21000 사념석 35개 (34%)</p>
+                <p>Lv9: 22000 사념석 35개 (30%)</p>
+                <p>Lv10: 23000 사념석 40개 (26%)</p>
+                <p>Lv11: 24000 사념석 40개 (22%)</p>
+                <p>Lv12: 25000 사념석 45개 (18%)</p>
+                <p>Lv13: 26000 사념석 45개 (14%)</p>
+                <p>Lv14: 27000 사념석 50개 (10%)</p>
+                <p>Lv15: MAX</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const enhanceButton = document.getElementById("enhance-button");
+        const enhanceAllButton = document.getElementById("enhance-all-button");
+        const resetButton = document.getElementById("reset-button");
+        const itemLevel = document.getElementById("item-level");
+        const log = document.getElementById("log");
+        const materialInfoContainer = document.getElementById("material-info-container");
+        const materialInfoBtn = document.getElementById("material-info-btn");
+        const closeInfo = document.getElementById("close-info");
+        const totalGold = document.getElementById("total-gold");
+        const totalSoulstone = document.getElementById("total-soulstone");
+        const levelSelect = document.getElementById("level-select");
+
+
+        // 현재 레벨별 재료 정보
+const goldAmount = document.getElementById("gold-amount");
+const soulstoneAmount = document.getElementById("soulstone-amount");
+const diamondAmount = document.getElementById("diamond-amount");
+
+// 총 사용량 관련 요소
+const totalGoldUsedText = document.getElementById("total-gold");
+const totalSoulstoneUsedText = document.getElementById("total-soulstone");
+const totalDiamondUsedText = document.getElementById("total-diamond");
+
+let totalGoldUsed = 0;      // 총 골드 사용량
+let totalSoulstoneUsed = 0; // 총 사념석 사용량
+
+        const probabilities = [
+            90, 80, 70, 60, 50, 46, 42, 38, 34, 30, 26, 22, 18, 14, 10,0
+        ];
+        const soulstoneRequired = [
+            15, 15, 20, 20, 25, 25, 30, 30, 35, 35, 40, 40, 45, 45, 50,50
+        ];
+        const goldRequired = [
+            13000, 14000, 15000, 16000, 17000, 18000, 19000, 20000, 21000, 22000, 23000, 24000, 25000, 26000, 27000,27000
+        ];
+
+        let currentLevel = 0;
+        let soulstoneUsed = 0;
+        let goldUsed = 0;
+        let successCount = 0;
+        let failureCount = 0;
+        function formatNumber(num) {
+            return num.toLocaleString(); // 숫자에 콤마 추가
+        }
+        function updateUI() {
+            // 현재 레벨이 15일 경우 undefined 방지 (NaN 방지)
+            const currentGold = currentLevel < 15 ? goldRequired[currentLevel] : 0;
+            const currentSoulstone = currentLevel < 15 ? soulstoneRequired[currentLevel] : 0;
+        
+            // 현재 레벨 표시
+            itemLevel.textContent = currentLevel;
+        
+            // Lv.15가 되면 현재 레벨의 골드/사념석만 숨기고, 총 사용량은 유지
+            document.getElementById("gold-amount").textContent = currentLevel < 15 ? formatNumber(currentGold) : "";
+            document.getElementById("soulstone-amount").textContent = currentLevel < 15 ? formatNumber(currentSoulstone) : "";
+        
+            // 현재 레벨의 다이아 사용량 (Lv.15면 표시 안함)
+            const currentDiamond = currentLevel < 15 ? currentSoulstone * 100 : "";
+            document.getElementById("diamond-amount").textContent = currentLevel < 15 ? formatNumber(currentDiamond) : "";
+        
+            // 총 사용량은 항상 유지 (NaN 방지)
+            totalGold.textContent = `총 골드 사용량: ${formatNumber(goldUsed)}`;
+            totalSoulstone.textContent = `총 사념석 사용량: ${formatNumber(soulstoneUsed)}`;
+            const totalDiamond = soulstoneUsed * 100;
+            document.getElementById("total-diamond").textContent = `총 다이아 사용량: ${formatNumber(totalDiamond)}`;
+        
+            // 성공과 실패 횟수 표시
+            document.getElementById("success-count").textContent = successCount;
+            document.getElementById("failure-count").textContent = failureCount;
+        
+            // 강화 버튼 텍스트 업데이트
+            enhanceButton.textContent = currentLevel === 15 ? "Lv.MAX" : `강화 (확률: ${probabilities[currentLevel]}%)`;
+        
+            // Max 레벨이면 강화 버튼과 한 번에 강화 버튼 비활성화
+            enhanceButton.disabled = currentLevel === 15;
+            enhanceAllButton.disabled = currentLevel === 15;
+        }
+        
+        
+        
+        
+        
+        function formatNumber(num) {
+            return num.toLocaleString(); // 숫자에 콤마 추가
+        }
+
+        enhanceButton.addEventListener("click", () => {
+            if (currentLevel < 15) {
+                const success = Math.random() * 100 < probabilities[currentLevel];
+                log.innerHTML += `<p>Lv.${currentLevel} 강화 ${success ? '성공! 🎉' : '실패! 😢'}</p>`;
+        
+                if (success) {
+                    currentLevel++;
+                    successCount++;
+                    enhanceButton.classList.add("success"); // 성공 시 반짝임 애니메이션 추가
+                    setTimeout(() => {
+                        enhanceButton.classList.remove("success");
+                    }, 1000); // 반짝임 애니메이션 지속 시간
+                } else {
+                    failureCount++;
+                    enhanceButton.classList.add("failure"); // 실패 시 흔들림 애니메이션 추가
+                    setTimeout(() => {
+                        enhanceButton.classList.remove("failure"); // 애니메이션 끝난 후 failure 클래스 제거
+                    }, 500); // 흔들림 애니메이션 지속 시간 (0.5초)
+                }
+        
+                soulstoneUsed += soulstoneRequired[currentLevel];
+                goldUsed += goldRequired[currentLevel];
+                updateUI();
+                log.scrollTop = log.scrollHeight;
+            }
+        });
+        
+        
+
+        enhanceAllButton.addEventListener("click", () => {
+            for (let i = currentLevel; i < 15; i++) {
+                let success = false;
+                while (!success) {
+                    success = Math.random() * 100 < probabilities[i];
+                    log.innerHTML += `<p>Lv.${i} 강화 ${success ? '성공! 🎉' : '실패! 😢'}</p>`;
+                    if (success) {
+                        currentLevel = i + 1; // 성공 시 레벨을 업데이트
+                        successCount++; // 성공 횟수 증가
+                    } else {
+                        failureCount++; // 실패 횟수 증가
+                    }
+                    soulstoneUsed += soulstoneRequired[i];
+                    goldUsed += goldRequired[i];
+                }
+            }
+            // Force level to 15 if it's not already at max
+            currentLevel = 15;
+            soulstoneUsed += soulstoneRequired[14];
+            goldUsed += goldRequired[14];
+            updateUI(); // Update UI with new values
+            log.scrollTop = log.scrollHeight;
+        });
+        
+
+        
+
+        // 초기화 버튼 이벤트
+resetButton.addEventListener("click", () => {
+    // 초기화 버튼을 누를 때 currentLevel을 levelSelect의 선택된 값으로 설정
+    currentLevel = parseInt(levelSelect.value);
+
+    soulstoneUsed = 0;
+    goldUsed = 0;
+    log.innerHTML = '';
+    successCount = 0;
+            failureCount = 0;
+    updateUI();
+});
+
+        levelSelect.addEventListener("change", () => {
+            currentLevel = parseInt(levelSelect.value);
+        
+            // 총 사용량을 0으로 초기화
+            soulstoneUsed = 0;
+            goldUsed = 0;
+            log.innerHTML = '';
+            successCount = 0;
+            failureCount = 0;
+            updateUI();
+        });
+        
+
+        materialInfoBtn.addEventListener("click", () => {
+            materialInfoContainer.classList.toggle("show");
+        });
+
+        closeInfo.addEventListener("click", () => {
+            materialInfoContainer.classList.remove("show");
+        });
+
+        updateUI();
+    </script>
+</body>
+</html>
