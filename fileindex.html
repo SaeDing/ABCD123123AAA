@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>파일 비교</title>
+  <style>
+    /* 기본 스타일 */
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      scroll-behavior: smooth;
+    }
+    /* 네비게이션 바 */
+    nav {
+      background-color: #333;
+      padding: 10px;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 100;
+      text-align: center;
+    }
+    nav a {
+      color: #fff;
+      margin: 0 15px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    /* 컨테이너 영역 */
+    .container {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 80%;
+      max-width: 800px;
+      margin: 80px auto 20px; /* 상단 네비게이션 고려 */
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input[type="file"] {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #5cb85c;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #4cae4c;
+    }
+    /* 검색창 */
+    #searchContainer {
+      margin: 20px 0;
+      text-align: center;
+    }
+    #searchInput {
+      width: 80%;
+      padding: 8px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .result-container {
+      margin-top: 30px;
+      border-top: 1px solid #eee;
+      padding-top: 20px;
+    }
+    .result-section {
+      margin-bottom: 20px;
+    }
+    .result-section h2 {
+      color: #555;
+      margin-bottom: 10px;
+    }
+    .result-section ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    .result-section li {
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+    #error {
+      color: red;
+      font-weight: bold;
+    }
+    .file-list {
+      margin-top: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 10px;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+    .file-list li {
+      list-style: none;
+      padding: 5px 0;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+    .file-list li:last-child {
+      border-bottom: none;
+    }
+    .thumbnail {
+      width: 40px;
+      height: auto;
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+    /* 팝업 관련 */
+    .popup {
+      display: none;
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 200;
+    }
+    .popup-content {
+      background-color: white;
+      margin: 5% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .close {
+      color: #aaa;
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+    }
+    /* 팝업 헤더: 카테고리 정보 및 좌우 이동 버튼 */
+    #popup-header {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #popup-header button {
+      background-color: #ddd;
+      border: none;
+      padding: 5px 10px;
+      margin: 0 10px;
+      font-size: 18px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    #popup-category-label {
+      font-weight: bold;
+      font-size: 16px;
+    }
+    .preview-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      width: 100%;
+    }
+    .preview {
+      flex: 1;
+      margin: 5px;
+      overflow: auto;
+      max-height: 80vh;
+    }
+    /* .bin 미리보기 폰트 크기 증가 */
+    pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      max-height: 80vh;
+      overflow-y: auto;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <!-- 상단 네비게이션 바 -->
+  <nav>
+    <a href="#top">맨위로</a>
+    <a href="#changedResult">크기가 변화한 파일</a>
+    <a href="#newResult">새로 생긴 파일</a>
+    <a href="#deletedResult">없어진 파일</a>
+    <a href="#identicalResult">동일한 파일</a>
+  </nav>
+  
+  <!-- 최상단 앵커 -->
+  <div id="top"></div>
+  
+  <div class="container">
+    <h1>파일 비교</h1>
+    <div id="fileA-section" class="form-group">
+      <label for="fileA">파일 A 선택 (복수 선택 가능):</label>
+      <input type="file" id="fileA" multiple>
+      <ul id="fileA-list" class="file-list"></ul>
+    </div>
+    <div id="fileB-section" class="form-group">
+      <label for="fileB">파일 B 선택 (복수 선택 가능):</label>
+      <input type="file" id="fileB" multiple>
+      <ul id="fileB-list" class="file-list"></ul>
+    </div>
+    <button onclick="compareFiles()">비교하기</button>
+    
+    <!-- 검색 기능: 입력하는대로 결과 영역의 파일들 필터링 -->
+    <div id="searchContainer">
+      <input type="text" id="searchInput" placeholder="파일명 검색">
+    </div>
+    
+    <div id="result" class="result-container">
+      <div id="changedResult" class="result-section">
+        <h2>크기가 변화한 파일</h2>
+        <ul id="changedList"></ul>
+      </div>
+      <div id="newResult" class="result-section">
+        <h2>새로 생긴 파일</h2>
+        <ul id="newList"></ul>
+      </div>
+      <div id="deletedResult" class="result-section">
+        <h2>없어진 파일</h2>
+        <ul id="deletedList"></ul>
+      </div>
+      <div id="identicalResult" class="result-section">
+        <h2>동일한 파일</h2>
+        <ul id="identicalList"></ul>
+      </div>
+    </div>
+    <div id="error"></div>
+  </div>
+  
+  <!-- 팝업 영역 -->
+  <div id="popup" class="popup">
+    <div class="popup-content">
+      <span class="close">&times;</span>
+      <!-- 팝업 헤더: 좌우 버튼 및 카테고리 표시 -->
+      <div id="popup-header">
+        <button id="prevBtn">&lt;</button>
+        <span id="popup-category-label"></span>
+        <button id="nextBtn">&gt;</button>
+      </div>
+      <div class="preview-container">
+        <div id="previewA" class="preview"></div>
+        <div id="previewB" class="preview"></div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    /**********************
+     * 전역 변수 선언
+     **********************/
+    const fileAInput = document.getElementById('fileA');
+    const fileBInput = document.getElementById('fileB');
+    const fileAList = document.getElementById('fileA-list');
+    const fileBList = document.getElementById('fileB-list');
+    
+    // 파일별 정보를 저장 (크기, 미리보기 데이터 등)
+    let fileASizes = {};
+    let fileBSizes = {};
+    
+    // 카테고리별 리스트 데이터를 전역으로 저장 (파일명 배열)
+    let categoryData = {
+      changed: [],
+      new: [],
+      deleted: [],
+      identical: []
+    };
+    
+    // 팝업 내 현재 카테고리 및 인덱스 저장
+    let currentPreviewCategory = "";
+    let currentPreviewIndex = 0;
+    // 카테고리 순서 (건너뛰기 위한 순서)
+    const categoryOrder = ["changed", "new", "deleted", "identical"];
+    
+    /**********************
+     * 파일 선택 처리
+     **********************/
+    fileAInput.addEventListener('change', (event) => {
+      fileASizes = {};
+      fileAList.innerHTML = "";
+      for (let file of event.target.files) {
+        fileASizes[file.name] = { size: file.size };
+        let liElem = document.createElement('li');
+        let nameSpan = document.createElement('span');
+        nameSpan.textContent = file.name;
+        liElem.appendChild(nameSpan);
+        // png 파일이면 썸네일 생성
+        if (file.type === "image/png") {
+          fileASizes[file.name]["type"] = "png";
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            fileASizes[file.name]["dataUrl"] = e.target.result;
+            const thumb = document.createElement('img');
+            thumb.src = e.target.result;
+            thumb.className = "thumbnail";
+            liElem.insertBefore(thumb, nameSpan);
+          };
+          reader.readAsDataURL(file);
+          liElem.style.cursor = "pointer";
+          liElem.addEventListener("click", () => {
+            openPopup("changed", categoryData.changed.indexOf(file.name));
+          });
+        }
+        // .bin 파일이면 텍스트 읽기
+        else if (file.name.toLowerCase().endsWith(".bin")) {
+          fileASizes[file.name]["type"] = "bin";
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            fileASizes[file.name]["data"] = e.target.result;
+          };
+          reader.readAsText(file);
+          liElem.style.cursor = "pointer";
+          liElem.addEventListener("click", () => {
+            openPopup("changed", categoryData.changed.indexOf(file.name));
+          });
+        }
+        fileAList.appendChild(liElem);
+      }
+    });
+    
+    fileBInput.addEventListener('change', (event) => {
+      fileBSizes = {};
+      fileBList.innerHTML = "";
+      for (let file of event.target.files) {
+        fileBSizes[file.name] = { size: file.size };
+        let liElem = document.createElement('li');
+        let nameSpan = document.createElement('span');
+        nameSpan.textContent = file.name;
+        liElem.appendChild(nameSpan);
+        if (file.type === "image/png") {
+          fileBSizes[file.name]["type"] = "png";
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            fileBSizes[file.name]["dataUrl"] = e.target.result;
+            const thumb = document.createElement('img');
+            thumb.src = e.target.result;
+            thumb.className = "thumbnail";
+            liElem.insertBefore(thumb, nameSpan);
+          };
+          reader.readAsDataURL(file);
+          liElem.style.cursor = "pointer";
+          liElem.addEventListener("click", () => {
+            openPopup("new", categoryData.new.indexOf(file.name));
+          });
+        } else if (file.name.toLowerCase().endsWith(".bin")) {
+          fileBSizes[file.name]["type"] = "bin";
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            fileBSizes[file.name]["data"] = e.target.result;
+          };
+          reader.readAsText(file);
+          liElem.style.cursor = "pointer";
+          liElem.addEventListener("click", () => {
+            openPopup("new", categoryData.new.indexOf(file.name));
+          });
+        }
+        fileBList.appendChild(liElem);
+      }
+    });
+    
+    /**********************
+     * 파일 비교 및 리스트 생성
+     **********************/
+    function compareFiles() {
+      const changedList = document.getElementById('changedList');
+      const newList = document.getElementById('newList');
+      const deletedList = document.getElementById('deletedList');
+      const identicalList = document.getElementById('identicalList');
+      const error = document.getElementById('error');
+      
+      changedList.innerHTML = '';
+      newList.innerHTML = '';
+      deletedList.innerHTML = '';
+      identicalList.innerHTML = '';
+      error.innerHTML = '';
+      
+      if(Object.keys(fileASizes).length === 0 || Object.keys(fileBSizes).length === 0){
+        error.innerHTML = "두 개의 파일 목록 모두 선택해주세요.";
+        return;
+      }
+      
+      let changed = [];
+      let newFiles = [];
+      let deletedFiles = [];
+      let identical = [];
+      
+      const allFiles = new Set([...Object.keys(fileASizes), ...Object.keys(fileBSizes)]);
+      
+      allFiles.forEach(file => {
+        const sizeA = fileASizes[file]?.size || 0;
+        const sizeB = fileBSizes[file]?.size || 0;
+        if(fileASizes[file] && fileBSizes[file]) {
+          if(sizeA !== sizeB) {
+            changed.push(file);
+          } else {
+            identical.push(file);
+          }
+        } else if(!fileASizes[file] && fileBSizes[file]){
+          newFiles.push(file);
+        } else if(fileASizes[file] && !fileBSizes[file]){
+          deletedFiles.push(file);
+        }
+      });
+      
+      // 전역 변수에 각 카테고리 저장
+      categoryData.changed = changed;
+      categoryData.new = newFiles;
+      categoryData.deleted = deletedFiles;
+      categoryData.identical = identical;
+      
+      // changed 리스트 생성
+      changed.forEach((file, idx) => {
+        const sizeA_KB = (fileASizes[file].size / 1024).toFixed(2);
+        const sizeB_KB = (fileBSizes[file].size / 1024).toFixed(2);
+        const diff_KB = Math.abs(fileASizes[file].size - fileBSizes[file].size) / 1024;
+        let li = document.createElement('li');
+        li.textContent = `${file} (${sizeA_KB}KB -> ${sizeB_KB}KB) Diff: ${diff_KB.toFixed(2)}KB`;
+        li.style.cursor = "pointer";
+        if(fileASizes[file]?.type === "png") {
+          const thumbA = document.createElement('img');
+          thumbA.src = fileASizes[file].dataUrl;
+          thumbA.className = "thumbnail";
+          li.appendChild(thumbA);
+        }
+        if(fileBSizes[file]?.type === "png") {
+          const thumbB = document.createElement('img');
+          thumbB.src = fileBSizes[file].dataUrl;
+          thumbB.className = "thumbnail";
+          li.appendChild(thumbB);
+        }
+        li.dataset.category = "changed";
+        li.dataset.index = idx;
+        li.addEventListener("click", () => {
+          openPopup("changed", idx);
+        });
+        changedList.appendChild(li);
+      });
+      
+      // new 리스트 생성
+      newFiles.forEach((file, idx) => {
+        const sizeB_KB = (fileBSizes[file].size / 1024).toFixed(2);
+        let li = document.createElement('li');
+        li.textContent = `${file} (0KB -> ${sizeB_KB}KB) [새 파일]`;
+        li.style.cursor = "pointer";
+        if(fileBSizes[file]?.type === "png") {
+          const thumb = document.createElement('img');
+          thumb.src = fileBSizes[file].dataUrl;
+          thumb.className = "thumbnail";
+          li.insertBefore(thumb, li.firstChild);
+        }
+        li.dataset.category = "new";
+        li.dataset.index = idx;
+        li.addEventListener("click", () => {
+          openPopup("new", idx);
+        });
+        newList.appendChild(li);
+      });
+      
+      // deleted 리스트 생성
+      deletedFiles.forEach((file, idx) => {
+        const sizeA_KB = (fileASizes[file].size / 1024).toFixed(2);
+        let li = document.createElement('li');
+        li.textContent = `${file} (${sizeA_KB}KB -> 0KB) [삭제 파일]`;
+        li.style.cursor = "pointer";
+        if(fileASizes[file]?.type === "png") {
+          const thumb = document.createElement('img');
+          thumb.src = fileASizes[file].dataUrl;
+          thumb.className = "thumbnail";
+          li.insertBefore(thumb, li.firstChild);
+        }
+        li.dataset.category = "deleted";
+        li.dataset.index = idx;
+        li.addEventListener("click", () => {
+          openPopup("deleted", idx);
+        });
+        deletedList.appendChild(li);
+      });
+      
+      // identical 리스트 생성
+      identical.forEach((file, idx) => {
+        const size_KB = (fileASizes[file].size / 1024).toFixed(2);
+        let li = document.createElement('li');
+        li.textContent = `${file} (${size_KB}KB) [동일 파일]`;
+        li.style.cursor = "pointer";
+        if(fileASizes[file]?.type === "png") {
+          const thumb = document.createElement('img');
+          thumb.src = fileASizes[file].dataUrl;
+          thumb.className = "thumbnail";
+          li.insertBefore(thumb, li.firstChild);
+        }
+        li.dataset.category = "identical";
+        li.dataset.index = idx;
+        li.addEventListener("click", () => {
+          openPopup("identical", idx);
+        });
+        identicalList.appendChild(li);
+      });
+      
+      // 비교 후 검색 필터 적용 (검색창 입력값이 있으면)
+      filterResults();
+    }
+    
+    /**********************
+     * 검색 필터 기능
+     **********************/
+    const searchInput = document.getElementById("searchInput");
+    searchInput.addEventListener("input", filterResults);
+    
+    function filterResults() {
+      const query = searchInput.value.trim().toLowerCase();
+      // 네 개의 결과 리스트 id 배열
+      const listIds = ["changedList", "newList", "deletedList", "identicalList"];
+      listIds.forEach(id => {
+        const ul = document.getElementById(id);
+        const items = ul.getElementsByTagName("li");
+        for(let i = 0; i < items.length; i++){
+          const text = items[i].textContent.toLowerCase();
+          if(text.indexOf(query) > -1){
+            items[i].style.display = "";
+          } else {
+            items[i].style.display = "none";
+          }
+        }
+      });
+    }
+    
+    /**********************
+     * 팝업 및 좌우 이동 기능 (건너뛰기 포함)
+     **********************/
+    const popup = document.getElementById('popup');
+    const popupCategoryLabel = document.getElementById('popup-category-label');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const previewA = document.getElementById('previewA');
+    const previewB = document.getElementById('previewB');
+    
+    // 카테고리별 표시명
+    const categoryNames = {
+      changed: "크기가 변화한 파일",
+      new: "새로 생긴 파일",
+      deleted: "없어진 파일",
+      identical: "동일한 파일"
+    };
+    
+    // openPopup: 선택된 카테고리와 인덱스를 저장 후 renderPopup() 호출
+    function openPopup(category, index) {
+      currentPreviewCategory = category;
+      currentPreviewIndex = index;
+      renderPopup();
+      popup.style.display = "block";
+    }
+    
+    // renderPopup: 현재 카테고리와 인덱스에 해당하는 파일 정보를 미리보기 영역에 표시
+    function renderPopup() {
+      previewA.innerHTML = "";
+      previewB.innerHTML = "";
+      
+      const list = categoryData[currentPreviewCategory];
+      if (!list || list.length === 0) return;
+      const fileName = list[currentPreviewIndex];
+      
+      let dataA = null, dataB = null;
+      if (currentPreviewCategory === "changed" || currentPreviewCategory === "identical") {
+        dataA = fileASizes[fileName];
+        dataB = fileBSizes[fileName];
+      } else if (currentPreviewCategory === "new") {
+        dataB = fileBSizes[fileName];
+      } else if (currentPreviewCategory === "deleted") {
+        dataA = fileASizes[fileName];
+      }
+      
+      if(dataA) {
+        if(dataA.type === "png") {
+          const img = document.createElement('img');
+          img.src = dataA.dataUrl;
+          img.style.maxWidth = "100%";
+          img.style.maxHeight = "80vh";
+          previewA.appendChild(img);
+        } else if(dataA.type === "bin") {
+          const pre = document.createElement('pre');
+          pre.textContent = dataA.data;
+          previewA.appendChild(pre);
+        }
+      }
+      if(dataB) {
+        if(dataB.type === "png") {
+          const img = document.createElement('img');
+          img.src = dataB.dataUrl;
+          img.style.maxWidth = "100%";
+          img.style.maxHeight = "80vh";
+          previewB.appendChild(img);
+        } else if(dataB.type === "bin") {
+          const pre = document.createElement('pre');
+          pre.textContent = dataB.data;
+          previewB.appendChild(pre);
+        }
+      }
+      
+      popupCategoryLabel.textContent = categoryNames[currentPreviewCategory] + " (" + (currentPreviewIndex+1) + " / " + categoryData[currentPreviewCategory].length + ")";
+      
+      // 좌우 버튼은 별도 함수에서 처리하므로 여기서는 버튼 disable 처리는 하지 않음
+    }
+    
+    // 좌우 이동 함수 (건너뛰기 기능 포함)
+    function nextFile() {
+      let list = categoryData[currentPreviewCategory];
+      if (currentPreviewIndex < list.length - 1) {
+        currentPreviewIndex++;
+        renderPopup();
+      } else {
+        // 현재 카테고리 마지막이면 다음 카테고리 중 내용 있는 곳으로 이동
+        let currentIndex = categoryOrder.indexOf(currentPreviewCategory);
+        let found = false;
+        for (let i = currentIndex + 1; i < categoryOrder.length; i++) {
+          if (categoryData[categoryOrder[i]] && categoryData[categoryOrder[i]].length > 0) {
+            currentPreviewCategory = categoryOrder[i];
+            currentPreviewIndex = 0;
+            found = true;
+            break;
+          }
+        }
+        if(found) {
+          renderPopup();
+        }
+      }
+    }
+    
+    function prevFile() {
+      let list = categoryData[currentPreviewCategory];
+      if (currentPreviewIndex > 0) {
+        currentPreviewIndex--;
+        renderPopup();
+      } else {
+        // 현재 카테고리 처음이면 이전 카테고리 중 내용 있는 곳으로 이동
+        let currentIndex = categoryOrder.indexOf(currentPreviewCategory);
+        let found = false;
+        for (let i = currentIndex - 1; i >= 0; i--) {
+          if (categoryData[categoryOrder[i]] && categoryData[categoryOrder[i]].length > 0) {
+            currentPreviewCategory = categoryOrder[i];
+            currentPreviewIndex = categoryData[categoryOrder[i]].length - 1;
+            found = true;
+            break;
+          }
+        }
+        if(found) {
+          renderPopup();
+        }
+      }
+    }
+    
+    // 좌측, 우측 버튼 클릭 이벤트
+    prevBtn.addEventListener("click", prevFile);
+    nextBtn.addEventListener("click", nextFile);
+    
+    // 키보드 좌우 화살표 이벤트 (팝업이 열렸을 때)
+    document.addEventListener("keydown", (event) => {
+      if(popup.style.display === "block") {
+        if(event.key === "ArrowLeft") {
+          prevFile();
+        } else if(event.key === "ArrowRight") {
+          nextFile();
+        }
+      }
+    });
+    
+    // 팝업 닫기 처리
+    const close = document.querySelector('.close');
+    close.onclick = function() {
+      popup.style.display = "none";
+    }
+    window.onclick = function(event) {
+      if (event.target == popup) {
+        popup.style.display = "none";
+      }
+    }
+  </script>
+</body>
+</html>
