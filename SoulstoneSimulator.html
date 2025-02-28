@@ -186,8 +186,7 @@
 
 .button {
     display: inline-block;
-    
-    padding: 10px ;
+    padding: 0px;
     font-size: 18px;
     font-weight: bold;
     text-align: center;
@@ -196,7 +195,13 @@
     background-color: #f0f34b;
     color: rgb(20, 20, 20);
     transition: all 0.2s ease-in-out;
-  }
+    min-height: 50px;    /* 버튼 최소 높이 고정 */
+    line-height: 1.2;    /* 텍스트 줄 높이 */
+}
+
+
+
+
    
    
 /* 강화 성공 시 반짝이는 애니메이션 */
@@ -223,21 +228,21 @@
             }
         }
         .log {
-            height: 80px; /* 고정된 높이 설정 */
-            width: 100%; /* 부모 요소에 맞게 100% 너비 설정 */
-            overflow-y: auto; /* 스크롤 가능하게 설정 */
+    position: absolute;
+    bottom: -190px;       /* 컨테이너 하단에서 10px 위에 고정 */
+    left: 0;            /* 좌측 끝에 고정 */
+    width: 100%;        /* 부모 너비에 맞춤 */
+    height: 80px;       /* 고정 높이 */
+    overflow-y: auto;
+    background-color: #f5efef;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    color: black;
+    font-size: 14px;
+    box-sizing: border-box;
+    z-index: 2;
+}
 
-            background-color: #f5efef;
-
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            color: black;
-            font-size: 14px;
-            box-sizing: border-box; /* 내부 패딩을 포함하여 크기 설정 */
-            position: absolute; /* 다른 요소들과 겹치지 않게 위치 설정 */
-            bottom: -190px; /* 화면 하단에 고정 */
-            z-index: 2; /* 다른 요소들 위에 표시되도록 */
-        }
         
         .log p {
             margin: 5px 0;
@@ -323,6 +328,7 @@
         .buttons-container {
             display: flex;
             justify-content: space-between;
+            
         }
 
         .successcount20 {
@@ -389,7 +395,12 @@
             font-size: 14px;
         }
         
-        
+        #enhance-all-100-button {
+    white-space: nowrap;
+}
+
+
+
 
     </style>
 </head>
@@ -456,7 +467,8 @@
                 </button>
                 <button class="button" id="enhance-button">강화 (확률: 90%)</button>
                 <button class="button" id="enhance-all-button">한 번에 강화하기</button>
-            </div>
+                <button class="button" id="enhance-all-100-button">100번&nbsp;시도</button>
+ </div>
             <div class="log" id="log"></div>
             <div class="total-info">
                 <p id="total-gold">총 골드 사용량: 0</p>
@@ -504,6 +516,110 @@
     <script>
 
         let isMuted = false; // 소리 끄기 상태를 추적하는 변수
+
+        function simulateEnhancementOnce(initialLevel) {
+    // 선택된 초기 레벨로 시작 (예: level-select가 13이면 13부터 시작)
+    let localCurrentLevel = initialLevel;
+    let localGoldUsed = 0;
+    let localSoulstoneUsed = 0;
+    let localSuccessCount = 0;
+    let localFailureCount = 0;
+
+    // 선택된 레벨부터 Lv.15까지 강화 시뮬레이션 진행
+    for (let i = localCurrentLevel; i < 15; i++) {
+        let success = false;
+        while (!success) {
+            // i 레벨에서 강화 성공 여부 판정
+            success = Math.random() * 100 < probabilities[i];
+            if (success) {
+                localCurrentLevel = i + 1; // 성공 시 다음 레벨로 이동
+                localSuccessCount++;       // 성공 횟수 증가
+            } else {
+                localFailureCount++;       // 실패 횟수 증가
+            }
+            // 해당 레벨 시도마다 소모 재화 누적
+            localSoulstoneUsed += soulstoneRequired[i];
+            localGoldUsed += goldRequired[i];
+        }
+    }
+    
+    // 다이아 사용량 계산 (사념석 사용량에 100을 곱함)
+    let localDiamondUsed = localSoulstoneUsed * 100;
+    // 다이아를 480으로 나누어 '풀디' 판 수 계산 (소수점 버림)
+    let localFullDiCount = Math.floor(localDiamondUsed / 480);
+    
+    // 결과를 객체로 반환
+    return {
+        goldUsed: localGoldUsed,
+        soulstoneUsed: localSoulstoneUsed,
+        diamondUsed: localDiamondUsed,
+        fullDiCount: localFullDiCount,
+        successCount: localSuccessCount,
+        failureCount: localFailureCount
+    };
+}
+
+const enhanceAll100Button = document.getElementById("enhance-all-100-button");
+enhanceAll100Button.addEventListener("click", () => {
+    // level-select에서 선택한 초기 레벨 값을 정수로 변환
+    let initialLevel = parseInt(levelSelect.value);
+    
+    // 15레벨이면 실행하지 않음
+    if (initialLevel === 15) {
+        return;  // 15레벨인 경우 아무 작업도 수행하지 않음.
+    }
+    
+    // 버튼 클릭 시 로그 영역 초기화
+    log.innerHTML = "";
+
+    // 100번 실행을 위한 합계 변수 초기화
+    let totalGoldSum = 0;
+    let totalSoulstoneSum = 0;
+    let totalSuccessSum = 0;
+    let totalFailureSum = 0;
+    const simulationRuns = 100; // 시뮬레이션 실행 횟수
+    
+    // 각 시뮬레이션의 사념석 사용량을 저장할 배열
+    let soulstoneArray = [];
+    
+    // 100번 시뮬레이션 실행
+    for (let run = 0; run < simulationRuns; run++) {
+        const result = simulateEnhancementOnce(initialLevel);
+        totalGoldSum += result.goldUsed;
+        totalSoulstoneSum += result.soulstoneUsed;
+        totalSuccessSum += result.successCount;
+        totalFailureSum += result.failureCount;
+        soulstoneArray.push(result.soulstoneUsed);
+    }
+    
+    // 평균 계산 (반올림하여 정수로 표시)
+    const avgGold = Math.round(totalGoldSum / simulationRuns);
+    const avgSoulstone = Math.round(totalSoulstoneSum / simulationRuns);
+    // 다이아 사용량은 평균 사념석 사용량에 100을 곱한 값
+    const avgDiamond = avgSoulstone * 100;
+    const avgFullDiCount = Math.floor(avgDiamond / 480);
+    const avgSuccess = (totalSuccessSum / simulationRuns).toFixed(2);
+    const avgFailure = (totalFailureSum / simulationRuns).toFixed(2);
+    
+    // 최저/최고 사념석 사용량 (다이아로 환산하려면 ×100)
+    const minSoulstone = Math.min(...soulstoneArray);
+    const maxSoulstone = Math.max(...soulstoneArray);
+    const minDiamond = minSoulstone * 100;
+    const maxDiamond = maxSoulstone * 100;
+    
+    // 로그 영역에 결과 출력
+    log.innerHTML += `<p>100번 평균 결과 (시작 레벨: ${initialLevel}):</p>`;
+    log.innerHTML += `<p>평균 골드 사용량: ${formatNumber(avgGold)}</p>`;
+    log.innerHTML += `<p>평균 사념석 사용량: ${formatNumber(avgSoulstone)}</p>`;
+    log.innerHTML += `<p>성공 횟수: ${avgSuccess} / 실패 횟수: ${avgFailure}</p>`;
+    log.innerHTML += `<p>최저 다이아 사용량 (다이아): ${formatNumber(minDiamond)}</p>`;
+    log.innerHTML += `<p>평균 다이아 사용량: ${formatNumber(avgDiamond)} 풀디 ${formatNumber(avgFullDiCount)}판</p>`;
+    log.innerHTML += `<p>최고 다이아 사용량 (다이아): ${formatNumber(maxDiamond)}</p>`;
+    log.scrollTop = log.scrollHeight;
+    playAudio();
+});
+
+
 
         // 소리 재생 함수
         function playAudio() {
@@ -564,52 +680,52 @@
         }
     
         function updateUI() {
-            // 현재 레벨이 15일 경우 undefined 방지 (NaN 방지)
-            const currentGold = currentLevel < 15 ? goldRequired[currentLevel] : 0;
-            const currentSoulstone = currentLevel < 15 ? soulstoneRequired[currentLevel] : 0;
-    
-            // 다이아 사용량을 480으로 나누고 소수점 자르는 방법
-            const totalDiamond = soulstoneUsed * 100;
-            const fullDiCount = Math.floor(totalDiamond / 480); // 다이아 사용량을 480으로 나눈 값 (소수점 버림)
-    
-            // 현재 레벨 표시
-            itemLevel.textContent = currentLevel;
-    
-            // Lv.15가 되면 현재 레벨의 골드/사념석만 숨기고, 총 사용량은 유지
-            document.getElementById("gold-amount").textContent = currentLevel < 15 ? formatNumber(currentGold) : "";
-            document.getElementById("soulstone-amount").textContent = currentLevel < 15 ? formatNumber(currentSoulstone) : "";
-    
-            // 현재 레벨의 다이아 사용량 (Lv.15면 표시 안함)
-            document.getElementById("diamond-amount").textContent = currentLevel < 15 ? formatNumber(totalDiamond) : "";
-    
-            // 총 사용량은 항상 유지 (NaN 방지)
-            totalGold.textContent = `총 골드 사용량: ${formatNumber(goldUsed)}`;
-            totalSoulstone.textContent = `총 사념석 사용량: ${formatNumber(soulstoneUsed)}`;
-            document.getElementById("total-diamond").textContent = `총 다이아 사용량: ${formatNumber(totalDiamond)} 풀디 ${fullDiCount}판`;
-    
-            // 성공과 실패 횟수 표시
-            document.getElementById("success-count").textContent = successCount;
-            document.getElementById("failure-count").textContent = failureCount;
-    
-            // 레벨별 실패 횟수 표시 (failureCounts 배열을 사용)
-            let failureText = "";
-            for (let i = 0; i < 15; i++) {
-                failureText += `Lv.${String(i + 1).padStart(2, '0')}(${failureCounts[i]})`;  // 2자리 레벨 표시
-                if ((i + 1) % 5 === 0) {
-                    failureText += "\n";  // 5개 레벨마다 줄바꿈
-                } else {
-                    failureText += " | ";  // 각 레벨마다 구분
-                }
-            }
-            document.getElementById("failure-counts").textContent = failureText.trim();  // 공백 제거하여 출력
-    
-            // 강화 버튼 텍스트 업데이트
-            enhanceButton.textContent = currentLevel === 15 ? "Lv.MAX" : `강화 (확률: ${probabilities[currentLevel]}%)`;
-    
-            // Max 레벨이면 강화 버튼과 한 번에 강화 버튼 비활성화
-            enhanceButton.disabled = currentLevel === 15;
-            enhanceAllButton.disabled = currentLevel === 15;
+    // 현재 레벨이 15일 경우 undefined 방지 (NaN 방지)
+    const currentGold = currentLevel < 15 ? goldRequired[currentLevel] : 0;
+    const currentSoulstone = currentLevel < 15 ? soulstoneRequired[currentLevel] : 0;
+
+    // 다이아 사용량 계산
+    const totalDiamond = soulstoneUsed * 100;
+    const fullDiCount = Math.floor(totalDiamond / 480);
+
+    // 현재 레벨 표시
+    itemLevel.textContent = currentLevel;
+
+    // Lv.15일 경우 골드/사념석 값 숨김
+    document.getElementById("gold-amount").textContent = currentLevel < 15 ? formatNumber(currentGold) : "";
+    document.getElementById("soulstone-amount").textContent = currentLevel < 15 ? formatNumber(currentSoulstone) : "";
+    document.getElementById("diamond-amount").textContent = currentLevel < 15 ? formatNumber(totalDiamond) : "";
+
+    // 총 사용량 업데이트
+    totalGold.textContent = `총 골드 사용량: ${formatNumber(goldUsed)}`;
+    totalSoulstone.textContent = `총 사념석 사용량: ${formatNumber(soulstoneUsed)}`;
+    document.getElementById("total-diamond").textContent = `총 다이아 사용량: ${formatNumber(totalDiamond)} 풀디 ${fullDiCount}판`;
+
+    // 성공, 실패 횟수 업데이트
+    document.getElementById("success-count").textContent = successCount;
+    document.getElementById("failure-count").textContent = failureCount;
+
+    // 레벨별 실패 횟수 표시
+    let failureText = "";
+    for (let i = 0; i < 15; i++) {
+        failureText += `Lv.${String(i + 1).padStart(2, '0')}(${failureCounts[i]})`;
+        if ((i + 1) % 5 === 0) {
+            failureText += "\n";
+        } else {
+            failureText += " | ";
         }
+    }
+    document.getElementById("failure-counts").textContent = failureText.trim();
+
+    // 강화 버튼 텍스트 업데이트
+    // innerHTML을 사용해서 <br> 태그로 줄바꿈을 적용
+    enhanceButton.innerHTML = currentLevel === 15 ? "Lv.MAX" : `강화<br>(확률: ${probabilities[currentLevel]}%)`;
+
+    // Max 레벨이면 버튼 비활성화
+    enhanceButton.disabled = currentLevel === 15;
+    enhanceAllButton.disabled = currentLevel === 15;
+}
+
     
         enhanceButton.addEventListener("click", () => {
             playAudio();
