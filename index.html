@@ -9,53 +9,217 @@
   <meta property="og:image" content="img/preview-image.png">
   <meta property="og:url" content="https://yourwebsite.com">
   <title>그만쫌쳐들어와</title>
-  <link rel="stylesheet" href="styles.css">
   
+  <style>
+    /* 초기화 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    /* 배경용 div */
+    #background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      animation: fadeIn 1.5s forwards;
+    }
+    
+    /* 배경 페이드인 애니메이션 */
+    @keyframes fadeIn {
+      to { opacity: 0.2; }
+    }
+    
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      overflow-y: auto; /* 세로 스크롤 가능 */
+    }
+    
+    /* 전체 컨테이너 (내용이 많을 경우 스크롤 지원) */
+    .container {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    
+    /* 네비게이션 컨테이너 */
+    .nav-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      gap: 10px;
+      animation: slideUp 1s ease-out;
+    }
+    
+    /* 슬라이드업 애니메이션 */
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    
+    /* 타이틀 스타일 */
+    .nav-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #9c2121;
+      margin-bottom: 20px;
+    }
+    
+    /* 버튼 컨테이너 */
+    .button-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+    
+    /* 원형 버튼 스타일 */
+    .round-btn {
+      width: 120px;
+      height: 120px;
+      background-color: #fff;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 3px solid #ffffff;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+    
+    .round-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* 이미지 스타일 (누르거나 잘리지 않도록 object-fit: contain) */
+    .round-btn img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 50%;
+    }
+    
+    /* 텍스트 오버레이 */
+    .round-btn span {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: bold;
+      text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7), 0 0 25px rgba(255, 255, 255, 0.7);
+      width: 100%;
+    }
+    
+    /* 미디어 쿼리: 태블릿 */
+    @media (max-width: 768px) {
+      .round-btn {
+        width: 100px;
+        height: 100px;
+      }
+      .round-btn span {
+        font-size: 14px;
+      }
+      .button-container {
+        gap: 15px;
+      }
+    }
+    
+    /* 미디어 쿼리: 모바일 */
+    @media (max-width: 480px) {
+      .round-btn {
+        width: 80px;
+        height: 80px;
+      }
+      .round-btn span {
+        font-size: 12px;
+      }
+    }
+  </style>
 </head>
 <body>
+  <!-- 배경 이미지 영역 -->
+  <div id="background"></div>
+  
   <div class="container">
     <div class="nav-container">
-      <button class="round-btn" id="btn1" onclick="navigate('roundsindex.html')">
-        <img src="https://github.com/SaeDing/NoInvadePls/blob/main/img/a.PNG?raw=true" alt="A">
-        <span>고기</span>
-      </button>
-      <button class="round-btn" id="btn2" onclick="navigate('길드대전.html')">
-        <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/1.png?raw=true" alt="B">
-        <span>길드</span>
-      </button>
-      <button class="round-btn" id="btn3" onclick="navigate('월드보스1.html')">
-        <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/1m.png?raw=true" alt="C">
-        <span>보스1</span>
-      </button>
-      <button class="round-btn" id="btn4" onclick="navigate('월드보스2.html')">
-        <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/4m.png?raw=true" alt="E">
-        <span>보스2</span>
-      </button>
-      <button class="round-btn" id="btn4" onclick="navigate('월드보스3.html')">
-        <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/5m.png?raw=true" alt="F">
-        <span>보스3</span>
-      </button>
-      <button class="round-btn" id="btn4" onclick="navigate('일반.html')">
-        <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/2m.png?raw=true" alt="G">
-        <span>일반</span>
-      </button>
-      <button class="round-btn" id="btn4" onclick="navigate('어려움.html')">
-        <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/3m.png?raw=true" alt="H">
-        <span>어려움</span>
-      </button>
-      <button class="round-btn" id="btn5" onclick="navigate('SoulstoneSimulator.html')">
-        <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/mm.png?raw=true" alt="E">
-        <span>사념강화</span>
-      </button>
-      <button class="round-btn" id="btn5" onclick="navigate('artifactSimulator.html')">
-        <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/mmm.png?raw=true" alt="E">
-        <span>아티강화</span>
-      </button>
-
-
-      
+      <div class="nav-title">메뉴</div>
+      <div class="button-container">
+        <button class="round-btn" onclick="navigate('roundsindex.html')">
+          <img src="https://github.com/SaeDing/NoInvadePls/blob/main/img/a.PNG?raw=true" alt="고기">
+          <span>고기</span>
+        </button>
+        <button class="round-btn" onclick="navigate('길드대전.html')">
+          <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/1.png?raw=true" alt="길드">
+          <span>길드</span>
+        </button>
+        <button class="round-btn" onclick="navigate('월드보스1.html')">
+          <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/1m.png?raw=true" alt="보스1">
+          <span>보스1</span>
+        </button>
+        <button class="round-btn" onclick="navigate('월드보스2.html')">
+          <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/4m.png?raw=true" alt="보스2">
+          <span>보스2</span>
+        </button>
+        <button class="round-btn" onclick="navigate('월드보스3.html')">
+          <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/5m.png?raw=true" alt="보스3">
+          <span>보스3</span>
+        </button>
+        <button class="round-btn" onclick="navigate('일반.html')">
+          <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/2m.png?raw=true" alt="일반">
+          <span>일반</span>
+        </button>
+        <button class="round-btn" onclick="navigate('어려움.html')">
+          <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/3m.png?raw=true" alt="어려움">
+          <span>어려움</span>
+        </button>
+        <button class="round-btn" onclick="navigate('SoulstoneSimulator.html')">
+          <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/mm.png?raw=true" alt="사념강화">
+          <span>사념강화</span>
+        </button>
+        <button class="round-btn" onclick="navigate('artifactSimulator.html')">
+          <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/mmm.png?raw=true" alt="아티강화">
+          <span>아티강화</span>
+        </button>
+      </div>
     </div>
   </div>
-  <script src="script.js"></script>
+  
+  <script>
+    // 페이지 이동 함수
+    function navigate(page) {
+      window.location.href = page;
+    }
+    
+    // 랜덤 배경 이미지 설정
+    (function() {
+      const images = ["img/back1.png", "img/back2.png", "img/back3.png"];
+      const randomImage = images[Math.floor(Math.random() * images.length)];
+      const bgDiv = document.getElementById("background");
+      bgDiv.style.backgroundImage = `url('${randomImage}')`;
+    })();
+  </script>
 </body>
 </html>
