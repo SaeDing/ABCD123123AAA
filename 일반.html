@@ -444,61 +444,61 @@
   </div>
   <div class="title-text">일반 배치표</div>
   <script>
-// img 폴더에 있는 파일명 리스트
-const imageFiles = [
-  "우주인 3단 마딜.png",
-  "보루 변신 물딜.png",
-  "라이양 변신 마딜.png",
-  "빅토리어스 마딜.png",
-  "미믹 물딜.png",
-  "눈보라 예티 변신 마딜.png",
-  "슈퍼시바 마딜.png",
-  "죽음의 기사 물딜.png",
-  "스핑 물딜.png",
-  "마녀 마딜.png",
-  "캔드리 물딜.png",
-  "새싹이 물딜.png",
-  "눈보라 예티 마딜.png",
-  "해골룡 변신 마딜.png",
-  "개굴 단장 변신 마딜.png",
-  "그린딩딩 물딜.png",
-  "빅헤드 물딜.png",
-  "역병의사 마딜.png",
-  "라이양 마딜.png",
-  "로큰롤스 마딜.png",
-  "메카 좀비 마딜.png",
-  "선인장 건맨 물딜.png",
-  "메카콩 마딜.png",
-  "스시 선생 물딜.png",
-  "카우보이 밥 물딜.png",
-  "할로윈퀸 마딜.png",
-  "오우거 전사 물딜.png",
-  "돌팔이 마딜.png",
-  "미라씨 물딜.png",
-  "꼬꼬질라 물딜.png",
-  "포크몬 물딜.png",
-  "악마 토끼 마딜.png",
-  "샤키 물딜.png",
-  "스리슬쩍냥 물딜.png",
-  "해골 궁수 물딜.png",
-  "식빵 복서 물딜.png",
-  "크레이지 핫도그 물딜.png",
-  "오크라이더 물딜.png",
-  "잭 오 마딜.png",
-  "잭 오 변신 마딜.png",
-  "전투 달팽이 물딜.png",
-  "전투 달팽이 변신 물딜.png",
-  "데드베어 마딜.png",
-  "보루 물딜.png",
-  "드라큐 마딜.png",
-  "드라큐 변신 마딜.png",
-  "크레이지 핫도그 변신 물딜.png",
-  "프랑키 물딜.png",
-  "해골룡 마딜.png",
-  "개굴 단장 마딜.png",
-  "우주인 1단 마딜.png",
-  "우주인 2단 마딜.png"
-];
+    // img 폴더에 있는 파일명 리스트
+    const imageFiles = [
+      "우주인 3단 마딜.png",
+      "보루 변신 물딜.png",
+      "라이양 변신 마딜.png",
+      "빅토리어스 마딜.png",
+      "미믹 물딜.png",
+      "눈보라 예티 변신 마딜.png",
+      "슈퍼시바 마딜.png",
+      "죽음의 기사 물딜.png",
+      "스핑 물딜.png",
+      "마녀 마딜.png",
+      "캔드리 물딜.png",
+      "새싹이 물딜.png",
+      "눈보라 예티 마딜.png",
+      "해골룡 변신 마딜.png",
+      "개굴 단장 변신 마딜.png",
+      "그린딩딩 물딜.png",
+      "빅헤드 물딜.png",
+      "역병의사 마딜.png",
+      "라이양 마딜.png",
+      "로큰롤스 마딜.png",
+      "메카 좀비 마딜.png",
+      "선인장 건맨 물딜.png",
+      "메카콩 마딜.png",
+      "스시 선생 물딜.png",
+      "카우보이 밥 물딜.png",
+      "할로윈퀸 마딜.png",
+      "오우거 전사 물딜.png",
+      "돌팔이 마딜.png",
+      "미라씨 물딜.png",
+      "꼬꼬질라 물딜.png",
+      "포크몬 물딜.png",
+      "악마 토끼 마딜.png",
+      "샤키 물딜.png",
+      "스리슬쩍냥 물딜.png",
+      "해골 궁수 물딜.png",
+      "식빵 복서 물딜.png",
+      "크레이지 핫도그 물딜.png",
+      "오크라이더 물딜.png",
+      "잭 오 마딜.png",
+      "잭 오 변신 마딜.png",
+      "전투 달팽이 물딜.png",
+      "전투 달팽이 변신 물딜.png",
+      "데드베어 마딜.png",
+      "보루 물딜.png",
+      "드라큐 마딜.png",
+      "드라큐 변신 마딜.png",
+      "크레이지 핫도그 변신 물딜.png",
+      "프랑키 물딜.png",
+      "해골룡 마딜.png",
+      "개굴 단장 마딜.png",
+      "우주인 1단 마딜.png",
+      "우주인 2단 마딜.png"
+    ];
     const imageContainer = document.getElementById("image-container");
     const dropZones = document.querySelectorAll(".drop-zone");
     const resetButton = document.getElementById("reset-button");
@@ -507,7 +507,30 @@ const imageFiles = [
       window.location.href = page;
     }
     let selectedImage = null;
-
+    
+    // 추가: page6 전용 드롭존 상태 저장 객체 및 기존 데이터 불러오기 (키: dropData_page6)
+    let dropData = {};
+    const savedDropData = localStorage.getItem('dropData_page6');
+    if (savedDropData) {
+      dropData = JSON.parse(savedDropData);
+    }
+    
+    // 페이지 로딩 시 저장된 dropData를 복원 (page6 전용)
+    dropZones.forEach((zone, index) => {
+      if (dropData[index]) {
+        const img = document.createElement("img");
+        img.src = dropData[index];
+        img.alt = "dropped-image";
+        img.style.width = "162%";
+        img.style.height = "162%";
+        zone.appendChild(img);
+        zone.style.visibility = "visible";
+        // 이미지가 있으면 테두리와 배경 제거
+        zone.style.border = "none";
+        zone.style.backgroundColor = "rgba(0, 0, 0, 0)";
+      }
+    });
+    
     // 유닛 클릭 시 선택 및 배경색 변경
     imageFiles.forEach(file => {
       const img = document.createElement("img");
@@ -541,9 +564,9 @@ const imageFiles = [
       });
       imageContainer.appendChild(img);
     });
-
-    // 드롭존 이벤트: 클릭 시 이미지 추가, 더블클릭/더블탭 시 이미지 제거
-    dropZones.forEach(zone => {
+    
+    // 드롭존 이벤트: 클릭 시 이미지 추가, 더블클릭/더블탭 시 이미지 제거 (page6 전용)
+    dropZones.forEach((zone, index) => {
       zone.addEventListener("click", () => {
         if (selectedImage) {
           if (zone.querySelector("img")) {
@@ -563,13 +586,18 @@ const imageFiles = [
             zone.style.border = "none";
             zone.style.backgroundColor = "rgba(0, 0, 0, 0)";
           });
+          // dropData 업데이트 후 page6 전용 localStorage에 저장
+          dropData[index] = img.src;
+          localStorage.setItem('dropData_page6', JSON.stringify(dropData));
         }
       });
-      // 데스크톱: 더블클릭
+      // 데스크톱: 더블클릭 시 이미지 제거 및 localStorage 업데이트 (page6 전용)
       zone.addEventListener("dblclick", () => {
         const img = zone.querySelector("img");
         if (img) {
           img.remove();
+          delete dropData[index];
+          localStorage.setItem('dropData_page6', JSON.stringify(dropData));
         }
       });
       // 모바일: 터치 후 더블탭 감지
@@ -580,6 +608,8 @@ const imageFiles = [
           const img = zone.querySelector("img");
           if (img) {
             img.remove();
+            delete dropData[index];
+            localStorage.setItem('dropData_page6', JSON.stringify(dropData));
           }
           zone.lastTap = 0;
           e.preventDefault();
@@ -590,116 +620,113 @@ const imageFiles = [
       });
     });
     
+    resetButton.addEventListener("click", () => {
+      dropZones.forEach(zone => {
+        zone.innerHTML = ""; // 드롭존 비우기
+        zone.style.visibility = "hidden";
+        zone.style.border = "0.2px dashed rgba(102, 102, 102, 0.3)";
+        zone.style.backgroundColor = "rgba(200, 200, 200, 0.7)";
+      });
     
-
-resetButton.addEventListener("click", () => {
-    dropZones.forEach(zone => {
-      zone.innerHTML = ""; // 드롭존 비우기
-      zone.style.visibility = "hidden";
-      zone.style.border = "0.2px dashed rgba(102, 102, 102, 0.3)";
-      zone.style.backgroundColor = "rgba(200, 200, 200, 0.7)";
+      // 선택 상태 초기화
+      document.querySelectorAll(".image-container img").forEach(image => {
+        image.style.backgroundColor = "";
+      });
+      selectedImage = null;
+    
+      // wave와 gold 입력값 초기화
+      const waveInput = document.getElementById("wave");
+      const goldInput = document.getElementById("gold");
+      waveInput.value = "";
+      goldInput.value = "";
+    
+      // wave와 gold 값 초기화
+      const waveGoldDisplay = document.getElementById("wave-gold-display");
+      waveGoldDisplay.textContent = "";
+    
+      // page6 전용 캐시 데이터 초기화
+      dropData = {};
+      localStorage.removeItem('dropData_page6');
     });
-  
-    // 선택 상태 초기화
-    document.querySelectorAll(".image-container img").forEach(image => {
-      image.style.backgroundColor = ""; // 배경색 초기화
-    });
-    selectedImage = null; // 선택 상태 초기화
-  
-    // wave와 gold 입력값 초기화
-    const waveInput = document.getElementById("wave");
-    const goldInput = document.getElementById("gold");
-    waveInput.value = "";
-    goldInput.value = "";
-  
-    // wave와 gold 값 초기화
-    const waveGoldDisplay = document.getElementById("wave-gold-display");
-    waveGoldDisplay.textContent = ""; // 텍스트 초기화
-  });
-
+    
     saveButton.addEventListener("click", () => {
-        const waveInput = document.getElementById("wave");
-        const goldInput = document.getElementById("gold");
-        const waveValue = waveInput.value.trim();
-        const goldValue = goldInput.value.trim();
+      const waveInput = document.getElementById("wave");
+      const goldInput = document.getElementById("gold");
+      const waveValue = waveInput.value.trim();
+      const goldValue = goldInput.value.trim();
     
-        // WAVE & GOLD 텍스트 설정
-        let displayText = "";
-        if (waveValue) {
-            displayText += `WAVE: ${waveValue}`;
-        }
-        if (goldValue) {
-            if (displayText) displayText += " | ";
-            displayText += `Gold: ${goldValue}`;
-        }
+      // WAVE & GOLD 텍스트 설정
+      let displayText = "";
+      if (waveValue) {
+        displayText += `WAVE: ${waveValue}`;
+      }
+      if (goldValue) {
+        if (displayText) displayText += " | ";
+        displayText += `Gold: ${goldValue}`;
+      }
     
-        // 텍스트 표시 영역 업데이트
-        const waveGoldDisplay = document.getElementById("wave-gold-display");
-        waveGoldDisplay.textContent = displayText;
-        waveGoldDisplay.style.color = "white";
-        waveGoldDisplay.style.position = "absolute";
-        waveGoldDisplay.style.top = "9px";
-        waveGoldDisplay.style.right = "0px";
-        waveGoldDisplay.style.fontSize = "9px";
-        waveGoldDisplay.style.fontWeight = "bold";
-        waveGoldDisplay.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
-        waveGoldDisplay.style.padding = "5px 10px";
-        waveGoldDisplay.style.borderRadius = "5px";
+      // 텍스트 표시 영역 업데이트
+      const waveGoldDisplay = document.getElementById("wave-gold-display");
+      waveGoldDisplay.textContent = displayText;
+      waveGoldDisplay.style.color = "white";
+      waveGoldDisplay.style.position = "absolute";
+      waveGoldDisplay.style.top = "9px";
+      waveGoldDisplay.style.right = "0px";
+      waveGoldDisplay.style.fontSize = "9px";
+      waveGoldDisplay.style.fontWeight = "bold";
+      waveGoldDisplay.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+      waveGoldDisplay.style.padding = "5px 10px";
+      waveGoldDisplay.style.borderRadius = "5px";
     
-        // 📌 100ms 대기 후 캡처 실행 (텍스트 업데이트 반영)
-        setTimeout(() => {
-            const mapImageElement = document.getElementById("mapImage");
-            const imageHeight = mapImageElement.clientHeight; // 실제 이미지 높이 (예: 360px)
-            html2canvas(document.getElementById("map-container"), {
-                scrollX: 0,
-                scrollY: 0,
-                height: imageHeight,  // 캡처 영역 높이를 이미지 높이로 제한
-                windowWidth: document.documentElement.offsetWidth,
-                windowHeight: document.documentElement.offsetHeight,
-                scale: 10,  // 🔥 기존 6 → 8로 더 고해상도 설정
-                useCORS: true,
-                allowTaint: true,
-                backgroundColor: null
-            }).then((canvas) => {
-                const link = document.createElement("a");
-                link.download = "map.png";
-                link.href = canvas.toDataURL("image/png", 1.0);
-                link.click();
+      // 100ms 대기 후 캡처 실행 (텍스트 업데이트 반영)
+      setTimeout(() => {
+        const mapImageElement = document.getElementById("mapImage");
+        const imageHeight = mapImageElement.clientHeight; // 실제 이미지 높이 (예: 360px)
+        html2canvas(document.getElementById("map-container"), {
+          scrollX: 0,
+          scrollY: 0,
+          height: imageHeight,  // 캡처 영역 높이를 이미지 높이로 제한
+          windowWidth: document.documentElement.offsetWidth,
+          windowHeight: document.documentElement.offsetHeight,
+          scale: 10,  // 기존 6 → 8 또는 10로 고해상도 설정
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: null
+        }).then((canvas) => {
+          const link = document.createElement("a");
+          link.download = "map.png";
+          link.href = canvas.toDataURL("image/png", 1.0);
+          link.click();
     
-                // 캡처 후 텍스트 초기화
-                waveGoldDisplay.textContent = "";
-            });
-        }, 100);
+          // 캡처 후 텍스트 초기화
+          waveGoldDisplay.textContent = "";
+        });
+      }, 100);
     });
     
     // 드롭존과 관련된 요소 선택
-const mapContainer = document.getElementById("map-container");
-const mapImage = document.getElementById("mapImage");
-
-
-// mapImage의 실제 표시 영역 계산 후 드롭존 위치 보정
-mapImage.onload = () => {
-  // mapImage의 실제 영역 정보
-  const imageRect = mapImage.getBoundingClientRect();
-  const containerRect = mapContainer.getBoundingClientRect();
-  // container 내 이미지의 offset 계산
-  const offsetX = imageRect.left - containerRect.left;
-  const offsetY = imageRect.top - containerRect.top;
-
-  // 각 드롭존 위치 보정
-  dropZones.forEach(zone => {
-    const origTop = parseInt(zone.style.top, 10);
-    const origLeft = parseInt(zone.style.left, 10);
-    zone.style.top = (origTop + offsetY) + "px";
-    zone.style.left = (origLeft + offsetX) + "px";
-  });
-};
-
-document.addEventListener('dragstart', function(e) {
-    e.preventDefault();
-  });
-  
-  
-  </script>
+    const mapContainer = document.getElementById("map-container");
+    const mapImage = document.getElementById("mapImage");
+    
+    // mapImage의 실제 표시 영역 계산 후 드롭존 위치 보정
+    mapImage.onload = () => {
+      const imageRect = mapImage.getBoundingClientRect();
+      const containerRect = mapContainer.getBoundingClientRect();
+      const offsetX = imageRect.left - containerRect.left;
+      const offsetY = imageRect.top - containerRect.top;
+    
+      dropZones.forEach(zone => {
+        const origTop = parseInt(zone.style.top, 10);
+        const origLeft = parseInt(zone.style.left, 10);
+        zone.style.top = (origTop + offsetY) + "px";
+        zone.style.left = (origLeft + offsetX) + "px";
+      });
+    };
+    
+    document.addEventListener('dragstart', function(e) {
+      e.preventDefault();
+    });
+    </script>
+    
 </body>
 </html>
