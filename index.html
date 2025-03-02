@@ -81,7 +81,7 @@
       margin-bottom: 20px;
     }
     
-    /* 버튼 컨테이너 */
+    /* 버튼 컨테이너 - 모바일 및 태블릿 기본 flex 레이아웃 */
     .button-container {
       display: flex;
       flex-wrap: wrap;
@@ -157,6 +157,16 @@
         font-size: 12px;
       }
     }
+    
+    /* PC 버전: 버튼이 한 줄에 3개씩 보이도록 grid 레이아웃 적용 */
+    @media (min-width: 769px) {
+      .button-container {
+        display: grid;
+        grid-template-columns: repeat(3, 120px);
+        gap: 20px;
+        justify-content: center;
+      }
+    }
   </style>
 </head>
 <body>
@@ -167,26 +177,7 @@
     <div class="nav-container">
       <div class="nav-title">메뉴</div>
       <div class="button-container">
-        <button class="round-btn" onclick="navigate('roundsindex.html')">
-          <img src="https://github.com/SaeDing/NoInvadePls/blob/main/img/a.PNG?raw=true" alt="고기">
-          <span>고기</span>
-        </button>
-        <button class="round-btn" onclick="navigate('길드대전.html')">
-          <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/1.png?raw=true" alt="길드">
-          <span>길드</span>
-        </button>
-        <button class="round-btn" onclick="navigate('월드보스1.html')">
-          <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/1m.png?raw=true" alt="보스1">
-          <span>보스1</span>
-        </button>
-        <button class="round-btn" onclick="navigate('월드보스2.html')">
-          <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/4m.png?raw=true" alt="보스2">
-          <span>보스2</span>
-        </button>
-        <button class="round-btn" onclick="navigate('월드보스3.html')">
-          <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/5m.png?raw=true" alt="보스3">
-          <span>보스3</span>
-        </button>
+        <!-- 1행: 일반, 어려움, 길드 -->
         <button class="round-btn" onclick="navigate('일반.html')">
           <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/2m.png?raw=true" alt="일반">
           <span>일반</span>
@@ -195,13 +186,37 @@
           <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/3m.png?raw=true" alt="어려움">
           <span>어려움</span>
         </button>
+        <button class="round-btn" onclick="navigate('길드대전.html')">
+          <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/1.png?raw=true" alt="길드">
+          <span>길드</span>
+        </button>
+  
+        <!-- 2행: 월드보스1, 월드보스2, 월드보스3 -->
+        <button class="round-btn" onclick="navigate('월드보스1.html')">
+          <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/1m.png?raw=true" alt="월드보스1">
+          <span>월드보스1</span>
+        </button>
+        <button class="round-btn" onclick="navigate('월드보스2.html')">
+          <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/4m.png?raw=true" alt="월드보스2">
+          <span>월드보스2</span>
+        </button>
+        <button class="round-btn" onclick="navigate('월드보스3.html')">
+          <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/5m.png?raw=true" alt="월드보스3">
+          <span>월드보스3</span>
+        </button>
+  
+        <!-- 3행: 고기, 사념, 아티 -->
+        <button class="round-btn" onclick="navigate('roundsindex.html')">
+          <img src="https://github.com/SaeDing/NoInvadePls/blob/main/img/a.PNG?raw=true" alt="고기">
+          <span>고기계산기</span>
+        </button>
         <button class="round-btn" onclick="navigate('SoulstoneSimulator.html')">
-          <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/mm.png?raw=true" alt="사념강화">
-          <span>사념강화</span>
+          <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/mm.png?raw=true" alt="사념">
+          <span>사념강화시뮬</span>
         </button>
         <button class="round-btn" onclick="navigate('artifactSimulator.html')">
-          <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/mmm.png?raw=true" alt="아티강화">
-          <span>아티강화</span>
+          <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/mmm.png?raw=true" alt="아티">
+          <span>아티강화시뮬</span>
         </button>
       </div>
     </div>
