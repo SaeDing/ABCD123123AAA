@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Atlas & PNG 분할 도구 (회전 및 offsets 포함)</title>
+  <style>
+    /* 기본 스타일 */
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      scroll-behavior: smooth;
+    }
+    nav {
+      background-color: #333;
+      padding: 10px;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 100;
+      text-align: center;
+    }
+    nav a {
+      color: #fff;
+      margin: 0 15px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    .container {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 80%;
+      max-width: 800px;
+      margin: 80px auto 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input[type="file"] {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #5cb85c;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.3s ease;
+      margin-bottom: 10px;
+    }
+    button:hover {
+      background-color: #4cae4c;
+    }
+    .result-container {
+      margin-top: 30px;
+      border-top: 1px solid #eee;
+      padding-top: 20px;
+    }
+    .result-section ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    .result-section li {
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .result-section li:last-child {
+      border-bottom: none;
+    }
+    .thumbnail {
+      width: 80px;
+      height: auto;
+      margin-right: 10px;
+      border: 1px solid #ddd;
+      padding: 2px;
+      background-color: #fff;
+    }
+  </style>
+  <!-- JSZip와 FileSaver 라이브러리 추가 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+</head>
+<body>
+  <nav>
+    <a href="#">Atlas 분할 도구</a>
+  </nav>
+  <div class="container">
+    <h1>Atlas & PNG 파일 선택</h1>
+    <div class="form-group">
+      <label for="atlasFile">Atlas 파일 선택 (.txt 또는 .atlas)</label>
+      <input type="file" id="atlasFile" accept=".txt,.atlas,.bytes">
+    </div>
+    <div class="form-group">
+      <label for="pngFile">PNG 파일 선택</label>
+      <input type="file" id="pngFile" accept=".png">
+    </div>
+    <button id="processButton">분할 실행</button>
+    <div id="result" class="result-container"></div>
+  </div>
+
+  <script>
+    // 범용 회전 함수: 캔버스를 주어진 각도(degree)만큼 회전
+    function rotateCanvas(canvas, angle) {
+      const rad = angle * Math.PI / 180;
+      const sin = Math.abs(Math.sin(rad));
+      const cos = Math.abs(Math.cos(rad));
+      const width = canvas.width;
+      const height = canvas.height;
+      const newWidth = Math.ceil(width * cos + height * sin);
+      const newHeight = Math.ceil(width * sin + height * cos);
+      let rotated = document.createElement('canvas');
+      rotated.width = newWidth;
+      rotated.height = newHeight;
+      let rctx = rotated.getContext('2d');
+      rctx.save();
+      rctx.translate(newWidth / 2, newHeight / 2);
+      rctx.rotate(rad);
+      rctx.drawImage(canvas, -width / 2, -height / 2);
+      rctx.restore();
+      return rotated;
+    }
+
+    // Atlas 파일 파서: 각 영역(region)의 이름, bounds, rotate, offsets 정보를 파싱
+    function parseAtlas(text) {
+        const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+        const regions = [];
+        let i = 0;
+
+        // 첫 줄이 PNG 파일명일 경우 건너뛰기
+        if (lines[0].toLowerCase().endsWith('.png')) {
+            i = 1;
+        }
+
+        // 헤더 부분(속성이 포함된 줄) 건너뛰기
+        while (i < lines.length && lines[i].includes(':')) {
+            i++;
+        }
+
+        // 각 영역(region) 파싱
+        while (i < lines.length) {
+            const regionName = lines[i];
+            i++;
+            let bounds = null, offsets = null, rotate = 0;
+
+            while (i < lines.length && lines[i].includes(':')) {
+                const [key, value] = lines[i].split(":").map(s => s.trim());
+                const lowerKey = key.toLowerCase();
+
+                if (lowerKey === 'bounds') {
+                    const nums = value.split(',').map(s => parseInt(s.trim()));
+                    if (nums.length >= 4) {
+                        bounds = { x: nums[0], y: nums[1], width: nums[2], height: nums[3] };
+                    }
+                } else if (lowerKey === 'rotate') {
+                    rotate = parseFloat(value);
+                } else if (lowerKey === 'offsets') {
+                    const nums = value.split(',').map(s => parseInt(s.trim()));
+                    if (nums.length >= 4) {
+                        offsets = { x: nums[0], y: nums[1], width: nums[2], height: nums[3] };
+                    }
+                }
+                i++;
+            }
+
+            if (bounds) {
+                console.log(`Region: ${regionName}, bounds: ${JSON.stringify(bounds)}, offsets: ${JSON.stringify(offsets)}, rotate: ${rotate}`);
+                regions.push({ name: regionName, bounds: bounds, offsets: offsets, rotate: rotate });
+            }
+        }
+        return regions;
+    }
+
+    // 영역 자르기 함수: rotate가 90 또는 -90이면 width와 height를 교환해서 추출
+    function cropRegion(image, region) {
+        let { x, y, width, height } = region.bounds;
+        let canvas = document.createElement('canvas');
+        let ctx = canvas.getContext('2d');
+
+        // 🔥 rotate:90인 경우 width ↔ height 교환하여 올바르게 자르기
+        if (region.rotate === 90) {
+            let temp = width;
+            width = height;
+            height = temp;
+        }
+
+        console.log(`✂️ Cropping: ${region.name} → x=${x}, y=${y}, width=${width}, height=${height}`);
+
+        // 🌟 올바르게 크롭하기 (rotate 신경 안 씀)
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(image, x, y, width, height, 0, 0, width, height);
+
+        return canvas;
+    }
+
+    // 추출된 이미지 정보를 저장할 전역 배열
+    const extractedImages = [];
+
+    document.getElementById('processButton').addEventListener('click', function() {
+        const atlasFileInput = document.getElementById('atlasFile');
+        const pngFileInput = document.getElementById('pngFile');
+        const resultDiv = document.getElementById('result');
+        resultDiv.innerHTML = ""; // 결과 초기화
+        extractedImages.length = 0;
+
+        if (atlasFileInput.files.length === 0 || pngFileInput.files.length === 0) {
+            alert("Atlas 파일과 PNG 파일 모두 선택해 주세요.");
+            return;
+        }
+
+        const atlasFile = atlasFileInput.files[0];
+        const pngFile = pngFileInput.files[0];
+
+        const readerAtlas = new FileReader();
+        const readerPNG = new FileReader();
+
+        // 🔥 `.bytes` 파일 확장자도 허용
+        let atlasFileName = atlasFile.name;
+        if (atlasFileName.endsWith(".bytes")) {
+            atlasFileName = atlasFileName.replace(".bytes", ".txt");
+        }
+
+        readerAtlas.onload = function(e) {
+            const atlasText = e.target.result;
+            const regions = parseAtlas(atlasText);
+
+            readerPNG.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const ul = document.createElement('ul');
+                    regions.forEach(region => {
+                        const canvas = cropRegion(img, region);
+                        const dataURL = canvas.toDataURL("image/png");
+                        extractedImages.push({ name: region.name + ".png", dataURL: dataURL });
+                        const li = document.createElement('li');
+                        const thumbnail = document.createElement('img');
+                        thumbnail.src = dataURL;
+                        thumbnail.className = "thumbnail";
+                        const link = document.createElement('a');
+                        link.href = dataURL;
+                        link.download = region.name + ".png";
+                        link.textContent = region.name + ".png";
+                        li.appendChild(thumbnail);
+                        li.appendChild(link);
+                        ul.appendChild(li);
+                    });
+                    resultDiv.appendChild(ul);
+                    // ZIP 저장 버튼 생성
+                    const zipButton = document.createElement('button');
+                    zipButton.textContent = "ZIP로 저장";
+                    zipButton.addEventListener('click', createAndDownloadZip);
+                    resultDiv.appendChild(zipButton);
+                }
+                img.src = event.target.result;
+            }
+            readerPNG.readAsDataURL(pngFile);
+        }
+
+        // 🔥 `.bytes` 파일도 `.txt`처럼 처리해서 읽기
+        readerAtlas.readAsText(atlasFile);
+    });
+
+    document.getElementById('atlasFile').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+
+    // 🔥 `*.atlas.bytes` 파일만 허용
+    if (file && !file.name.endsWith(".atlas.bytes")) {
+        alert("❌ 오류: '*.atlas.bytes' 확장자만 선택할 수 있습니다!");
+        event.target.value = ""; // 선택한 파일 초기화
+    }
+});
+
+
+    function createAndDownloadZip() {
+        const zip = new JSZip();
+        extractedImages.forEach(file => {
+            const base64Data = file.dataURL.split(',')[1];
+            zip.file(file.name, base64Data, {base64: true});
+        });
+        zip.generateAsync({type:"blob"}).then(function(content) {
+            saveAs(content, "extracted_images.zip");
+        });
+    }
+</script>
+
+</body>
+</html>
