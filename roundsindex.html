@@ -272,6 +272,9 @@
       text-shadow: 2px 2px 6px rgba(0,0,0,0.7), 0 0 25px rgba(255,255,255,0.7);
       width: 100%;
     }
+    #calculate-btn, #reset-btn {
+  display: none;
+}
 
     /* 모바일 최적화: 컨테이너와 폰트 크기 조정 */
     @media (max-width: 480px) {
@@ -303,6 +306,7 @@
         font-size: 14px;
       }
     }
+
   </style>
 </head>
 <body>
@@ -346,7 +350,8 @@
       <input type="radio" id="difficulty-hell" name="difficulty" value="불지옥">
       <label for="difficulty-hell">불지옥</label>
     </div>
-
+<!--             -->
+    <!--             -->
     <button id="calculate-btn">계산하기</button>
     <button id="reset-btn">초기화</button>
 
