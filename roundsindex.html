@@ -56,23 +56,24 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
+      
       box-sizing: border-box;
       overflow-y: auto;
     }
 
     /* 고기 계산기 컨테이너 */
     .container {
-      width: 90%;
-      max-width: 600px;
-      background: var(--container-bg);
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      box-sizing: border-box;
-      margin-bottom: 20px;
-      animation: fadeInContainer 1s ease-out;
-    }
+  width: 90%;
+  max-width: 600px;
+  background: var(--container-bg);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  box-sizing: border-box;
+  margin-bottom: 20px;
+  margin-top: 50px; /* 상단에서 50px 간격 추가 */
+  animation: fadeInContainer 1s ease-out;
+}
     header h1 {
       text-align: center;
       color: var(--secondary-color);
@@ -231,8 +232,8 @@
 
     /* 원형 네비게이션 버튼 */
     .round-btn {
-      width: 120px;
-      height: 120px;
+      width: 60px;
+      height: 60px;
       background-color: #fff;
       border-radius: 50%;
       display: flex;
@@ -295,8 +296,8 @@
         padding: 8px;
       }
       .round-btn {
-        width: 100px;
-        height: 100px;
+        width: 40px;
+        height: 40px;
       }
       .round-btn span {
         font-size: 14px;
@@ -315,17 +316,17 @@
     <!-- 입력 섹션 -->
     <div class="input-section">
       <label for="meat-input">입력값:</label>
-      <input type="text" id="meat-input" placeholder="양의 정수를 입력하세요">
+      <input type="text" id="meat-input" placeholder="정수를 입력하세요">
     </div>
 
     <!-- 입력 타입 라디오 버튼 (입력값 아래) -->
     <div class="input-type">
       <input type="radio" id="type-meat" name="inputType" value="meat" checked>
-      <label for="type-meat">고기개수</label>
+      <label for="type-meat">고기<br>개수</label>
       <input type="radio" id="type-round" name="inputType" value="round">
       <label for="type-round">판수</label>
       <input type="radio" id="type-마족" name="inputType" value="마족 소환권">
-      <label for="type-마족">마족 소환권</label>
+      <label for="type-마족">마족<br>소환권</label>
       <input type="radio" id="type-골드" name="inputType" value="골드">
       <label for="type-골드">골드</label>
       <input type="radio" id="type-다이아" name="inputType" value="다이아">
@@ -339,7 +340,7 @@
       <input type="radio" id="difficulty-hard" name="difficulty" value="어려움">
       <label for="difficulty-hard">어려움</label>
       <input type="radio" id="difficulty-very-hard" name="difficulty" value="매우 어려움">
-      <label for="difficulty-very-hard">매우 어려움</label>
+      <label for="difficulty-very-hard">매우<br>어려움</label>
       <input type="radio" id="difficulty-easy" name="difficulty" value="쉬움">
       <label for="difficulty-easy">쉬움</label>
       <input type="radio" id="difficulty-hell" name="difficulty" value="불지옥">
@@ -361,10 +362,6 @@
 
   <div class="container13">
     <div class="button-container13">
-      <button class="round-btn" id="btn1" onclick="navigate('roundsindex.html')">
-        <img src="https://github.com/SaeDing/NoInvadePls/blob/main/img/a.PNG?raw=true" alt="A">
-        <span>고기</span>
-      </button>
       <button class="round-btn" id="btn2" onclick="navigate('길드대전.html')">
         <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/1.png?raw=true" alt="B">
         <span>길드</span>
@@ -405,7 +402,7 @@
       "쉬움": { "마족 소환권": 2, "잡동사니 소환권": 2, 다이아: 160, 골드: 3200, 경험치: 3200, 잼: 80, 뺑뺑이: 240 },
       "불지옥": { "마족 소환권": 7, "잡동사니 소환권": 7, 다이아: 480, 골드: 40000, 경험치: 3200, 잼: 80, 뺑뺑이: 240 }
     };
-
+  
     // 실시간 업데이트를 위한 이벤트 핸들러 추가
     document.getElementById('calculate-btn').addEventListener('click', calculate);
     document.getElementById('meat-input').addEventListener('keydown', function(event) {
@@ -426,7 +423,7 @@
         calculate();
       });
     });
-
+  
     function calculate() {
       const meatCount = parseInt(document.getElementById('meat-input').value, 10);
       const difficulty = document.querySelector('input[name="difficulty"]:checked').value;
@@ -445,9 +442,9 @@
       roundsEl.textContent = '';
       estimatedTimeEl.textContent = '';
       rewardsEl.innerHTML = '';
-
+  
       if (isNaN(meatCount) || meatCount <= 0) {
-        errorMsgEl.textContent = '양의 정수를 입력하세요!';
+        errorMsgEl.textContent = '정수를 입력하세요!';
         return;
       }
       if (inputType === "meat" && (meatCount % 10 !== 0)) {
@@ -484,20 +481,28 @@
       estimatedTimeEl.textContent = `예상 시간 : ${estimatedTimeText}`;
       
       const rewards = rewardsData[difficulty];
-      const rewardsText = Object.entries(rewards)
-        .map(([key, value]) => {
-          return `${key}: ${(value * rounds).toLocaleString()}`;
-        })
-        .join(', ')
-        .replace(/, 골드:/, ',<br>골드:');
-      
+      // 원하는 그룹 설정: [그룹1, 그룹2, 그룹3, 그룹4]
+      const groups = [
+        ["마족 소환권", "잡동사니 소환권"],
+        ["다이아", "골드"],
+        ["경험치", "잼"],
+        ["뺑뺑이"]
+      ];
+  
+      const rewardsText = groups
+        .map(group => group
+          .map(key => `${key}: ${(rewards[key] * rounds).toLocaleString()}`)
+          .join(' , ')
+        )
+        .join('<br>');
+  
       rewardsEl.innerHTML = `보상 : ${rewardsText}`;
     }
-
+  
     function navigate(page) {
       window.location.href = page;
     }
-
+  
     function updateButtonStyles() {
       const labels = document.querySelectorAll('.difficulty-buttons label');
       labels.forEach(label => label.style.boxShadow = '');
@@ -506,20 +511,20 @@
         selectedButton.style.boxShadow = '0 0 8px rgba(255,99,71,0.5)';
       }
     }
-
+  
     document.getElementById('reset-btn').addEventListener('click', () => {
       document.getElementById('meat-input').value = '';
       ['error-msg', 'start-time', 'end-time', 'rounds', 'estimated-time', 'rewards']
         .forEach(id => document.getElementById(id).textContent = '');
     });
-
+  
     document.addEventListener('DOMContentLoaded', () => {
       const defaultDiff = document.querySelector('input[name="difficulty"][value="SS"]');
       if (defaultDiff) {
         defaultDiff.checked = true;
       }
     });
-
+  
     (function() {
       const images = ["img/back1.png", "img/back2.png", "img/back3.png"];
       const randomImage = images[Math.floor(Math.random() * images.length)];
@@ -527,5 +532,6 @@
       bgDiv.style.backgroundImage = `url('${randomImage}')`;
     })();
   </script>
+  
 </body>
 </html>
