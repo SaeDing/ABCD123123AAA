@@ -91,6 +91,7 @@
     .input-section label {
       font-size: 1rem;
       flex: 1;
+      margin-left: 90px; /* 원하는 픽셀로 조절 가능 */
     }
     .input-section input {
       flex: 2;
@@ -464,14 +465,21 @@
         errorMsgEl.textContent = '정수를 입력하세요!';
         return;
       }
-      if (inputType === "meat" && (meatCount % 10 !== 0)) {
-        errorMsgEl.textContent = '고기 개수는 10의 배수여야 합니다!';
-        return;
-      }
+   
+
+
+
+
+
+
+
+
+
       
       let rounds;
       if (inputType === "meat") {
-        rounds = meatCount / 10;
+        const adjustedMeatCount = Math.floor(meatCount / 10) * 10;
+rounds = adjustedMeatCount / 10;
       } else if (inputType === "round") {
         rounds = meatCount;
       } else if (inputType === "마족 소환권" || inputType === "골드" || inputType === "다이아") {
