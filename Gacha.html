@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=360, initial-scale=1.0">
+  <title>군단장 뽑기 시뮬레이터</title>
+  <style>
+    /* 고정된 360x640 픽셀 크기로 동일한 세로 모드 구현 */
+    #container {
+      width: 360px;
+      height: 640px;
+      margin: 20px auto;
+      border: 2px solid #333;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      font-family: Arial, sans-serif;
+      color: #fff;
+      overflow: auto;
+      position: relative;
+    }
+    /* ::before를 사용하여 배경 이미지 적용 및 투명도 0.3 */
+    #container::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('Gmap.png') no-repeat center center;
+      background-size: cover;
+      opacity: 0.3;
+      z-index: -1;
+    }
+    h1 {
+      text-align: center;
+      margin: 10px 0;
+      font-size: 20px;
+      text-shadow: 1px 1px 2px #000;
+    }
+    /* 컨트롤 패널 스타일 */
+    #controls {
+      text-align: center;
+      margin: 10px 0;
+    }
+    /* 버튼, 리스트박스, 입력창, 라벨 스타일 (라벨 텍스트는 검정색) */
+    #controls button,
+    #controls select,
+    #controls input[type="number"],
+    #controls label {
+      padding: 8px;
+      margin: 5px;
+      border-radius: 5px;
+      border: none;
+      font-size: 14px;
+      color: black;
+    }
+    #controls button {
+      background-color: rgba(0,0,0,0.6);
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    #controls button:hover {
+      background-color: rgba(0,0,0,0.8);
+    }
+    /* 로그창 스타일 */
+    #log {
+      background-color: rgba(0,0,0,0.5);
+      height: 250px;
+      margin: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-y: auto;
+      font-size: 14px;
+      text-shadow: 1px 1px 2px #000;
+    }
+    /* 최종 요약 영역 (로그 아래) */
+    #finalSummary {
+      background-color: rgba(255,255,255,0.8);
+      color: black;
+      padding: 8px;
+      margin: 10px;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <h1>군단장 뽑기 시뮬레이터</h1>
+    <!-- 컨트롤 영역 -->
+    <div id="controls">
+      <button id="pull1">1회 뽑기</button>
+      <button id="pull11">11회 뽑기</button>
+      <button id="pull100">100회 뽑기</button>
+      <button id="pull5000">5천회 뽑기</button>
+      <br>
+      <input type="number" id="customCount" placeholder="NN회 뽑기" min="1" style="width:80px;">
+      <button id="pullNN">뽑기</button>
+      <br>
+      <!-- 군단장 특선 -> 군단장 픽업 -->
+      <label for="special">군단장 픽업:</label>
+      <select id="special">
+        <option value="none">없음</option>
+      </select>
+      <br>
+      <!-- 진행 상태 및 누적 개수 라벨 -->
+      <label id="pullStatus"></label><br>
+      <label id="pullCount"></label><br>
+      <button id="pickupMax">픽업 군단장<br>만렙까지 뽑기</button>
+      <button id="reset">초기화</button>
+    </div>
+    <!-- 로그창 -->
+    <div id="log"></div>
+    <!-- 최종 요약 영역 -->
+    <div id="finalSummary">픽업 군단장 레벨: 0 (0장 뽑음, 67장 남음)</div>
+  </div>
+
+  <script>
+    // 전역 변수: 진행 중인 픽업 시뮬레이션의 interval ID
+    let pickupInterval = null;
+
+    // 각 등급별 유닛 배열 (군단장은 아래 배열로 변경)
+    const units = {
+      "하급 마족": ["새싹이", "스리슬쩍냥", "샤키", "미라씨", "식빵 복서", "해골 궁수"],
+      "중급 마족": ["캔드리", "포크몬", "돌팔이", "꼬꼬질라", "역병 의사", "악마 토끼"],
+      "상급 마족": ["그린딩딩", "할로윈 퀸", "로큰롤스", "빅 헤드", "오우거 전사"],
+      "마계 공작": ["선인장 건맨", "카우보이 밥", "메카콩", "스시 선생"],
+      "군단장": ["마녀", "스핑", "죽음의 기사", "보루", "라이양", "오크 라이더", "데드베어", "잭 오", "빅토리어스", "프랑키", "눈보라 예티", "슈퍼시바", "개굴 단장", "우주인", "해골룡", "전투 달팽이", "메카 좀비", "크래이지 핫도그", "미믹", "드라큐"]
+    };
+
+    // 각 등급별 뽑기 확률 (총 100%)
+    const probabilities = {
+      "하급 마족": 42,
+      "중급 마족": 27,
+      "상급 마족": 19,
+      "마계 공작": 10,
+      "군단장": 2
+    };
+
+    // 군단장 픽업 옵션 채우기
+    const specialSelect = document.getElementById('special');
+    units["군단장"].forEach(unit => {
+      const option = document.createElement('option');
+      option.value = unit;
+      option.textContent = unit;
+      specialSelect.appendChild(option);
+    });
+
+    // DOM 요소
+    const logDiv = document.getElementById('log');
+    const pullStatusLabel = document.getElementById('pullStatus');
+    const pullCountLabel = document.getElementById('pullCount');
+    const finalSummaryDiv = document.getElementById('finalSummary');
+
+    // 로그 추가 함수 (append)
+    function addLog(message, rarity) {
+      const p = document.createElement('p');
+      p.textContent = message;
+      if (rarity === "군단장") p.style.color = "#FF8C00";      // 찐한 오렌지색
+      else if (rarity === "마계 공작") p.style.color = "#D8BFD8"; // 연보라
+      else if (rarity === "상급 마족") p.style.color = "#ADD8E6"; // 연파랑
+      else if (rarity === "중급 마족") p.style.color = "#90EE90"; // 연초록
+      else if (rarity === "하급 마족") p.style.color = "#696969"; // 찐한 회색
+      logDiv.appendChild(p);
+      logDiv.scrollTop = 0;
+    }
+
+    // 새 로그를 맨 위에 삽입하는 함수
+    function addLogAtTop(message, rarity) {
+      const p = document.createElement('p');
+      p.textContent = message;
+      if (rarity === "군단장") p.style.color = "#FF8C00";
+      else if (rarity === "마계 공작") p.style.color = "#D8BFD8";
+      else if (rarity === "상급 마족") p.style.color = "#ADD8E6";
+      else if (rarity === "중급 마족") p.style.color = "#90EE90";
+      else if (rarity === "하급 마족") p.style.color = "#696969";
+      logDiv.insertBefore(p, logDiv.firstChild);
+      logDiv.scrollTop = 0;
+    }
+
+    // 평범한 로그(검정색) 추가 함수
+    function addPlainLog(message) {
+      const p = document.createElement('p');
+      p.textContent = message;
+      p.style.color = "black";
+      logDiv.appendChild(p);
+      logDiv.scrollTop = 0;
+    }
+
+    // 로그창 및 라벨 초기화 (진행 중이면 interval 중지 및 최종 요약 초기화)
+    function resetLog() {
+      if (pickupInterval !== null) {
+        clearInterval(pickupInterval);
+        pickupInterval = null;
+      }
+      logDiv.innerHTML = "";
+      pullStatusLabel.innerText = "";
+      pullCountLabel.innerText = "";
+      finalSummaryDiv.innerText = "픽업 군단장 레벨: 0 (0장 뽑음, 67장 남음)";
+      document.getElementById('pickupMax').disabled = false;
+    }
+
+    // 뽑기 전 등급 결정 (가중치 적용)
+    function drawRarity() {
+      let rand = Math.random() * 100;
+      let sum = 0;
+      for (let key in probabilities) {
+        sum += probabilities[key];
+        if (rand < sum) return key;
+      }
+      return null;
+    }
+
+    // 등급에 따른 유닛 결정 함수
+    function drawUnit(rarity) {
+      if (rarity !== "군단장") {
+        const arr = units[rarity];
+        return arr[Math.floor(Math.random() * arr.length)];
+      } else {
+        const specialChoice = document.getElementById('special').value;
+        const arr = units["군단장"];
+        if (specialChoice !== "none") {
+          if (Math.random() < 0.5) return specialChoice;
+          else {
+            const others = arr.filter(item => item !== specialChoice);
+            return others[Math.floor(Math.random() * others.length)];
+          }
+        } else {
+          return arr[Math.floor(Math.random() * arr.length)];
+        }
+      }
+    }
+
+    // 유닛의 등급 반환 함수
+    function getRarity(unit) {
+      for (let key in units) {
+        if (units[key].includes(unit)) return key;
+      }
+      return "";
+    }
+
+    // 누적 카드 수를 기준으로 픽업 캐릭터 레벨 계산 함수
+    function calculateLevel(count) {
+      const thresholds = [
+        { level: 1, count: 1 },
+        { level: 2, count: 2 },
+        { level: 3, count: 3 },
+        { level: 4, count: 4 },
+        { level: 5, count: 5 },
+        { level: 6, count: 6 },
+        { level: 7, count: 7 },
+        { level: 8, count: 8 },
+        { level: 9, count: 9 },
+        { level: 10, count: 10 },
+        { level: 11, count: 12 },
+        { level: 12, count: 14 },
+        { level: 13, count: 16 },
+        { level: 14, count: 18 },
+        { level: 15, count: 21 },
+        { level: 16, count: 25 },
+        { level: 17, count: 30 },
+        { level: 18, count: 40 },
+        { level: 19, count: 52 },
+        { level: 20, count: 67 }
+      ];
+      let lvl = 0;
+      for (let i = 0; i < thresholds.length; i++) {
+        if (count >= thresholds[i].count) {
+          lvl = thresholds[i].level;
+        } else {
+          break;
+        }
+      }
+      return lvl;
+    }
+
+    // 최종 요약 영역 업데이트 함수 (실시간 업데이트용)
+    function updateFinalSummary(pickupCount) {
+      let remaining = 67 - pickupCount;
+      if (remaining < 0) remaining = 0;
+      const level = calculateLevel(pickupCount);
+      finalSummaryDiv.innerText = "픽업 군단장 레벨: " + level + " (" + pickupCount + "장 뽑음, " + remaining + "장 남음)";
+    }
+
+    // 일반 뽑기 시뮬레이션 함수 (simulate)
+    function simulate(count) {
+      resetLog();
+      const desired = document.getElementById('special').value;
+      let pickupCount = 0; // 선택된 픽업 카드 누적 개수
+      if (count >= 11) {
+        const resultCount = {};
+        for (let i = 0; i < count; i++) {
+          const rarity = drawRarity();
+          const unit = drawUnit(rarity);
+          if (rarity === "군단장") {
+            resultCount[unit] = (resultCount[unit] || 0) + 2;
+            if (unit === desired && desired !== "none") {
+              pickupCount += 2;
+            }
+          } else {
+            resultCount[unit] = (resultCount[unit] || 0) + 1;
+          }
+        }
+        const rarityOrder = ["군단장", "마계 공작", "상급 마족", "중급 마족", "하급 마족"];
+        let resultArray = [];
+        for (let unit in resultCount) {
+          let rarity = getRarity(unit);
+          resultArray.push({ unit: unit, count: resultCount[unit], rarity: rarity });
+        }
+        resultArray.sort((a, b) => {
+          if (a.unit === desired && desired !== "none") return -1;
+          if (b.unit === desired && desired !== "none") return 1;
+          let aIndex = rarityOrder.indexOf(a.rarity);
+          let bIndex = rarityOrder.indexOf(b.rarity);
+          if (aIndex !== bIndex) return aIndex - bIndex;
+          return a.unit.localeCompare(b.unit);
+        });
+        resultArray.forEach(item => {
+          addLog(item.unit + " x" + item.count + "개", item.rarity);
+        });
+      } else {
+        for (let i = 0; i < count; i++) {
+          const rarity = drawRarity();
+          const unit = drawUnit(rarity);
+          if (rarity === "군단장") {
+            addLog("[" + rarity + "] " + unit + " (x2) 뽑혔습니다.", rarity);
+            if (unit === desired && desired !== "none") {
+              pickupCount += 2;
+            }
+          } else {
+            addLog("[" + rarity + "] " + unit + " 뽑혔습니다.", rarity);
+          }
+        }
+      }
+      updateFinalSummary(pickupCount);
+      logDiv.scrollTop = 0;
+    }
+
+    // 픽업 군단장 만렙까지 뽑기 시뮬레이션 함수
+    // - 진행 상태 라벨: "nn회 뽑기중! / 현재까지 nn장! 남은 개수 (67 - 누적)장!"
+    // - 최대 5000회 제한, 실패 시 메시지 출력
+    // - 뽑는 동안 실시간으로 최종 요약 영역 업데이트 (픽업 캐릭터 레벨)
+    function simulateUntilMax() {
+      resetLog();
+      const pickupButton = document.getElementById('pickupMax');
+      pickupButton.disabled = true;
+      const desired = document.getElementById('special').value;
+      if (desired === "none") {
+        addLogAtTop("원하는 군단장을 선택하세요.", "");
+        pickupButton.disabled = false;
+        return;
+      }
+      let countDesired = 0;
+      let totalPulls = 0;
+      let lastDesiredLine = "";
+      // 집계 객체 (5개 범주)
+      let aggregate = {
+        "군단장": {},
+        "마계 공작": {},
+        "상급 마족": {},
+        "중급 마족": {},
+        "하급 마족": {}
+      };
+      pickupInterval = setInterval(() => {
+        const rarity = drawRarity();
+        const unit = drawUnit(rarity);
+        totalPulls++;
+        pullStatusLabel.innerText = totalPulls + "회 뽑기중!";
+        pullCountLabel.innerText = "현재까지 " + countDesired + "장! 남은 개수 " + (67 - countDesired) + "장!";
+        updateFinalSummary(countDesired);
+        if (["군단장", "마계 공작", "상급 마족", "중급 마족", "하급 마족"].includes(rarity)) {
+          if (rarity === "군단장") {
+            aggregate["군단장"][unit] = (aggregate["군단장"][unit] || 0) + 2;
+          } else {
+            aggregate[rarity][unit] = (aggregate[rarity][unit] || 0) + 1;
+          }
+        }
+        if (rarity === "군단장") {
+          if (unit === desired) {
+            countDesired += 2;
+            lastDesiredLine = "[" + rarity + "] " + unit + " (x2) 뽑혔습니다. (누적 " + countDesired + ")";
+          }
+          addLogAtTop("[" + rarity + "] " + unit + " (x2) 뽑혔습니다. (누적 " + countDesired + ")", rarity);
+        } else {
+          addLogAtTop("[" + rarity + "] " + unit + " 뽑혔습니다.", rarity);
+        }
+        // 최대 5000회 제한 처리 (실패)
+        if (totalPulls >= 5000 && countDesired < 67) {
+          clearInterval(pickupInterval);
+          pickupInterval = null;
+          resetLog();
+          addLog("5천회를 전부 뽑았습니다.", "군단장");
+          addLog("만렙에 실패했습니다.", "군단장");
+          addLog("현재 뽑은 개수 (" + countDesired + ") 필요한 개수 (67)", "군단장");
+          const summaryOrder = ["군단장", "마계 공작", "상급 마족", "중급 마족", "하급 마족"];
+          summaryOrder.forEach(category => {
+            let line = "뽑은 " + category + ": ";
+            for (let name in aggregate[category]) {
+              line += name + " x" + aggregate[category][name] + ", ";
+            }
+            line = line.replace(/, $/, "");
+            addLog(line, category);
+          });
+          updateFinalSummary(countDesired);
+          pickupButton.disabled = false;
+        }
+        // 목표 달성 성공
+        if (countDesired >= 67) {
+          clearInterval(pickupInterval);
+          pickupInterval = null;
+          resetLog();
+          addLog("총 " + totalPulls + "회 뽑아서 만렙이 되었습니다.", "군단장");
+          addLog("", "");
+          addLog(lastDesiredLine, "군단장");
+          const summaryOrder = ["군단장", "마계 공작", "상급 마족", "중급 마족", "하급 마족"];
+          summaryOrder.forEach(category => {
+            let line = "뽑은 " + category + ": ";
+            for (let name in aggregate[category]) {
+              line += name + " x" + aggregate[category][name] + ", ";
+            }
+            line = line.replace(/, $/, "");
+            addLog(line, category);
+          });
+          updateFinalSummary(countDesired);
+          pickupButton.disabled = false;
+        }
+      }, 10);
+    }
+
+    // 이벤트 연결
+    document.getElementById('pull1').addEventListener('click', () => simulate(1));
+    document.getElementById('pull11').addEventListener('click', () => simulate(11));
+    document.getElementById('pull100').addEventListener('click', () => simulate(100));
+    document.getElementById('pull5000').addEventListener('click', () => simulate(5000));
+    document.getElementById('pullNN').addEventListener('click', () => {
+      const count = parseInt(document.getElementById('customCount').value);
+      if (!isNaN(count) && count > 0) simulate(count);
+    });
+    document.getElementById('pickupMax').addEventListener('click', simulateUntilMax);
+    document.getElementById('reset').addEventListener('click', resetLog);
+  </script>
+</body>
+</html>
