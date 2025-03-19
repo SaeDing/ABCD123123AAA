@@ -2,160 +2,742 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=360, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>군단장 뽑기 시뮬레이터</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
   <style>
-    /* 고정된 360x640 픽셀 크기로 동일한 세로 모드 구현 */
-    #container {
-      width: 360px;
-      height: 640px;
-      margin: 20px auto;
-      border: 2px solid #333;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
-      font-family: Arial, sans-serif;
-      color: #FF8C00;
-      overflow: auto;
-      position: relative;
+    :root {
+      --primary-color: #007AFF;
+      --secondary-color: #5AC8FA;
+      --accent-color: #34C759;
+      --text-light: #F8F9FA;
+      --text-dark: #212529;
+      --background-color: #121212;
+      --card-bg: rgba(30, 30, 30, 0.8);
+      --legendary-color: #FFD700;
+      --epic-color: #9370DB;
+      --rare-color: #4EA8DE;
+      --uncommon-color: #60D394;
+      --common-color: #A0A0A0;
     }
-    /* ::before를 사용하여 배경 이미지 적용 및 투명도 0.4 */
-    #container::before {
-      content: "";
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+    }
+
+    body {
+      background-color: var(--background-color);
+      color: var(--text-light);
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 0;
+      margin: 0;
+      position: fixed;
+      font-size: 14px; /* 기본 폰트 크기 조정 */
+    }
+
+    #app-container {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+      height: 100vh;
+      max-height: 100vh;
+      background-color: var(--card-bg);
+      border-radius: 0;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #app-background {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: url('Gmap.png') no-repeat center center;
-      background-size: cover;
-      opacity: 0.6;
+      background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+      opacity: 0.1;
       z-index: -1;
     }
-    h1 {
+
+    header {
+      background-color: var(--primary-color);
+      color: var(--text-light);
+      padding: 15px 10px;
       text-align: center;
-      margin: 10px 0;
-      font-size: 20px;
-      text-shadow: 1px 1px 2px #000;
+      border-radius: 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: visible;
     }
-    /* 컨트롤 패널 스타일 */
-    #controls {
-      text-align: center;
-      margin: 10px 0;
-      margin-bottom: 5px;
+
+    header h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin: 0;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      z-index: 2;
+      position: relative;
+      white-space: nowrap;
+      overflow: visible;
     }
-    /* 버튼, 리스트박스, 입력창, 라벨 스타일 (라벨 텍스트는 검정색) */
-    #controls button,
-    #controls select,
-    #controls input[type="number"],
-    #controls label {
-      padding: 3px;
-      margin: 5px;
-      border-radius: 5px;
-      border: none;
-      font-size: 14px;
-      color: black;
-    }
-    #controls button {
-      background-color: rgba(0,0,0,0.6);
-      color: #fff;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-    #controls button:hover {
-      background-color: rgba(0,0,0,0.8);
-    }
-    /* 로그창 스타일 */
-    #log {
-      margin-top: 5px;
-      background-color: rgba(0,0,0,0.5);
-      bottom: 25px;
-      height: 320px;
-      margin: 10px;
-      padding: 10px;
-      border-radius: 5px;
-      overflow-y: auto;
-      font-size: 14px;
-      text-shadow: 1px 1px 2px #000;
-      position: relative; /* 내부에 절대 위치 요소 배치 */
-    }
-    /* 로그 메시지 영역 */
-    #logContent {
-      /* 로그창 패딩을 고려하여 여유분 */
-      padding-top: 40px;
-    }
-    /* 로그창 내부 버튼 영역 */
-    #logButtons {
+
+    header::after {
+      content: '';
       position: absolute;
-      top: 5px;
-      right: 5px;
+      top: -20px;
+      right: -20px;
+      width: 100px;
+      height: 100px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+    }
+
+    .controls-section {
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .controls-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .pull-btn {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      flex: 1;
+      min-width: 65px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pull-btn:hover {
+      opacity: 0.9;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .pull-btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .pull-btn.highlight {
+      background-color: var(--accent-color);
+    }
+
+    #pull-custom-container {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+    }
+
+    #customCount {
+      flex: 1;
+      border-radius: 50px;
+      border: 2px solid var(--primary-color);
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 10px 15px;
+      font-size: 0.9rem;
+      color: var(--text-dark);
+      outline: none;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    #customCount:focus {
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 2px rgba(247, 37, 133, 0.25);
+    }
+
+    #pullNN {
+      padding: 10px 20px;
+    }
+
+    .select-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .select-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      white-space: nowrap;
+      color: var(--text-light);
+    }
+
+    #special {
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 2px solid var(--primary-color);
+      background-color: rgba(255, 255, 255, 0.9);
+      color: var(--text-dark);
+      font-size: 0.9rem;
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23007AFF' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: calc(100% - 8px) center;
+      padding-right: 28px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    }
+
+    #special:focus {
+      border-color: var(--accent-color);
+      box-shadow: 0 0 8px rgba(52, 199, 89, 0.4);
+    }
+
+    /* 제거된 status-labels 스타일 */
+
+    .log-section {
+      flex: 1;
+      margin: 10px 15px;
+      border-radius: 15px;
+      background-color: rgba(0, 0, 0, 0.4);
+      box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-height: 250px;
+    }
+
+    .log-header {
+      display: flex;
+      padding: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .log-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-light);
+    }
+
+    .log-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .log-action-btn {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: var(--text-light);
+      border: none;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .log-action-btn:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .log-action-btn.primary {
+      background-color: var(--primary-color);
+    }
+
+    .log-action-btn.primary:hover {
+      background-color: var(--accent-color);
+    }
+
+    #logContent {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
       display: flex;
       flex-direction: column;
       gap: 5px;
+      max-height: 300px;
     }
-    #logButtons button {
-      padding: 3px;
-      font-size: 12px;
-      background-color: rgba(0,0,0,0.6);
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s;
+
+    .log-entry {
+      padding: 6px 8px;
+      border-radius: 6px;
+      background-color: rgba(255, 255, 255, 0.05);
+      font-size: 0.85rem;
+      animation: fadeIn 0.3s ease;
+      border-left: 3px solid transparent;
     }
-    #logButtons button:hover {
-      background-color: rgba(0,0,0,0.8);
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    /* 최종 요약 영역 (로그 아래) */
-    #finalSummary {
-      background-color: rgba(255,255,255,0.8);
-      color: black;
+
+    .log-entry.legendary {
+      border-left-color: var(--legendary-color);
+    }
+
+    .log-entry.epic {
+      border-left-color: var(--epic-color);
+    }
+
+    .log-entry.rare {
+      border-left-color: var(--rare-color);
+    }
+
+    .log-entry.uncommon {
+      border-left-color: var(--uncommon-color);
+    }
+
+    .log-entry.common {
+      border-left-color: var(--common-color);
+    }
+
+    .summary-section {
+      margin: 10px 15px 15px 15px;
+      padding: 12px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .summary-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-light);
+      opacity: 0.8;
+    }
+
+    .summary-content {
+      font-size: 0.9rem;
+      line-height: 1.4;
+      color: var(--text-light);
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 8px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 5px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+
+    /* 애니메이션 오버레이 제거 */
+
+    .statistics-section {
+      padding: 12px;
+      margin: 0 15px 15px;
+      border-radius: 12px;
+      background-color: rgba(255, 255, 255, 0.05);
+      display: none;
+    }
+
+    .statistics-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text-light);
+      text-align: center;
+    }
+
+    .statistics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .stat-card {
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
       padding: 8px;
-      margin: 10px;
-      border-radius: 5px;
-      font-size: 14px;
-      white-space: pre-wrap; /* 줄바꿈 문자 인식 */
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--accent-color);
+      margin-bottom: 3px;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    /* Sound Effect Button */
+    .sound-toggle {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 1.2rem;
+      cursor: pointer;
+      z-index: 10;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+
+    .sound-toggle:hover {
+      color: rgba(255, 255, 255, 0.9);
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    /* 다크모드 토글 제거 */
+
+    /* 라이트 테마 제거 - 항상 다크모드 */
+
+    /* Media Queries */
+    /* 미디어 쿼리 - 모바일 vs 데스크탑 */
+    @media (max-width: 767px) {
+      /* 모바일 세로 모드 */
+      body {
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      #app-container {
+        width: 100%;
+        height: 100vh;
+        max-width: 100%;
+        max-height: 100vh;
+        border-radius: 0;
+      }
+      
+      .controls-section {
+        padding: 8px 10px; /* 패딩 상단 줄임 */
+      }
+      
+      .controls-row {
+        margin-bottom: 6px; /* 여백 줄임 */
+        gap: 6px; /* 간격 줄임 */
+      }
+
+      .pull-btn {
+        font-size: 0.75rem;
+        padding: 5px 6px; /* 패딩 줄임 */
+      }
+      
+      .log-section {
+        min-height: 170px; /* 크게 줄임 */
+        margin: 5px 10px;
+      }
+      
+      #logContent {
+        max-height: 170px; /* 크게 줄임 */
+      }
+      
+      .summary-section, .statistics-section {
+        margin: 5px 10px;
+        padding: 6px; /* 패딩 더 줄임 */
+      }
+      
+      .statistics-section {
+        display: block;
+      }
+      
+      /* 헤더 높이 줄임 */
+      header {
+        padding: 10px 8px; /* 패딩 줄임 */
+      }
+      
+      header h1 {
+        font-size: 1.3rem; /* 폰트 크기 줄임 */
+      }
+      
+      /* 360 x 740 해상도 대응 */
+      .statistics-grid {
+        display: flex;
+        flex-direction: column; /* 세로로 배치하여 공간 확보 */
+        gap: 3px; /* 간격 더 줄임 */
+      }
+      
+      .stat-card {
+        flex: 1;
+        padding: 4px; /* 패딩 줄임 */
+        margin-bottom: 0;
+      }
+      
+      .stat-value {
+        font-size: 0.9rem;
+        margin-bottom: 1px; /* 여백 줄임 */
+      }
+      
+      .stat-label {
+        font-size: 0.7rem;
+      }
+      
+      .statistics-title {
+        margin-bottom: 3px; /* 여백 줄임 */
+        font-size: 0.8rem;
+      }
+      
+      /* 진행도 섹션 여백 줄임 */
+      .summary-section {
+        gap: 3px;
+        padding: 6px; /* 패딩 줄임 */
+        margin-bottom: 5px; /* 여백 줄임 */
+      }
+      
+      .summary-title {
+        font-size: 0.75rem;
+      }
+      
+      .summary-content {
+        font-size: 0.8rem;
+        line-height: 1.3; /* 줄 간격 줄임 */
+      }
+      
+      .progress-bar-container {
+        height: 6px; /* 높이 줄임 */
+        margin-top: 3px; /* 여백 줄임 */
+      }
+    }
+    
+    /* 작은 모바일 화면에 대한 추가 조정 */
+    @media (max-width: 374px) {
+      .pull-btn {
+        font-size: 0.65rem;
+        padding: 4px 5px;
+        min-width: 45px;
+      }
+      
+      .log-section {
+        min-height: 160px; /* 더 줄임 */
+      }
+      
+      #logContent {
+        max-height: 160px; /* 더 줄임 */
+      }
+      
+      .stat-value {
+        font-size: 0.8rem;
+      }
+      
+      .stat-label {
+        font-size: 0.6rem;
+      }
+    }
+    
+    @media (min-width: 768px) {
+      /* 태블릿과 데스크탑 - 가로 모드 */
+      body {
+        padding: 0;
+        overflow: auto;
+        position: static;
+        height: auto;
+      }
+      
+      #app-container {
+        width: 90%;
+        max-width: 1000px;
+        height: auto;
+        min-height: 600px;
+        margin: 20px auto;
+        border-radius: 16px;
+        overflow: visible;
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        grid-template-rows: auto 1fr auto;
+        grid-template-areas:
+          "header header"
+          "controls log"
+          "stats summary";
+        gap: 15px;
+        padding: 15px;
+      }
+      
+      header {
+        grid-area: header;
+        border-radius: 12px;
+        margin-bottom: 15px;
+      }
+      
+      .controls-section {
+        grid-area: controls;
+        padding: 15px;
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 12px;
+        height: auto;
+      }
+      
+      .log-section {
+        grid-area: log;
+        margin: 0;
+        border-radius: 12px;
+      }
+      
+      .summary-section {
+        grid-area: summary;
+        margin: 0;
+      }
+      
+      .statistics-section {
+        grid-area: stats;
+        display: block;
+        margin: 0;
+      }
+      
+      header h1 {
+        font-size: 1.8rem;
+      }
+      
+      .pull-btn {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+      }
     }
   </style>
 </head>
 <body>
-  <div id="container">
-    <h1>군단장 뽑기 시뮬레이터</h1>
-    <!-- 컨트롤 영역 -->
-    <div id="controls">
-      <button id="pull1">1회 뽑기</button>
-      <button id="pull11">11회 뽑기</button>
-      <button id="pull100">100회 뽑기</button>
-      <button id="pull5000">5천회 뽑기</button>
-      <br>
-      <input type="number" id="customCount" placeholder="NN회 뽑기" min="1" style="width:80px;">
-      <button id="pullNN">뽑기</button>
-      <br>
-      <!-- 군단장 특선 -> 군단장 픽업 -->
-      <label for="special">군단장 픽업:</label>
-      <select id="special">
-        <option value="none">없음</option>
-      </select>
-      <br>
-      <!-- 진행 상태 및 누적 개수 라벨 -->
-      <label id="pullStatus"></label><br>
-      <label id="pullCount"></label><br>
-    </div>
-    <!-- 로그창 -->
-    <div id="log">
-      <!-- 로그 메시지 영역 -->
-      <div id="logContent"></div>
-      <!-- 로그창 내부 버튼 영역 (픽업 군단장, 초기화) -->
-      <div id="logButtons">
-        <button id="pickupMax">픽업 군단장<br>만렙까지 뽑기</button>
-        <button id="reset">초기화</button>
+  <div id="app-container">
+    <div id="app-background"></div>
+    
+    <button class="sound-toggle" id="soundToggle">🔊</button>
+    
+    <header>
+      <h1>군단장 뽑기 시뮬레이터</h1>
+    </header>
+    
+    <section class="controls-section">
+      <div class="controls-row">
+        <button id="pull1" class="pull-btn">1회</button>
+        <button id="pull11" class="pull-btn">11회</button>
+        <button id="pull100" class="pull-btn">100회</button>
+        <button id="pull1000" class="pull-btn highlight">1000회</button>
+        <button id="pull5000" class="pull-btn">5000회</button>
       </div>
-    </div>
-    <!-- 최종 요약 영역 -->
-    <div id="finalSummary">픽업 군단장 레벨: 0 (0장 뽑음, 67장 남음)</div>
+      
+      <div class="controls-row">
+        <div id="pull-custom-container">
+          <input type="number" id="customCount" placeholder="원하는 횟수" min="1">
+          <button id="pullNN" class="pull-btn">뽑기</button>
+        </div>
+      </div>
+      
+      <div class="select-container">
+        <span class="select-label">군단장 픽업:</span>
+        <select id="special">
+          <option value="none">없음</option>
+        </select>
+      </div>
+      
+      <div class="log-actions" style="margin-top: 10px;">
+        <button id="pickupMax" class="pull-btn highlight" style="flex: 1;">만렙까지 뽑기</button>
+        <button id="reset" class="pull-btn" style="flex: 1;">초기화</button>
+      </div>
+    </section>
+    
+    <section class="log-section">
+      <div class="log-header">
+        <div class="log-title">뽑기 결과</div>
+      </div>
+      <div id="logContent"></div>
+    </section>
+    
+    <section class="summary-section">
+      <div class="summary-title">픽업 캐릭터 진행도</div>
+      <div id="finalSummary" class="summary-content">픽업 군단장 레벨: 0 (0장 뽑음, 67장 남음)</div>
+      <div class="progress-bar-container">
+        <div id="levelProgress" class="progress-bar" style="width: 0%"></div>
+      </div>
+    </section>
+    
+    <section class="statistics-section">
+      <div class="statistics-title">뽑기 통계</div>
+      <div class="statistics-grid">
+        <div class="stat-card">
+          <div id="totalPullsStat" class="stat-value">0</div>
+          <div class="stat-label">총 뽑기 횟수</div>
+        </div>
+        <div class="stat-card">
+          <div id="legendaryRateStat" class="stat-value">0%</div>
+          <div class="stat-label">군단장 확률</div>
+        </div>
+        <div class="stat-card">
+          <div id="pickupRateStat" class="stat-value">0%</div>
+          <div class="stat-label">픽업 만렙</div>
+        </div>
+      </div>
+    </section>
   </div>
 
+  <!-- 애니메이션 오버레이 제거 -->
+
   <script>
-    // 전역 변수: 진행 중인 픽업 시뮬레이션의 interval ID
-    let pickupInterval = null;
+    // 소리 효과 활성화 변수
+    let soundEnabled = true;
+    
+    // 전역 진행도 변수
+    let globalPickupCount = 0;
+    
+    // 누적 결과 저장 변수
+    let cumulativeResults = {
+      "군단장": {},
+      "마계 공작": {},
+      "상급 마족": {},
+      "중급 마족": {},
+      "하급 마족": {}
+    };
+    
+    // 통계 변수
+    let totalStats = {
+      totalPulls: 0,
+      legendaryCount: 0,
+      pickupCount: 0
+    };
+
+    // 소리 효과 로드
+    const sounds = {
+      common: new Audio("data:audio/wav;base64,UklGRlQFAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YTAFAACAgICAgICAgICAgICAgICAgICAgICAgICAf3hxeH+AfXZ1eHx6dnR5fYB8dXN2eXt5eHp6eXl5eXl6enp7fHx9fX5/gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgH96eXt7e3t9fX1+fn19fHx7e3t7e3t8fH19fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f4CAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAf3p5en+AgXx7fIF8dXN2eHl3dXp9fnx6fYGDfnh4fIGDgXx7foOFgHl5fIGDgX18f4iMioJ7e4CEgHx8fpCYkHtt0tXJwAAAeIeQiXFnZnGDjZGMgn+Dh4iHh4aEgXt1cXBycnR2eHp7l/0KAACcwuP02LmYgYWQl4+D//z//xwIAADGy8bC5gYAAHpvZF12eHFsrwYAADOkw7xdw+3z7gkWIhoQBAAAi5SPkQsGAAB0EQAAZoiVh/728vPu7ezr7vP19/r7/wQIDA4RDg0KBwUCAQAAAP7AvsG+vr83ZMzW+gsAAIktEg0UERHHBwAAot//+4ZSQkJEQT84Pj9APz04OJobBwAAid3u+BkHAADN/f34CSMoIRH8CyAiHiH2m5KLhPT///8XL0Q8J/4WKSwjF7TFy9L4BwAAld//++4SGRsWDg0QExYYGBgYFhMKAygwKBkPAQAAAAD7jJCPihYIAAB+AQ50dG1nZP8AcHt2cvy+tbK09QMAAJmOiYfFEwAAj5KRjf4EGzpAPDAaAwAA/v8BBQgMDhEUFRUVFBMRDwwJBQIAAP/o0cvHyMs8HSAkHxkRBwkNEBH42drb3wYAAACHh4iJioqKioqKioqKioqKioiHh4eGhoWFhYWFhYWGh4eIioqKioqKioqKioqKioqKioqKiomJiYmIiIiIiIiIiIiIiIiIiImJiYmJiYqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKiYmJiYiIiIiIiIiIiIiIiIiIiIiIiIiJiYmJiYqKioqKioqKioqKioqKioqKioqKioqKiYmJiYmJiIiIiIiIiIiIiIiIiIiIiYmJiYmJioqKioqKioqKioqKioqKioqKioqKiomJiYmJiIiIiIiIiIiIiIiIiIiIiImJiYmJiYmKioqKioqKioqKioqKioqKioqKiomJiYmIiIiIh4eHh4eHh4eHh4eHiIiIiImJiYmKioqKioqKioqKioqKioqKioqKiomJiYmIiIiIh4eHh4eHh4eHh4eHiIiIiImJiYmKioqKioqKioqKioqKioqKioqKioqKiYmJiYiIiIiHh4eHh4eHh4eHh4iIiIiJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiI"),
+      legendary: new Audio("data:audio/wav;base64,UklGRiQTAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQATAACAfn9+gICAf35+foCAgH9+fn+AgIB/fn5/gICAf35/gICAgH9+f4CAgH9/f4CAgH9/f4CAgH9/f4GBgYB/gIGBgYCAf4CAgIB/f4CAgIB/f4CAgIB/gICAgIB/gICAgIB/gICAgIB/gICAgIB/gICAgIB/gICAgIB/gICAgIB/gICAgIB/gICAgIB/gICAgIB/gICAgIB/gICAgIB/gICAgIB/gICAgIB/gICAgIB/gICAgIB/gICAgIB/gICAgIB/gICAgIB/gICAgIB/gICAgIB/gICAgIB/gICAgIB/gICAgIB/gICAgIB/gICAgIB/gICAgH9/gICAgH9/f4CAgH9/f4CAfn5+foCAgH5+fn+AgIB+fn5/gICAfn5+f4CAgH5+fn+AgIB+fn5/gICAfn5+f4CAgH5+fn+AgIB+fn5/gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB9fX1+gICAfX19foCAgH19fX6AgIB8fHx9fX18fHx8fX19fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0c3NzcnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycXFxcXFxcXFxcXFxcXFxcXFxcXFxcXFxcXFxcXFxcXFxcXFxcXFxcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwb29vb29vb29vb29vb29vb29vb29vb29vb29vb29vb29vb29vb29ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1sbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxra2tra2tra2tra2tra2tra2tra2tra2tra2tra2tra2tra2tra2trampqampqampqampqampqampqampqampqampqampqampqampqaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXFxcXFxcXFxcXFxcXFxcXFxcXFxcXFxcXFxcXFxcXFxcXFxcXFxcW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1taWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NSUlJSUlJSUlJSUlJSUlJSUlJSUlJSUlJSUlJSUlJSUlJSUlJSUlJRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQT39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0c3NzcnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycXFxcXFxcXFxcXFxcXFxcXFxcXFxcXFxcXFxcXFxcXFxcXFxcXFxcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwb29vb29vb29vb29vb29vb29vb29vb29vb29vb29vb29vb29vb29ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1sbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxra2tra2tra2tra2tra2tra2tra2tra2tra2tra2tra2tra2tra2trampqampqampqampqampqampqampqampqampqampqampqampqaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXFxcXFxcXFxcXFxcXFxcXFxcXFxcXFxcXFxcXFxcXFxcXFxcXFxcW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1taWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NSUlJSUlJSUlJSUlJSUlJSUlJSUlJSUlJSUlJSUlJSUlJSUlJSUlJRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQT39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0c3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3NzdHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAf39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0c3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3NzdHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4")
+    };
 
     // 각 등급별 유닛 배열 (군단장은 아래 배열로 변경)
     const units = {
@@ -164,6 +746,15 @@
       "상급 마족": ["그린딩딩", "할로윈 퀸", "로큰롤스", "빅 헤드", "오우거 전사"],
       "마계 공작": ["선인장 건맨", "카우보이 밥", "메카콩", "스시 선생"],
       "군단장": ["아마존", "마녀", "스핑", "죽음의 기사", "보루", "라이양", "오크 라이더", "데드베어", "잭 오", "빅토리어스", "프랑키", "눈보라 예티", "슈퍼시바", "개굴 단장", "우주인", "해골룡", "전투 달팽이", "메카 좀비", "크래이지 핫도그", "미믹", "드라큐"]
+    };
+
+    // 등급 매핑
+    const rarityClasses = {
+      "군단장": "legendary",
+      "마계 공작": "epic",
+      "상급 마족": "rare",
+      "중급 마족": "uncommon",
+      "하급 마족": "common"
     };
 
     // 각 등급별 뽑기 확률 (총 100%)
@@ -175,8 +766,30 @@
       "군단장": 2
     };
 
+    // DOM 요소
+    const logContent = document.getElementById('logContent');
+    const finalSummaryDiv = document.getElementById('finalSummary');
+    const levelProgressBar = document.getElementById('levelProgress');
+    const soundToggleBtn = document.getElementById('soundToggle');
+    const specialSelect = document.getElementById('special'); // 픽업 선택 요소
+    
+    // 통계 요소
+    const totalPullsStat = document.getElementById('totalPullsStat');
+    const legendaryRateStat = document.getElementById('legendaryRateStat');
+    const pickupRateStat = document.getElementById('pickupRateStat');
+    const averageCostStat = document.getElementById('averageCostStat');
+    
     // 군단장 픽업 옵션 채우기
-    const specialSelect = document.getElementById('special');
+    // 옵션 초기화 (중복 방지)
+    specialSelect.innerHTML = '';
+    
+    // 먼저 "없음" 옵션 추가
+    const noneOption = document.createElement('option');
+    noneOption.value = "none";
+    noneOption.textContent = "없음";
+    specialSelect.appendChild(noneOption);
+
+    // 그 다음 군단장들 추가
     units["군단장"].forEach(unit => {
       const option = document.createElement('option');
       option.value = unit;
@@ -184,57 +797,86 @@
       specialSelect.appendChild(option);
     });
 
-    // DOM 요소
-    const logContent = document.getElementById('logContent');
-    const pullStatusLabel = document.getElementById('pullStatus');
-    const pullCountLabel = document.getElementById('pullCount');
-    const finalSummaryDiv = document.getElementById('finalSummary');
+    // 소리 토글 기능
+    soundToggleBtn.addEventListener('click', () => {
+      soundEnabled = !soundEnabled;
+      soundToggleBtn.textContent = soundEnabled ? '🔊' : '🔇';
+    });
 
-    // 로그 추가 함수 (append): logContent에 메시지 추가
-    function addLog(message, rarity) {
-      const p = document.createElement('p');
-      p.textContent = message;
-      if (rarity === "군단장") p.style.color = "#FF8C00";      // 찐한 오렌지색
-      else if (rarity === "마계 공작") p.style.color = "#D8BFD8"; // 연보라
-      else if (rarity === "상급 마족") p.style.color = "#ADD8E6"; // 연파랑
-      else if (rarity === "중급 마족") p.style.color = "#90EE90"; // 연초록
-      else if (rarity === "하급 마족") p.style.color = "#696969"; // 찐한 회색
-      logContent.appendChild(p);
-      logContent.scrollTop = logContent.scrollHeight;
-    }
-
-    // 새 로그를 맨 위에 삽입하는 함수
-    function addLogAtTop(message, rarity) {
-      const p = document.createElement('p');
-      p.textContent = message;
-      if (rarity === "군단장") p.style.color = "#FF8C00";
-      else if (rarity === "마계 공작") p.style.color = "#D8BFD8";
-      else if (rarity === "상급 마족") p.style.color = "#ADD8E6";
-      else if (rarity === "중급 마족") p.style.color = "#90EE90";
-      else if (rarity === "하급 마족") p.style.color = "#696969";
-      logContent.insertBefore(p, logContent.firstChild);
-      logContent.scrollTop = logContent.scrollHeight;
-    }
-
-    // 평범한 로그(검정색) 추가 함수
-    function addPlainLog(message) {
-      const p = document.createElement('p');
-      p.textContent = message;
-      p.style.color = "black";
-      logContent.appendChild(p);
-      logContent.scrollTop = logContent.scrollHeight;
-    }
-
-    // 로그창 및 라벨 초기화 (진행 중이면 interval 중지 및 최종 요약 초기화)
-    function resetLog() {
-      if (pickupInterval !== null) {
-        clearInterval(pickupInterval);
-        pickupInterval = null;
+    // 소리만 재생하는 함수 (애니메이션 제거)
+    function playSound(rarity) {
+      if (!soundEnabled) return;
+      
+      if (rarity === "군단장") {
+        sounds.legendary.play();
+      } else {
+        sounds.common.play();
       }
-      logContent.innerHTML = ""; // 로그 메시지만 초기화
-      pullStatusLabel.innerText = "";
-      pullCountLabel.innerText = "";
+    }
+
+    // 로그 추가 함수
+    function addLog(message, rarity) {
+      const logEntry = document.createElement('div');
+      logEntry.className = 'log-entry';
+      logEntry.textContent = message;
+      
+      if (rarity) {
+        logEntry.classList.add(rarityClasses[rarity]);
+      }
+      
+      logContent.appendChild(logEntry);
+    }
+
+    // 로그 맨 위에 추가 함수
+    function addLogAtTop(message, rarity) {
+      const logEntry = document.createElement('div');
+      logEntry.className = 'log-entry';
+      logEntry.textContent = message;
+      
+      if (rarity) {
+        logEntry.classList.add(rarityClasses[rarity]);
+      }
+      
+      logContent.insertBefore(logEntry, logContent.firstChild);
+      logContent.scrollTop = 0;
+    }
+
+    // 로그창 초기화 (통계는 초기화하지 않음, 픽업 진행도도 유지)
+    function clearLog() {
+      logContent.innerHTML = "";
+      
+      // 픽업 진행도는 유지, 화면 업데이트
+      updateFinalSummary(globalPickupCount);
+    }
+    
+    // 모든 것을 초기화 (통계 포함, 픽업 진행도 포함)
+    function resetLog() {
+      clearLog();
+      
+      // 통계 초기화
+      totalStats = {
+        totalPulls: 0,
+        legendaryCount: 0,
+        pickupCount: 0
+      };
+      
+      // 누적 결과 초기화
+      cumulativeResults = {
+        "군단장": {},
+        "마계 공작": {},
+        "상급 마족": {},
+        "중급 마족": {},
+        "하급 마족": {}
+      };
+      
+      // 픽업 진행도 초기화
+      globalPickupCount = 0;
       finalSummaryDiv.innerText = "픽업 군단장 레벨: 0 (0장 뽑음, 67장 남음)";
+      levelProgressBar.style.width = "0%";
+      
+      totalPullsStat.textContent = "0";
+      legendaryRateStat.textContent = "0%";
+      pickupRateStat.textContent = "0%";
     }
 
     // 뽑기 전 등급 결정 (가중치 적용)
@@ -311,7 +953,7 @@
       return lvl;
     }
 
-    // 최종 요약 영역 업데이트 함수 (실시간 업데이트용)
+    // 최종 요약 영역 업데이트 함수
     function updateFinalSummary(pickupCount) {
       const required = 67; // 필요한 카드 수
       let remaining = required - pickupCount;
@@ -323,74 +965,183 @@
       const level = calculateLevel(pickupCount);
       let extraText = (extra > 0) ? " " + extra + "장 더 뽑음" : "";
       finalSummaryDiv.innerText = "픽업 군단장 레벨: " + level + " \n(" + pickupCount + "장 뽑음, " + remaining + "장 남음" + extraText + ")";
+      
+      // 프로그레스 바 업데이트
+      const progressPercentage = Math.min(100, (pickupCount / required) * 100);
+      levelProgressBar.style.width = progressPercentage + "%";
+      
+      // 전역 변수 업데이트
+      globalPickupCount = pickupCount;
     }
 
-    // 일반 뽑기 시뮬레이션 함수 (simulate)
+    // 통계 업데이트 함수
+    function updateStatistics(totalPulls, legendaryCount, pickupCount) {
+      totalStats.totalPulls += totalPulls;
+      totalStats.legendaryCount += legendaryCount;
+      totalStats.pickupCount += pickupCount;
+      
+      totalPullsStat.textContent = totalStats.totalPulls;
+      
+      // 군단장 확률
+      if (totalStats.totalPulls > 0) {
+        const legendaryRate = (totalStats.legendaryCount / totalStats.totalPulls * 100).toFixed(2);
+        legendaryRateStat.textContent = legendaryRate + "%";
+        
+        // 픽업 획득율 (현재 뽑은 픽업 개수 / 목표 67장)의 비율
+        const progressPercent = (globalPickupCount / 67 * 100);
+        pickupRateStat.textContent = Math.min(100, progressPercent.toFixed(2)) + "%";
+      }
+    }
+
+    // 일반 뽑기 시뮬레이션 함수
     function simulate(count) {
-      resetLog();
       const desired = document.getElementById('special').value;
-      let pickupCount = 0; // 선택된 픽업 카드 누적 개수
+      let pickupCount = globalPickupCount; // 전역 변수에서 현재 픽업 카운트 가져오기
+      let legendaryCount = 0; // 이번 시뮬레이션에서의 군단장 개수
+      
+      // 이번 뽑기 결과 저장용 임시 객체
+      let currentPullResults = {
+        "군단장": {},
+        "마계 공작": {},
+        "상급 마족": {},
+        "중급 마족": {},
+        "하급 마족": {}
+      };
+      
       if (count >= 11) {
-        const resultCount = {};
         for (let i = 0; i < count; i++) {
           const rarity = drawRarity();
           const unit = drawUnit(rarity);
+          
+          // 군단장 소리는 마지막 1개만 재생
+          if (rarity === "군단장" && i === count - 1) {
+            playSound(rarity);
+          }
+          
           if (rarity === "군단장") {
-            resultCount[unit] = (resultCount[unit] || 0) + 2;
+            currentPullResults[rarity][unit] = (currentPullResults[rarity][unit] || 0) + 2;
+            legendaryCount++;
             if (unit === desired && desired !== "none") {
               pickupCount += 2;
             }
           } else {
-            resultCount[unit] = (resultCount[unit] || 0) + 1;
+            currentPullResults[rarity][unit] = (currentPullResults[rarity][unit] || 0) + 1;
           }
         }
-        const rarityOrder = ["군단장", "마계 공작", "상급 마족", "중급 마족", "하급 마족"];
-        let resultArray = [];
-        for (let unit in resultCount) {
-          let rarity = getRarity(unit);
-          resultArray.push({ unit: unit, count: resultCount[unit], rarity: rarity });
-        }
-        resultArray.sort((a, b) => {
-          if (a.unit === desired && desired !== "none") return -1;
-          if (b.unit === desired && desired !== "none") return 1;
-          let aIndex = rarityOrder.indexOf(a.rarity);
-          let bIndex = rarityOrder.indexOf(b.rarity);
-          if (aIndex !== bIndex) return aIndex - bIndex;
-          return a.unit.localeCompare(b.unit);
-        });
-        resultArray.forEach(item => {
-          addLog(item.unit + " x" + item.count + "개", item.rarity);
-        });
+        
+        // 결과 로그 표시 전에 로그 영역 비우기
+        logContent.innerHTML = "";
+        
+        // 누적 결과와 현재 결과 합쳐서 표시
+        updateAndDisplayResults(currentPullResults);
       } else {
         for (let i = 0; i < count; i++) {
           const rarity = drawRarity();
           const unit = drawUnit(rarity);
+          
+          // 소리 재생
+          playSound(rarity);
+          
           if (rarity === "군단장") {
-            addLog("[" + rarity + "] " + unit + " (x2) 뽑혔습니다.", rarity);
+            currentPullResults[rarity][unit] = (currentPullResults[rarity][unit] || 0) + 2;
+            legendaryCount++;
             if (unit === desired && desired !== "none") {
               pickupCount += 2;
             }
           } else {
-            addLog("[" + rarity + "] " + unit + " 뽑혔습니다.", rarity);
+            currentPullResults[rarity][unit] = (currentPullResults[rarity][unit] || 0) + 1;
           }
         }
+        
+        // 결과 로그 표시 전에 로그 영역 비우기
+        logContent.innerHTML = "";
+        
+        // 누적 결과와 현재 결과 합쳐서 표시
+        updateAndDisplayResults(currentPullResults);
       }
+      
       updateFinalSummary(pickupCount);
+      updateStatistics(count, legendaryCount, pickupCount);
+      
+      // 스크롤을 맨 위로 올림
+      logContent.scrollTop = 0;
+    }
+    
+    // 누적 결과와 현재 결과를 합쳐서 표시하는 함수
+    function updateAndDisplayResults(currentResults) {
+      // 등급 순서 (군단장이 먼저 표시되도록)
+      const rarityOrder = ["군단장", "마계 공작", "상급 마족", "중급 마족", "하급 마족"];
+      const desired = document.getElementById('special').value;
+      
+      // 결과 배열 준비
+      let resultArray = [];
+      
+      // 모든 등급에 대해 처리
+      rarityOrder.forEach(rarity => {
+        // 먼저 현재 결과 업데이트
+        for (let unit in currentResults[rarity]) {
+          const currentCount = currentResults[rarity][unit] || 0;
+          const prevCount = cumulativeResults[rarity][unit] || 0;
+          cumulativeResults[rarity][unit] = prevCount + currentCount;
+        }
+        
+        // 그 다음 누적 결과에 있는 모든 유닛 표시
+        for (let unit in cumulativeResults[rarity]) {
+          const totalCount = cumulativeResults[rarity][unit];
+          // 현재 뽑기에서 얻은 수량 (없으면 0)
+          const currentCount = currentResults[rarity][unit] || 0;
+          
+          resultArray.push({
+            unit: unit,
+            rarity: rarity,
+            currentCount: currentCount,
+            totalCount: totalCount,
+            isPickup: (unit === desired && desired !== "none")
+          });
+        }
+      });
+      
+      // 결과 정렬 (픽업 캐릭터를 최우선, 그 다음 군단장)
+      resultArray.sort((a, b) => {
+        // 픽업 캐릭터가 항상 최우선 (맨 위)
+        if (a.isPickup && !b.isPickup) return -1;
+        if (!a.isPickup && b.isPickup) return 1;
+        
+        // 둘 다 픽업이 아니면 등급별로 정렬
+        const aIndex = rarityOrder.indexOf(a.rarity);
+        const bIndex = rarityOrder.indexOf(b.rarity);
+        if (aIndex !== bIndex) return aIndex - bIndex;
+        
+        // 같은 등급 내에서는 이름순
+        return a.unit.localeCompare(b.unit);
+      });
+      
+      // 결과 표시
+      resultArray.forEach(item => {
+        let displayText = item.unit + " " + item.totalCount + "개";
+        if (item.currentCount > 0) {
+          displayText += " (+" + item.currentCount + ")";
+        }
+        addLog(displayText, item.rarity);
+      });
     }
 
     // 픽업 군단장 만렙까지 뽑기 시뮬레이션 함수
     function simulateUntilMax() {
-      resetLog();
+      clearLog(); // resetLog가 아닌 clearLog를 사용 (통계는 누적)
       const pickupButton = document.getElementById('pickupMax');
       pickupButton.disabled = true;
       const desired = document.getElementById('special').value;
+      
       if (desired === "none") {
         addLogAtTop("원하는 군단장을 선택하세요.", "");
         pickupButton.disabled = false;
         return;
       }
-      let countDesired = 0; // 선택된 픽업 카드 누적 개수
+      
+      let countDesired = globalPickupCount; // 전역 변수에서 현재 픽업 카운트 가져오기
       let totalPulls = 0;   // 전체 뽑은 횟수
+      let legendaryCount = 0; // 전체 군단장 개수
       let lastDesiredLine = "";
       let aggregate = {
         "군단장": {},
@@ -400,6 +1151,14 @@
         "하급 마족": {}
       };
 
+      // 이미 만렙인 경우 체크
+      if (countDesired >= 67) {
+        addLog("이미 만렙입니다! 초기화 후 다시 시도하세요.", "군단장");
+        pickupButton.disabled = false;
+        return;
+      }
+
+      // 만렙까지 뽑기 시뮬레이션
       while (true) {
         const rarity = drawRarity();
         const unit = drawUnit(rarity);
@@ -407,6 +1166,7 @@
 
         if (rarity === "군단장") {
           aggregate["군단장"][unit] = (aggregate["군단장"][unit] || 0) + 2;
+          legendaryCount++;
           if (unit === desired) {
             countDesired += 2;
             lastDesiredLine = "[" + rarity + "] " + unit + " (x2) 뽑혔습니다. (누적 " + countDesired + ")";
@@ -414,38 +1174,63 @@
         } else {
           aggregate[rarity][unit] = (aggregate[rarity][unit] || 0) + 1;
         }
-
+        
+        // 종료 조건 체크
         if (totalPulls >= 5000 && countDesired < 67) break;
         if (countDesired >= 67) break;
       }
 
-      resetLog();
       if (countDesired < 67) {
         addLog("5천회를 전부 뽑았습니다.", "군단장");
         addLog("만렙에 실패했습니다.", "군단장");
         addLog("현재 뽑은 개수 (" + countDesired + ") 필요한 개수 (67)", "군단장");
       } else {
         addLog("총 " + totalPulls + "회 뽑아서 만렙이 되었습니다.", "군단장");
-        addLog("", "");
-        addLog(lastDesiredLine, "군단장");
+        
+        // 만렙 달성 소리
+        playSound("군단장");
       }
+      
+      // 결과 정렬 및 표시
       const summaryOrder = ["군단장", "마계 공작", "상급 마족", "중급 마족", "하급 마족"];
       summaryOrder.forEach(category => {
         let line = "뽑은 " + category + ": ";
+        let unitNames = [];
+        
         for (let name in aggregate[category]) {
-          line += name + " x" + aggregate[category][name] + ", ";
+          // 픽업 캐릭터를 맨 앞으로
+          const isPickup = (name === desired && desired !== "none");
+          const unitText = name + " " + aggregate[category][name] + "개";
+          
+          if (isPickup) {
+            unitNames.unshift(unitText); // 픽업 캐릭터는 맨 앞으로
+          } else {
+            unitNames.push(unitText); // 나머지는 그대로 추가
+          }
         }
-        line = line.replace(/, $/, "");
+        
+        if (unitNames.length > 0) {
+          line += unitNames.join(", ");
+        } else {
+          line += "없음";
+        }
+        
         addLog(line, category);
       });
+      
       updateFinalSummary(countDesired);
+      updateStatistics(totalPulls, legendaryCount, countDesired);
       pickupButton.disabled = false;
+      
+      // 스크롤을 맨 위로 올림
+      logContent.scrollTop = 0;
     }
 
     // 이벤트 연결
     document.getElementById('pull1').addEventListener('click', () => simulate(1));
     document.getElementById('pull11').addEventListener('click', () => simulate(11));
     document.getElementById('pull100').addEventListener('click', () => simulate(100));
+    document.getElementById('pull1000').addEventListener('click', () => simulate(1000));
     document.getElementById('pull5000').addEventListener('click', () => simulate(5000));
     document.getElementById('pullNN').addEventListener('click', () => {
       const count = parseInt(document.getElementById('customCount').value);
@@ -453,6 +1238,11 @@
     });
     document.getElementById('pickupMax').addEventListener('click', simulateUntilMax);
     document.getElementById('reset').addEventListener('click', resetLog);
+    
+    // 픽업 변경 이벤트 추가 - 픽업이 변경되면 자동으로 초기화
+    specialSelect.addEventListener('change', () => {
+      resetLog();
+    });
   </script>
 </body>
 </html>
