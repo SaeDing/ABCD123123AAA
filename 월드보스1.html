@@ -167,6 +167,34 @@
     background-color: rgba(255, 165, 0, 0.7);
   }
   
+  /* 드래그 가능한 이미지 스타일 */
+  .drop-zone img {
+    cursor: move;
+    touch-action: none; /* 터치 시 브라우저 기본 동작 방지 */
+    -webkit-user-drag: element; /* iOS에서 드래그 지원 */
+    user-select: none;
+  }
+
+  /* 고스트 이미지 스타일 */
+  .ghost-image {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+    border-radius: 8px;
+  }
+
+  /* 모바일 최적화 */
+  @media (max-width: 768px) {
+    .drop-zone {
+      touch-action: none;
+    }
+    
+    .drop-zone:active {
+      background-color: rgba(255, 165, 0, 0.7);
+    }
+  }
+  
   /* 유닛 리스트 컨테이너: 맵 아래 영역 전부 사용 */
   .image-container {
     flex: 0.6;            /* 남은 세로 공간 자동 채움 */
@@ -308,9 +336,6 @@
       text-align: center;
     }
 
-
-
-
   </style>
 </head>
 <body>
@@ -385,11 +410,6 @@
           <div class="drop-zone" style="top:195px; left:250px;"></div>
           
 
-    
-                    
-          
-          
- 
         </div>
         <!-- 유닛 리스트 -->
 
@@ -480,6 +500,244 @@
     }
     let selectedImage = null;
     
+    // 드래그 관련 변수
+    let draggedElement = null;
+    let sourceDropZone = null;
+    let touchDragging = false;
+    let touchTarget = null;
+    let ghostImage = null;
+
+    // 터치 시작 위치
+    let startX = 0;
+    let startY = 0;
+
+    // 모든 드롭존 표시 함수
+    function showAllDropZones() {
+      dropZones.forEach(zone => {
+        zone.style.visibility = "visible";
+        zone.style.border = "1px dashed rgba(150, 150, 150, 0.8)";
+        zone.style.backgroundColor = "rgba(255, 255, 255, 0.8)";
+      });
+    }
+
+    // 빈 드롭존 숨기기 함수
+    function hideEmptyDropZones() {
+      dropZones.forEach(zone => {
+        if (!zone.querySelector('img')) {
+          zone.style.visibility = "hidden";
+        } else {
+          zone.style.border = "none";
+          zone.style.backgroundColor = "rgba(0, 0, 0, 0)";
+        }
+      });
+    }
+
+    // 특정 위치에 있는 드롭존 찾기
+    function findDropZoneAtPosition(x, y) {
+      for (const zone of dropZones) {
+        const rect = zone.getBoundingClientRect();
+        if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+          return zone;
+        }
+      }
+      return null;
+    }
+
+    // 현재 위치의 드롭존 하이라이트
+    function highlightDropZoneAtPosition(x, y) {
+      // 모든 드롭존의 기본 스타일 복원
+      dropZones.forEach(zone => {
+        zone.style.backgroundColor = "rgba(255, 255, 255, 0.8)";
+      });
+      
+      // 현재 위치 아래의 드롭존 찾기 및 강조
+      const zone = findDropZoneAtPosition(x, y);
+      if (zone) {
+        zone.style.backgroundColor = "rgba(255, 165, 0, 0.7)";
+      }
+    }
+
+    // 드래그 중 시각적 피드백을 위한 고스트 이미지 생성
+    function createGhostImage(img) {
+      // 이미 고스트 이미지가 있으면 제거
+      removeGhostImage();
+      
+      // 새 고스트 이미지 생성
+      ghostImage = document.createElement('div');
+      ghostImage.className = 'ghost-image';
+      ghostImage.style.position = 'fixed';
+      ghostImage.style.width = '40px';
+      ghostImage.style.height = '40px';
+      ghostImage.style.backgroundImage = `url(${img.src})`;
+      ghostImage.style.backgroundSize = 'contain';
+      ghostImage.style.backgroundRepeat = 'no-repeat';
+      ghostImage.style.backgroundPosition = 'center';
+      ghostImage.style.opacity = '0.7';
+      ghostImage.style.pointerEvents = 'none';
+      ghostImage.style.zIndex = '9999';
+      
+      // 초기 위치 설정
+      ghostImage.style.left = startX + 'px';
+      ghostImage.style.top = startY + 'px';
+      
+      // 페이지에 추가
+      document.body.appendChild(ghostImage);
+    }
+
+    // 고스트 이미지 제거
+    function removeGhostImage() {
+      if (ghostImage && ghostImage.parentNode) {
+        ghostImage.parentNode.removeChild(ghostImage);
+        ghostImage = null;
+      }
+    }
+    
+    // 유닛 이미지에 드래그 속성 추가하는 함수
+    function makeDraggable(img, zone) {
+      img.draggable = true;
+      
+      // PC용 드래그 이벤트
+      img.addEventListener('dragstart', function(e) {
+        draggedElement = img;
+        sourceDropZone = zone;
+        
+        // 모든 드롭존 표시
+        showAllDropZones();
+        
+        // 드래그 중인 이미지 투명도 조정
+        setTimeout(() => {
+          img.style.opacity = '0.4';
+        }, 0);
+      });
+      
+      img.addEventListener('dragend', function() {
+        img.style.opacity = '1';
+        
+        // 비어있는 드롭존 숨기기
+        setTimeout(hideEmptyDropZones, 50);
+        
+        draggedElement = null;
+        sourceDropZone = null;
+      });
+      
+      // 모바일용 터치 이벤트
+      img.addEventListener('touchstart', function(e) {
+        // 기본 터치 동작 방지
+        e.preventDefault();
+        
+        // 초기 터치 위치 저장
+        const touch = e.touches[0];
+        startX = touch.clientX;
+        startY = touch.clientY;
+        
+        // 드래그 변수 설정
+        touchTarget = img;
+        sourceDropZone = zone;
+        
+        // 드래그 시작 상태로 설정
+        setTimeout(() => {
+          // 일정 시간 후에만 드래그 시작 (탭과 드래그 구분)
+          touchDragging = true;
+          
+          // 드래그 중인 이미지 스타일 변경
+          img.style.opacity = '0.4';
+          
+          // 고스트 이미지 생성 (선택사항)
+          createGhostImage(img);
+          
+          // 모든 드롭존 표시
+          showAllDropZones();
+        }, 100);
+      });
+      
+      img.addEventListener('touchmove', function(e) {
+        if (!touchDragging) return;
+        
+        // 기본 스크롤 방지
+        e.preventDefault();
+        
+        // 현재 터치 위치
+        const touch = e.touches[0];
+        const currentX = touch.clientX;
+        const currentY = touch.clientY;
+        
+        // 고스트 이미지가 있으면 이동
+        if (ghostImage) {
+          ghostImage.style.left = (currentX - 20) + 'px';
+          ghostImage.style.top = (currentY - 20) + 'px';
+        }
+        
+        // 현재 터치 위치 아래에 있는 드롭존 찾기
+        highlightDropZoneAtPosition(currentX, currentY);
+      });
+      
+      img.addEventListener('touchend', function(e) {
+        if (!touchDragging) return;
+        
+        // 터치 종료 위치
+        const touch = e.changedTouches[0];
+        const endX = touch.clientX;
+        const endY = touch.clientY;
+        
+        // 드롭 대상 찾기
+        const targetZone = findDropZoneAtPosition(endX, endY);
+        
+        // 고스트 이미지 제거
+        removeGhostImage();
+        
+        // 유효한 드롭존을 찾았고, 원래 위치와 다른 경우
+        if (targetZone && targetZone !== sourceDropZone) {
+          // 이미 타겟 드롭존에 이미지가 있으면 제거
+          if (targetZone.querySelector('img')) {
+            targetZone.querySelector('img').remove();
+          }
+          
+          // 이미지 이동
+          sourceDropZone.removeChild(touchTarget);
+          targetZone.appendChild(touchTarget);
+          
+          // 드래그 기능 다시 적용
+          makeDraggable(touchTarget, targetZone);
+          
+          // localStorage 업데이트
+          const sourceIndex = Array.from(dropZones).indexOf(sourceDropZone);
+          const targetIndex = Array.from(dropZones).indexOf(targetZone);
+          
+          delete dropData[sourceIndex];
+          dropData[targetIndex] = touchTarget.src;
+          localStorage.setItem('dropData_page3', JSON.stringify(dropData));
+          
+          // 스타일 복원
+          targetZone.style.border = "none";
+          targetZone.style.backgroundColor = "rgba(0, 0, 0, 0)";
+        }
+        
+        // 상태 초기화
+        touchTarget.style.opacity = '1';
+        touchDragging = false;
+        touchTarget = null;
+        sourceDropZone = null;
+        
+        // 비어있는 드롭존 숨기기
+        setTimeout(hideEmptyDropZones, 50);
+      });
+      
+      // 터치 캔슬 처리
+      img.addEventListener('touchcancel', function() {
+        if (touchDragging) {
+          // 상태 초기화
+          touchTarget.style.opacity = '1';
+          removeGhostImage();
+          touchDragging = false;
+          touchTarget = null;
+          sourceDropZone = null;
+          
+          // 비어있는 드롭존 숨기기
+          setTimeout(hideEmptyDropZones, 50);
+        }
+      });
+    }
+    
     // 추가: page3 전용 드롭존 상태 저장 객체 및 기존 데이터 불러오기
     let dropData = {};
     const savedDropData = localStorage.getItem('dropData_page3');
@@ -493,13 +751,16 @@
         const img = document.createElement("img");
         img.src = dropData[index];
         img.alt = "dropped-image";
-        img.style.width = "150%";
-        img.style.height = "150%";
+        img.style.width = "120%";
+        img.style.height = "120%";
         zone.appendChild(img);
         zone.style.visibility = "visible";
         // 이미지가 있으면 테두리와 배경 제거
         zone.style.border = "none";
         zone.style.backgroundColor = "rgba(0, 0, 0, 0)";
+        
+        // 드래그 가능하게 설정
+        makeDraggable(img, zone);
       }
     });
     
@@ -550,6 +811,10 @@
           img.style.width = "150%";
           img.style.height = "150%";
           zone.appendChild(img);
+          
+          // 추가된 이미지에 드래그 기능 적용
+          makeDraggable(img, zone);
+          
           // dropData 업데이트 및 localStorage 저장 (page3 전용)
           dropData[index] = selectedImage;
           localStorage.setItem('dropData_page3', JSON.stringify(dropData));
@@ -563,6 +828,7 @@
           });
         }
       });
+      
       // 데스크톱: 더블클릭 시 이미지 제거 및 localStorage 업데이트 (page3 전용)
       zone.addEventListener("dblclick", () => {
         const img = zone.querySelector("img");
@@ -570,8 +836,11 @@
           img.remove();
           delete dropData[index];
           localStorage.setItem('dropData_page3', JSON.stringify(dropData));
+          // 이미지가 제거된 후 드롭존 스타일 업데이트
+          zone.style.visibility = "hidden";
         }
       });
+      
       // 모바일: 터치 후 더블탭 감지
       zone.addEventListener("touchend", function(e) {
         const currentTime = new Date().getTime();
@@ -582,12 +851,63 @@
             img.remove();
             delete dropData[index];
             localStorage.setItem('dropData_page3', JSON.stringify(dropData));
+            // 이미지가 제거된 후 드롭존 스타일 업데이트
+            zone.style.visibility = "hidden";
           }
           zone.lastTap = 0;
           e.preventDefault();
           return false;
         } else {
           zone.lastTap = currentTime;
+        }
+      });
+      
+      // 드롭존에 드래그오버 이벤트 추가
+      zone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        zone.style.backgroundColor = 'rgba(255, 165, 0, 0.5)';
+      });
+      
+      // 드롭존에서 드래그 벗어날 때
+      zone.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        zone.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+      });
+      
+      // 드롭존에 드롭 이벤트 추가
+      zone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        zone.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+        
+        // 드래그된 이미지가 있고, 다른 드롭존인 경우
+        if (draggedElement && sourceDropZone && sourceDropZone !== zone) {
+          // 이미 이미지가 있으면 제거
+          if (zone.querySelector('img')) {
+            zone.querySelector('img').remove();
+          }
+          
+          // 이미지 이동
+          sourceDropZone.removeChild(draggedElement);
+          zone.appendChild(draggedElement);
+          
+          // 드래그 기능 재설정
+          makeDraggable(draggedElement, zone);
+          
+          // localStorage 업데이트
+          const sourceIndex = Array.from(dropZones).indexOf(sourceDropZone);
+          const targetIndex = Array.from(dropZones).indexOf(zone);
+          
+          delete dropData[sourceIndex];
+          dropData[targetIndex] = draggedElement.src;
+          localStorage.setItem('dropData_page3', JSON.stringify(dropData));
+          
+          // 드롭존 스타일 설정
+          zone.style.border = "none";
+          zone.style.backgroundColor = "rgba(0, 0, 0, 0)";
         }
       });
     });
@@ -616,7 +936,7 @@
       const waveGoldDisplay = document.getElementById("wave-gold-display");
       waveGoldDisplay.textContent = "";
     
-      // page3 전용 캐시 데이터 초기화
+      // 추가: 캐시 데이터 초기화
       dropData = {};
       localStorage.removeItem('dropData_page3');
     });
@@ -650,17 +970,26 @@
       waveGoldDisplay.style.padding = "5px 10px";
       waveGoldDisplay.style.borderRadius = "5px";
     
-      // 100ms 대기 후 캡처 실행 (텍스트 업데이트 반영)
+      // 캡처 중에는 드롭존 테두리를 숨김
+      dropZones.forEach(zone => {
+        if (zone.querySelector('img')) {
+          zone.style.border = "none";
+        } else {
+          zone.style.visibility = "hidden";
+        }
+      });
+      
+      // 📌 100ms 대기 후 캡처 실행 (텍스트 업데이트 반영)
       setTimeout(() => {
         const mapImageElement = document.getElementById("mapImage");
-        const imageHeight = mapImageElement.clientHeight;
+        const imageHeight = mapImageElement.clientHeight; // 실제 이미지 높이 (예: 360px)
         html2canvas(document.getElementById("map-container"), {
           scrollX: 0,
           scrollY: 0,
-          height: imageHeight,
+          height: imageHeight,  // 캡처 영역 높이를 이미지 높이로 제한
           windowWidth: document.documentElement.offsetWidth,
           windowHeight: document.documentElement.offsetHeight,
-          scale: 10,
+          scale: 10,  // 🔥 기존 6 → 8로 더 고해상도 설정
           useCORS: true,
           allowTaint: true,
           backgroundColor: null
@@ -682,11 +1011,14 @@
     
     // mapImage의 실제 표시 영역 계산 후 드롭존 위치 보정
     mapImage.onload = () => {
+      // mapImage의 실제 영역 정보
       const imageRect = mapImage.getBoundingClientRect();
       const containerRect = mapContainer.getBoundingClientRect();
+      // container 내 이미지의 offset 계산
       const offsetX = imageRect.left - containerRect.left;
       const offsetY = imageRect.top - containerRect.top;
     
+      // 각 드롭존 위치 보정
       dropZones.forEach(zone => {
         const origTop = parseInt(zone.style.top, 10);
         const origLeft = parseInt(zone.style.left, 10);
@@ -695,8 +1027,23 @@
       });
     };
     
-    document.addEventListener('dragstart', function(e) {
-      e.preventDefault();
+    // 유닛 리스트의 이미지는 여전히 드래그 불가능하게 유지
+    document.querySelectorAll('.image-container img').forEach(img => {
+      img.addEventListener('dragstart', function(e) {
+        e.preventDefault(); // 유닛 리스트의 이미지는 여전히 드래그 방지
+      });
+    });
+    
+    // 전체 문서에 드래그 이벤트 추가
+    document.addEventListener('dragover', function(e) {
+      // 드래그 중일 때 드롭존이 모두 보이도록 유지
+      if (draggedElement) {
+        dropZones.forEach(zone => {
+          if (zone.style.visibility !== "visible") {
+            zone.style.visibility = "visible";
+          }
+        });
+      }
     });
     </script>
     
