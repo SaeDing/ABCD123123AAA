@@ -1,562 +1,1258 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>고기 계산기</title>
-  <style>
-    /* 컬러 및 전환 변수 설정 */
-    :root {
-      --primary-color: #007acc;
-      --secondary-color: #ff6347;
-      --bg-color: #f4f4f9;
-      --container-bg: #fff;
-      --nav-bg: #e0e0e0;
-      --transition-speed: 0.3s;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>통합 계산기 - 사냥패스 & 고기</title>
+    <style>
+        /* 공통 스타일 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
 
-    /* 초기화 */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+        body {
+            background-color: #F2F2F7;
+            color: #1C1C1E;
+            margin: 0;
+            padding: 15px;
+            overflow-x: hidden;
+            font-size: 16px;
+        }
+        
+        /* 접근성 관련 */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+        
+        /* 결과 영역 스타일 */
+        .result-area {
+            margin-top: 15px;
+        }
+        
+        .result-section {
+            margin-bottom: 15px;
+        }
+        
+        .result-divider {
+            height: 1px;
+            background-color: #E5E5EA;
+            margin: 15px 0;
+        }
+        
+        .error-message {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        /* 입력 필드에 포커스 스타일 */
+        input[type="number"]:focus, 
+        input[type="text"]:focus {
+            outline: 2px solid #007AFF;
+            box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.3);
+        }
+        
+        /* 입력 필드 유효/오류 스타일 */
+        input:valid {
+            border-color: #28a745;
+        }
+        
+        input:invalid {
+            border-color: #dc3545;
+        }
+        
+        /* 버튼 활성화 효과 */
+        .input-type label:active,
+        .difficulty-buttons label:active {
+            transform: scale(0.98);
+        }
+        
+        /* 피드백 애니메이션 */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 0.3s ease-in-out;
+        }
 
-    /* 배경용 div */
-    #background {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      background-size: cover;
-      background-position: center;
-      opacity: 0;
-      animation: fadeIn 1.5s forwards;
-    }
-    @keyframes fadeIn {
-      to { opacity: 0.2; }
-    }
+        /* 메인 레이아웃 */
+        .main-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            max-width: 1500px;
+            margin: 0 auto;
+        }
 
-    /* 컨테이너 페이드인 애니메이션 */
-    @keyframes fadeInContainer {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+        /* 배경 효과 */
+        #background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            animation: fadeIn 1.5s forwards;
+        }
+        @keyframes fadeIn {
+            to { opacity: 0.2; }
+        }
 
-    /* 전체 레이아웃 설정 */
-    body {
-      font-family: Arial, sans-serif;
-      background-color: var(--bg-color);
-      color: #333;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      
-      box-sizing: border-box;
-      overflow-y: auto;
-    }
+        @keyframes fadeInContainer {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-    /* 고기 계산기 컨테이너 */
-    .container {
-  width: 90%;
-  max-width: 600px;
-  background: var(--container-bg);
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  box-sizing: border-box;
-  margin-bottom: 20px;
-  margin-top: 50px; /* 상단에서 50px 간격 추가 */
-  animation: fadeInContainer 1s ease-out;
-}
-    header h1 {
-      text-align: center;
-      color: var(--secondary-color);
-      margin-bottom: 20px;
-      font-size: 1.8rem;
-    }
+        /* 사냥패스 계산기 스타일 - 20% 축소했지만 50% 더 키움 */
+        .hunting-pass-calculator {
+            width: 456px; /* 304px의 150% */
+            animation: fadeInContainer 0.8s ease-out;
+            order: 2; /* 사냥패스가 두번째 순서로 변경 */
+        }
 
-    /* 입력 섹션 */
-    .input-section {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    .input-section label {
-      font-size: 1rem;
-      flex: 1;
-      margin-left: 90px; /* 원하는 픽셀로 조절 가능 */
-    }
-    .input-section input {
-      flex: 2;
-      padding: 8px;
-      font-size: 1rem;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      transition: border-color var(--transition-speed);
-    }
-    .input-section input:focus {
-      border-color: var(--primary-color);
-      outline: none;
-    }
+        .hunting-container {
+            background-color: #FFFFFF;
+            border-radius: 12px;
+            box-shadow: 0 3px 9px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            margin-bottom: 12px;
+            font-size: 18px; /* 폰트 크기 증가 */
+        }
 
-    /* 입력 타입 라디오 버튼 (입력값 아래, 난이도 위) */
-    .input-type {
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-      gap: 10px;
-    }
-    .input-type label {
-  font-size: 0.9rem;
-  padding: 8px 12px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  cursor: pointer;
-  flex: 1;
-  text-align: center;
-  transition: background-color var(--transition-speed), border-color var(--transition-speed);
-  user-select: none;
-  display: flex;              /* 추가: flex 컨테이너로 전환 */
-  align-items: center;        /* 추가: 세로 중앙 정렬 */
-  justify-content: center;    /* 추가: 가로 중앙 정렬 */
-}
+        .hunting-pass-calculator h1 {
+            text-align: center;
+            margin-bottom: 23px;
+            font-size: 24px;
+            font-weight: 600;
+        }
 
-    .input-type input {
-      display: none;
-    }
-    .input-type input:checked + label {
-      background-color: #d0eaff;
-      color: var(--primary-color);
-      border-color: var(--primary-color);
-      box-shadow: 0 0 8px rgba(0,122,204,0.5);
-    }
+        .input-group {
+            margin-bottom: 12px;
+        }
 
-    /* 난이도 버튼 섹션 */
-    .difficulty-buttons {
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-      gap: 10px;
-    }
-    .difficulty-buttons label {
-      font-size: 0.9rem;
-      padding: 8px 12px;
-      background-color: #f5f5f5;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      cursor: pointer;
-      flex: 1;
-      text-align: center;
-      transition: background-color var(--transition-speed), border-color var(--transition-speed);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      user-select: none;
-    }
-    .difficulty-buttons input {
-      display: none;
-    }
-    .difficulty-buttons input:checked + label {
-      background-color: #d0f0ff;
-      color: var(--primary-color);
-      border-color: var(--primary-color);
-      box-shadow: 0 0 8px rgba(0,122,204,0.5);
-    }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 18px;
+            font-weight: 500;
+        }
 
-    /* 보상 글자 크기: 예상시간과 동일하게 1rem */
-    #rewards {
-      font-size: 1rem;
-    }
+        .input-group input[type="number"], 
+        .input-group input[type="text"] {
+            width: 100%;
+            padding: 9px;
+            border-radius: 9px;
+            border: 1px solid #E5E5EA;
+            font-size: 18px;
+            appearance: none;
+            -webkit-appearance: none;
+            margin-bottom: 5px;
+        }
 
-    /* 계산/초기화 버튼 스타일 */
-    #calculate-btn {
-      background: #fd694f;
-      transition: transform var(--transition-speed);
-    }
-    #calculate-btn:hover {
-      transform: scale(1.05);
-    }
-    #reset-btn {
-      background: #2bc786;
-      transition: transform var(--transition-speed);
-    }
-    #reset-btn:hover {
-      transform: scale(1.05);
-    }
-    button {
-  width: 100%;
-  padding: 6px 12px; /* 위/아래 6px, 좌/우 12px */
-  font-size: 1rem;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  margin-top: 20px;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  user-select: none;
-  
-}
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
 
+        .checkbox-container label {
+            margin-bottom: 0;
+            margin-left: 8px;
+            font-size: 18px;
+        }
 
-    button:hover {
-      background: #ff4500;
-    }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #E5E5EA;
+            font-size: 18px;
+        }
 
-    /* 결과 섹션 */
-    #result p {
-      margin: 10px 0;
-    }
-    #rounds .highlight {
-      color: #000;
-    }
+        .result-label {
+            font-weight: 500;
+        }
 
-    /* 네비게이션 컨테이너 (회색 배경) */
-    .container13 {
-      margin: 20px auto;
-      padding: 20px;
-      background-color: #fff;
-      border-radius: 10px;
-      text-align: center;
-      animation: fadeInContainer 1s ease-out;
-    }
-    .button-container13 {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
+        .result-value {
+            font-weight: 600;
+            color: #007AFF;
+        }
 
-    /* 원형 네비게이션 버튼 */
-    .round-btn {
-      width: 60px;
-      height: 60px;
-      font-size: 10px;
-      background-color: #fff;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border: 3px solid #fff;
-      cursor: pointer;
-      transition: transform var(--transition-speed), box-shadow var(--transition-speed);
-      position: relative;
-      overflow: hidden;
-      box-sizing: border-box;
-    }
-    .round-btn:focus {
-      outline: none;
-      box-shadow: none;
-    }
-    .round-btn:hover {
-      transform: scale(1.05) rotate(2deg);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-    }
-    .round-btn img {
-  width: 200%;
-  height: 200%;
-  object-fit: cover; /* 이미지가 버튼을 꽉 채우도록 설정 */
-  border-radius: 50%;
-}
+        .progress-container {
+            margin-top: 9px;
+            margin-bottom: 12px;
+        }
 
-.round-btn span {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  color: #fff;
-  font-size: 10px;
-  font-weight: bold;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.5); /* 텍스트 배경 추가로 가독성 향상 */
-  padding: 4px 0;
-  border-radius: 4px;
-}
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
 
-    #calculate-btn, #reset-btn {
-  display: none;
-}
+        .progress-bar {
+            height: 8px;
+            background-color: #E5E5EA;
+            border-radius: 4px;
+            overflow: hidden;
+        }
 
-    /* 모바일 최적화: 컨테이너와 폰트 크기 조정 */
-    @media (max-width: 480px) {
-      .container {
-        padding: 10px;
-        font-size: 0.9rem;
-      }
-      header h1 {
-        font-size: 1.5rem;
-      }
-      .input-section label,
-      .input-type label,
-      .difficulty-buttons label {
-        font-size: 0.8rem;
-      }
-      .input-section input {
-        font-size: 0.8rem;
-        padding: 6px;
-      }
-      button {
-        font-size: 0.85rem;
-        padding: 8px;
-      }
-      .round-btn {
-        width: 40px;
-        height: 40px;
-      }
-      .round-btn span {
-        font-size: 10px;
-      }
-    }
+        .progress-fill {
+            height: 100%;
+            background-color: #007AFF;
+            border-radius: 4px;
+            width: 0;
+            transition: width 0.5s ease-in-out;
+        }
 
-  </style>
+        .tip {
+            font-size: 15px;
+            color: #8E8E93;
+            margin-top: 3px;
+        }
+        
+        .collapsible {
+            margin-top: 9px;
+        }
+        
+        .collapsible-header {
+            background-color: #F9F9F9;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 9px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            font-size: 18px;
+        }
+        
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .collapsible-content.open {
+            max-height: 500px;
+        }
+
+        /* 고기 계산기 스타일 */
+        .meat-calculator {
+            width: 570px; /* 380px의 150% */
+            animation: fadeInContainer 0.8s ease-out 0.2s;
+            animation-fill-mode: both;
+            order: 1; /* 고기 계산기가 첫번째 순서로 변경 */
+        }
+
+        .meat-container {
+            background-color: #FFFFFF;
+            border-radius: 15px;
+            box-shadow: 0 3px 9px rgba(0, 0, 0, 0.1);
+            padding: 18px;
+            margin-bottom: 15px;
+        }
+
+        .meat-calculator h1 {
+            text-align: center;
+            color: #ff6347;
+            margin-bottom: 22px;
+            font-size: 27px;
+            font-weight: 600;
+        }
+
+        /* 입력 섹션 */
+        .input-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+        }
+        
+        .input-section label {
+            font-size: 21px;
+            flex: 1;
+        }
+        
+        .input-section input {
+            flex: 2;
+            padding: 12px;
+            font-size: 21px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            transition: border-color 0.3s;
+        }
+        
+        .input-section input:focus {
+            border-color: #007acc;
+            outline: none;
+        }
+
+        /* 입력 타입 라디오 버튼 */
+        .input-type {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 22px;
+            gap: 8px;
+        }
+        
+        .input-type label {
+            font-size: 18px;
+            padding: 9px 8px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+            transition: background-color 0.3s, border-color 0.3s;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 60px;
+        }
+
+        .input-type input {
+            display: none;
+        }
+        
+        .input-type input:checked + label {
+            background-color: #d0eaff;
+            color: #007acc;
+            border-color: #007acc;
+            box-shadow: 0 0 12px rgba(0,122,204,0.5);
+        }
+
+        /* 난이도 버튼 섹션 */
+        .difficulty-buttons {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 22px;
+            gap: 8px;
+        }
+        
+        .difficulty-buttons label {
+            font-size: 18px;
+            padding: 9px 8px;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+            transition: background-color 0.3s, border-color 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            user-select: none;
+            height: 60px;
+        }
+        
+        .difficulty-buttons input {
+            display: none;
+        }
+        
+        .difficulty-buttons input:checked + label {
+            background-color: #d0f0ff;
+            color: #007acc;
+            border-color: #007acc;
+            box-shadow: 0 0 12px rgba(0,122,204,0.5);
+        }
+
+        /* 아이콘 네비게이션 */
+        .button-container13 {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            padding: 15px 0;
+        }
+
+        .round-btn {
+            width: 60px;
+            height: 60px;
+            background-color: #fff;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 3px solid #fff;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .round-btn:hover {
+            transform: scale(1.05) rotate(2deg);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+        }
+        
+        .round-btn img {
+            width: 200%;
+            height: 200%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .round-btn span {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #fff;
+            font-size: 14px;
+            font-weight: bold;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 3px 0;
+        }
+
+        /* 미디어 쿼리 - 모바일에서 고기 계산기를 위로 */
+        @media (max-width: 1100px) {
+            .main-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .hunting-pass-calculator {
+                width: 100%;
+                max-width: 570px;
+                order: 2; /* 모바일에서는 두번째로 */
+            }
+            
+            .meat-calculator {
+                width: 100%;
+                max-width: 570px;
+                order: 1; /* 모바일에서는 첫번째로 */
+            }
+            
+            /* 모바일에서 폰트 크기 조정 */
+            .meat-calculator h1, .hunting-pass-calculator h1 {
+                font-size: 22px;
+            }
+            
+            .input-section label, .input-section input, 
+            .input-group label, .input-group input[type="number"], 
+            .input-group input[type="text"],
+            .result-item, .collapsible-header {
+                font-size: 16px;
+            }
+            
+            .input-type label, .difficulty-buttons label {
+                font-size: 14px;
+                height: 50px;
+            }
+            
+            .round-btn {
+                width: 50px;
+                height: 50px;
+            }
+        }
+    </style>
 </head>
+
 <body>
-  <div id="background"></div>
+    <div id="background"></div>
 
-  <div class="container">
-    <header>
-      <h1>고기 계산기</h1>
-    </header>
+    <div class="main-container">
+        <!-- 고기 계산기 -->
+        <div class="meat-calculator">
+            <h1>고기 계산기</h1>
 
-    <!-- 입력 섹션 -->
-    <div class="input-section">
-      <label for="meat-input">입력값:</label>
-      <input type="text" id="meat-input" placeholder="정수를 입력하세요">
+            <div class="meat-container">
+                <!-- 입력 섹션 -->
+                <div class="input-section">
+                    <label for="meat-input">입력값:</label>
+                    <input type="text" id="meat-input" inputmode="numeric" pattern="[0-9]*" placeholder="정수를 입력하세요" aria-describedby="meat-input-error">
+                </div>
+
+                <!-- 입력 타입 라디오 버튼 -->
+                <div class="input-type" role="radiogroup" aria-labelledby="input-type-label">
+                    <div id="input-type-label" class="sr-only">입력 타입 선택</div>
+                    <input type="radio" id="type-meat" name="inputType" value="meat" checked>
+                    <label for="type-meat">고기<br>개수</label>
+                    <input type="radio" id="type-round" name="inputType" value="round">
+                    <label for="type-round">판수</label>
+                    <input type="radio" id="type-마족" name="inputType" value="마족 소환권">
+                    <label for="type-마족">마족<br>소환권</label>
+                    <input type="radio" id="type-골드" name="inputType" value="골드">
+                    <label for="type-골드">골드</label>
+                    <input type="radio" id="type-다이아" name="inputType" value="다이아">
+                    <label for="type-다이아">다이아</label>
+                </div>
+
+                <!-- 난이도 버튼 섹션 -->
+                <div class="difficulty-buttons" role="radiogroup" aria-labelledby="difficulty-label">
+                    <div id="difficulty-label" class="sr-only">난이도 선택</div>
+                    <input type="radio" id="difficulty-ss" name="difficulty" value="SS" checked>
+                    <label for="difficulty-ss">SS</label>
+                    <input type="radio" id="difficulty-hard" name="difficulty" value="어려움">
+                    <label for="difficulty-hard">어려움</label>
+                    <input type="radio" id="difficulty-very-hard" name="difficulty" value="매우 어려움">
+                    <label for="difficulty-very-hard">매우<br>어려움</label>
+                    <input type="radio" id="difficulty-easy" name="difficulty" value="쉬움">
+                    <label for="difficulty-easy">쉬움</label>
+                    <input type="radio" id="difficulty-hell" name="difficulty" value="불지옥">
+                    <label for="difficulty-hell">불지옥</label>
+                </div>
+
+                <div id="result" class="result-area">
+                    <p id="error-msg" class="error-message" aria-live="assertive" style="color: red; font-size: 19px;"></p>
+                    <div class="result-section">
+                        <p id="start-time" style="font-size: 19px;"></p>
+                        <p id="end-time" style="font-size: 19px;"></p>
+                        <p id="rounds" style="font-size: 19px;"></p>
+                        <p id="estimated-time" style="font-size: 19px;"></p>
+                    </div>
+                    <div class="result-divider"></div>
+                    <div class="result-section">
+                        <p id="rewards" style="font-size: 19px;"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="meat-container">
+                <div class="button-container13">
+                    <button class="round-btn" id="btn2" onclick="navigate('길드대전.html')">
+                        <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/1.png?raw=true" alt="B">
+                        <span>길드</span>
+                    </button>
+                    <button class="round-btn" id="btn3" onclick="navigate('월드보스1.html')">
+                        <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/1m.png?raw=true" alt="C">
+                        <span>보스1</span>
+                    </button>
+                    <button class="round-btn" id="btn4" onclick="navigate('월드보스2.html')">
+                        <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/4m.png?raw=true" alt="E">
+                        <span>보스2</span>
+                    </button>
+                    <button class="round-btn" id="btn5" onclick="navigate('월드보스3.html')">
+                        <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/5m.png?raw=true" alt="F">
+                        <span>보스3</span>
+                    </button>
+                    <button class="round-btn" id="btn6" onclick="navigate('일반.html')">
+                        <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/2m.png?raw=true" alt="G">
+                        <span>일반</span>
+                    </button>
+                    <button class="round-btn" id="btn7" onclick="navigate('어려움.html')">
+                        <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/3m.png?raw=true" alt="H">
+                        <span>어려움</span>
+                    </button>
+                    <button class="round-btn" id="btn8" onclick="navigate('index.html')">
+                        <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/A.PNG?raw=true" alt="Home">
+                        <span>홈</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 사냥패스 레벨 계산기 -->
+        <div class="hunting-pass-calculator">
+            <h1>사냥패스 레벨 계산기</h1>
+
+            <div class="hunting-container">
+                <div class="input-group">
+                    <label for="currentLevel">현재 레벨</label>
+                    <input type="number" id="currentLevel" min="1" max="79" step="1" inputmode="numeric" value="1" aria-describedby="current-level-tip">
+                    <div class="tip" id="current-level-tip">1~79 사이의 값</div>
+                </div>
+
+                <div class="input-group">
+                    <label for="currentExp">현재 경험치</label>
+                    <input type="number" id="currentExp" min="0" step="1" inputmode="numeric" value="0" aria-describedby="current-exp-tip">
+                    <div class="tip" id="current-exp-tip">현재 레벨에서 모은 경험치</div>
+                </div>
+
+                <div class="input-group">
+                    <label for="gamesPerDay">플레이할 판수</label>
+                    <input type="number" id="gamesPerDay" min="1" step="1" inputmode="numeric" value="10">
+                </div>
+
+                <div class="checkbox-container">
+                    <input type="checkbox" id="doubleExp" checked aria-describedby="double-exp-description">
+                    <label for="doubleExp">하루 10판 2배 경험치</label>
+                    <span id="double-exp-description" class="sr-only">하루 첫 10판은 경험치가 2배로 적용됩니다</span>
+                </div>
+                
+                <div class="input-group" id="remainingDoubleExpContainer">
+                    <label for="remainingDoubleExp">남은 2배 경험치 판수</label>
+                    <input type="number" id="remainingDoubleExp" min="0" max="10" value="10">
+                    <div class="tip">오늘 남은 2배 경험치 판수</div>
+                </div>
+            </div>
+
+            <div class="hunting-container result-card" id="resultCard">
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>플레이 후 예상 진행도</span>
+                        <span id="futureProgressPercent">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="futureProgressFill" style="background-color: #5AC8FA;"></div>
+                    </div>
+                </div>
+                
+                <div class="result-item">
+                    <span class="result-label">플레이 후 예상 레벨</span>
+                    <span class="result-value" id="futureLevel">0</span>
+                </div>
+                
+                <div class="result-item">
+                    <span class="result-label">플레이 후 예상 경험치</span>
+                    <span class="result-value" id="futureExp">0</span>
+                </div>
+                
+                <div class="collapsible">
+                    <div class="collapsible-header" id="maxLevelHeader">
+                        <span>80레벨 달성 정보</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="collapsible-content" id="maxLevelInfo">
+                        <div class="result-item">
+                            <span class="result-label">80레벨 달성 판수</span>
+                            <span class="result-value" id="maxLevelGames">0판</span>
+                        </div>
+                        
+                        <div class="result-item">
+                            <span class="result-label">리셋 후 도달 레벨</span>
+                            <span class="result-value" id="resetLevel">0</span>
+                        </div>
+                        
+                        <div class="result-item">
+                            <span class="result-label">리셋 후 예상 경험치</span>
+                            <span class="result-value" id="resetExp">0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="collapsible">
+                    <div class="collapsible-header" id="detailsHeader">
+                        <span>상세 정보</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="collapsible-content" id="detailsContent">
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>현재 진행도</span>
+                                <span id="progressPercent">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressFill"></div>
+                            </div>
+                        </div>
+
+                        <div class="result-item">
+                            <span class="result-label">다음 레벨까지</span>
+                            <span class="result-value" id="nextLevelGames">0판</span>
+                        </div>
+
+                        <div class="result-item">
+                            <span class="result-label">만렙까지 필요한 총 판수</span>
+                            <span class="result-value" id="totalGames">0판</span>
+                        </div>
+                        
+                        <div class="result-item">
+                            <span class="result-label">2배 경험치 적용 판수</span>
+                            <span class="result-value" id="actualTotalGames">0판</span>
+                        </div>
+
+                        <div class="result-item">
+                            <span class="result-label">만렙까지 남은 경험치</span>
+                            <span class="result-value" id="remainingExp">0</span>
+                        </div>
+
+                        <div class="result-item">
+                            <span class="result-label">만렙까지 예상 소요 일수</span>
+                            <span class="result-value" id="estimatedDays">0일</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- 입력 타입 라디오 버튼 (입력값 아래) -->
-    <div class="input-type">
-      <input type="radio" id="type-meat" name="inputType" value="meat" checked>
-      <label for="type-meat">고기<br>개수</label>
-      <input type="radio" id="type-round" name="inputType" value="round">
-      <label for="type-round">판수</label>
-      <input type="radio" id="type-마족" name="inputType" value="마족 소환권">
-      <label for="type-마족">마족<br>소환권</label>
-      <input type="radio" id="type-골드" name="inputType" value="골드">
-      <label for="type-골드">골드</label>
-      <input type="radio" id="type-다이아" name="inputType" value="다이아">
-      <label for="type-다이아">다이아</label>
-    </div>
+    <script>
+        // 유틸리티 함수 모듈
+        const Utils = {
+            // 날짜 형식 포맷팅 함수
+            formatDate: function(date) {
+                return `${date.getFullYear()}년 ${String(date.getMonth() + 1).padStart(2, '0')}월 ${String(date.getDate()).padStart(2, '0')}일 ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+            },
+            
+            // 숫자 천 단위 콤마 형식 지정
+            formatNumber: function(number) {
+                return number.toLocaleString();
+            },
+            
+            // 0으로 나누기 방지
+            safeDivide: function(numerator, denominator) {
+                return denominator === 0 ? 0 : numerator / denominator;
+            },
+            
+            // 요소에 일시적인 강조 효과 추가
+            pulseEffect: function(element) {
+                element.classList.add('pulse');
+                setTimeout(() => {
+                    element.classList.remove('pulse');
+                }, 300);
+            }
+        };
 
-    <!-- 난이도 버튼 섹션 (입력 타입 아래) -->
-    <div class="difficulty-buttons">
-      <input type="radio" id="difficulty-ss" name="difficulty" value="SS" checked>
-      <label for="difficulty-ss">SS</label>
-      <input type="radio" id="difficulty-hard" name="difficulty" value="어려움">
-      <label for="difficulty-hard">어려움</label>
-      <input type="radio" id="difficulty-very-hard" name="difficulty" value="매우 어려움">
-      <label for="difficulty-very-hard">매우<br>어려움</label>
-      <input type="radio" id="difficulty-easy" name="difficulty" value="쉬움">
-      <label for="difficulty-easy">쉬움</label>
-      <input type="radio" id="difficulty-hell" name="difficulty" value="불지옥">
-      <label for="difficulty-hell">불지옥</label>
-    </div>
-<!--             -->
-    <!--             -->
-    <button id="calculate-btn">계산하기</button>
-    <button id="reset-btn">초기화</button>
+        // 사냥패스 계산기 스크립트
+        // 레벨별 필요 경험치 정의
+        const levelExpTable = {
+            1: 300,
+            2: 400,
+            3: 400,
+            4: 500,
+            5: 500,
+            6: 700,
+            7: 900,
+            8: 1100,
+            9: 1400,
+            10: 1700,
+            11: 2000,
+            12: 2200
+        };
 
-    <div id="result">
-      <p id="error-msg" style="color: red;"></p>
-      <p id="start-time"></p>
-      <p id="end-time"></p>
-      <p id="rounds"></p>
-      <p id="estimated-time"></p>
-      <p id="rewards"></p>
-    </div>
-  </div>
+        // 13레벨부터 80레벨까지는 2400 경험치
+        for (let i = 13; i <= 80; i++) {
+            levelExpTable[i] = 2400;
+        }
 
-  <div class="container13">
-    <div class="button-container13">
-      <button class="round-btn" id="btn2" onclick="navigate('길드대전.html')">
-        <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/1.png?raw=true" alt="B">
-        <span>길드</span>
-      </button>
-      <button class="round-btn" id="btn3" onclick="navigate('월드보스1.html')">
-        <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/1m.png?raw=true" alt="C">
-        <span>보스1</span>
-      </button>
-      <button class="round-btn" id="btn4" onclick="navigate('월드보스2.html')">
-        <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/4m.png?raw=true" alt="E">
-        <span>보스2</span>
-      </button>
-      <button class="round-btn" id="btn5" onclick="navigate('월드보스3.html')">
-        <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/5m.png?raw=true" alt="F">
-        <span>보스3</span>
-      </button>
-      <button class="round-btn" id="btn6" onclick="navigate('일반.html')">
-        <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/2m.png?raw=true" alt="G">
-        <span>일반</span>
-      </button>
-      <button class="round-btn" id="btn7" onclick="navigate('어려움.html')">
-        <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/3m.png?raw=true" alt="H">
-        <span>어려움</span>
-      </button>
-      <button class="round-btn" id="btn8" onclick="navigate('index.html')">
-        <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/A.PNG?raw=true" alt="Home">
-        <span>홈</span>
-      </button>
-    </div>
-  </div>
+        // 사냥패스 최대 레벨
+        const MAX_LEVEL = 80;
 
-  <script>
-    // 보상 데이터
-    const rewardsData = {
-      "SS": { "마족 소환권": 6, "잡동사니 소환권": 6, 다이아: 480, 골드: 9600, 경험치: 3200, 잼: 80, 뺑뺑이: 240 },
-      "어려움": { "마족 소환권": 6, "잡동사니 소환권": 6, 다이아: 480, 골드: 20000, 경험치: 3200, 잼: 80, 뺑뺑이: 240 },
-      "매우 어려움": { "마족 소환권": 7, "잡동사니 소환권": 7, 다이아: 480, 골드: 30000, 경험치: 3200, 잼: 80, 뺑뺑이: 240 },
-      "쉬움": { "마족 소환권": 2, "잡동사니 소환권": 2, 다이아: 160, 골드: 3200, 경험치: 3200, 잼: 80, 뺑뺑이: 240 },
-      "불지옥": { "마족 소환권": 7, "잡동사니 소환권": 7, 다이아: 480, 골드: 40000, 경험치: 3200, 잼: 80, 뺑뺑이: 240 }
-    };
-  
-    // 실시간 업데이트를 위한 이벤트 핸들러 추가
-    document.getElementById('calculate-btn').addEventListener('click', calculate);
-    document.getElementById('meat-input').addEventListener('keydown', function(event) {
-      if (event.key === 'Enter') calculate();
-    });
-    // 입력값 실시간 업데이트
-    document.getElementById('meat-input').addEventListener('input', calculate);
-    // 입력 타입 라디오 버튼 실시간 업데이트
-    document.querySelectorAll('input[name="inputType"]').forEach(button => {
-      button.addEventListener('change', () => {
-        calculate();
-      });
-    });
-    // 난이도 라디오 버튼 실시간 업데이트
-    document.querySelectorAll('input[name="difficulty"]').forEach(button => {
-      button.addEventListener('change', () => {
-        updateButtonStyles();
-        calculate();
-      });
-    });
-  
-    function calculate() {
-      const meatCount = parseInt(document.getElementById('meat-input').value, 10);
-      const difficulty = document.querySelector('input[name="difficulty"]:checked').value;
-      const inputType = document.querySelector('input[name="inputType"]:checked').value;
-      
-      const errorMsgEl = document.getElementById('error-msg');
-      const rewardsEl = document.getElementById('rewards');
-      const startTimeEl = document.getElementById('start-time');
-      const endTimeEl = document.getElementById('end-time');
-      const roundsEl = document.getElementById('rounds');
-      const estimatedTimeEl = document.getElementById('estimated-time');
-      
-      errorMsgEl.textContent = '';
-      startTimeEl.textContent = '';
-      endTimeEl.textContent = '';
-      roundsEl.textContent = '';
-      estimatedTimeEl.textContent = '';
-      rewardsEl.innerHTML = '';
-  
-      if (isNaN(meatCount) || meatCount <= 0) {
-        errorMsgEl.textContent = '정수를 입력하세요!';
-        return;
-      }
-   
+        // 한 판당 기본 경험치
+        const BASE_EXP_PER_GAME = 800;
 
+        // DOM 요소
+        const currentLevelInput = document.getElementById('currentLevel');
+        const currentExpInput = document.getElementById('currentExp');
+        const gamesPerDayInput = document.getElementById('gamesPerDay');
+        const doubleExpCheckbox = document.getElementById('doubleExp');
+        const remainingDoubleExpInput = document.getElementById('remainingDoubleExp');
+        const remainingDoubleExpContainer = document.getElementById('remainingDoubleExpContainer');
+        const resultCard = document.getElementById('resultCard');
+        const nextLevelGames = document.getElementById('nextLevelGames');
+        const totalGames = document.getElementById('totalGames');
+        const actualTotalGames = document.getElementById('actualTotalGames');
+        const remainingExp = document.getElementById('remainingExp');
+        const estimatedDays = document.getElementById('estimatedDays');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+        const futureProgressFill = document.getElementById('futureProgressFill');
+        const futureProgressPercent = document.getElementById('futureProgressPercent');
+        const futureLevel = document.getElementById('futureLevel');
+        const futureExp = document.getElementById('futureExp');
+        const maxLevelInfo = document.getElementById('maxLevelInfo');
+        const maxLevelGames = document.getElementById('maxLevelGames');
+        const resetLevel = document.getElementById('resetLevel');
+        const resetExp = document.getElementById('resetExp');
+        const maxLevelHeader = document.getElementById('maxLevelHeader');
+        const detailsHeader = document.getElementById('detailsHeader');
+        const detailsContent = document.getElementById('detailsContent');
 
+        // 접을 수 있는 섹션 추가
+        function toggleCollapsible(header, content) {
+            header.addEventListener('click', function() {
+                content.classList.toggle('open');
+                const arrow = header.querySelector('span:last-child');
+                arrow.textContent = content.classList.contains('open') ? '▲' : '▼';
+                
+                // 접근성을 위한 aria 속성 업데이트
+                header.setAttribute('aria-expanded', content.classList.contains('open'));
+                
+                // 효과 추가
+                Utils.pulseEffect(content);
+            });
+            
+            // 초기 aria 속성 설정
+            header.setAttribute('aria-expanded', 'false');
+            header.setAttribute('role', 'button');
+            header.setAttribute('tabindex', '0');
+            
+            // 키보드 접근성 추가
+            header.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this.click();
+                }
+            });
+        }
 
+        // 2배 경험치 체크박스 상태에 따라 남은 2배 경험치 판수 입력란 표시/숨김
+        function toggleRemainingDoubleExpField() {
+            remainingDoubleExpContainer.style.display = doubleExpCheckbox.checked ? 'block' : 'none';
+        }
 
+        // 현재 레벨의 필요 경험치 가져오기
+        function getLevelExp(level) {
+            return levelExpTable[level] || 2400; // 정의되지 않은 레벨은 2400 반환
+        }
 
+        // 총 필요 경험치 계산 (현재 레벨부터 만렙까지)
+        function calculateTotalExpNeeded(currentLevel, currentExp) {
+            let totalExp = getLevelExp(currentLevel) - currentExp;
+            
+            for (let level = currentLevel + 1; level < MAX_LEVEL; level++) {
+                totalExp += getLevelExp(level);
+            }
+            
+            return totalExp;
+        }
 
+        // 필요한 총 판수 계산 (항상 2배 경험치 미적용)
+        function calculateTotalGamesNeeded(totalExp) {
+            // 항상 2배 경험치 미적용으로 계산
+            return Math.ceil(totalExp / BASE_EXP_PER_GAME);
+        }
+        
+        // 필요한 판수 계산 (하루 플레이 판수 고려)
+        function calculateDaysGamesNeeded(totalExp, gamesPerDay, useDoubleExp) {
+            let remainingExp = totalExp;
+            let totalGames = 0;
+            
+            while (remainingExp > 0) {
+                let dailyGames = 0;
+                let dailyMaxGames = gamesPerDay;
+                
+                // 하루 10판까지 2배 경험치 적용
+                if (useDoubleExp) {
+                    while (dailyGames < 10 && dailyGames < dailyMaxGames && remainingExp > 0) {
+                        remainingExp -= (BASE_EXP_PER_GAME * 2);
+                        dailyGames++;
+                        totalGames++;
+                    }
+                }
+                
+                // 나머지 판수는 기본 경험치
+                while (dailyGames < dailyMaxGames && remainingExp > 0) {
+                    remainingExp -= BASE_EXP_PER_GAME;
+                    dailyGames++;
+                    totalGames++;
+                }
+            }
+            
+            return totalGames;
+        }
 
+        // 다음 레벨까지 필요한 판수 계산
+        function calculateNextLevelGames(currentLevel, currentExp, useDoubleExp) {
+            const expNeeded = getLevelExp(currentLevel) - currentExp;
+            
+            if (useDoubleExp) {
+                // 2배 경험치 적용
+                return Math.ceil(expNeeded / (BASE_EXP_PER_GAME * 2));
+            } else {
+                // 기본 경험치 적용
+                return Math.ceil(expNeeded / BASE_EXP_PER_GAME);
+            }
+        }
+        
+        // 실제 필요한 판수 계산 (2배 경험치 고려)
+        function calculateActualGamesNeeded(totalExp, useDoubleExp, remainingDoubleExpGames) {
+            if (!useDoubleExp) {
+                // 2배 경험치 미적용 시 기본 계산
+                return Math.ceil(totalExp / BASE_EXP_PER_GAME);
+            }
+            
+            let remainingExp = totalExp;
+            let totalGames = 0;
+            
+            // 남은 2배 경험치 판수로 먼저 계산
+            const doubleExpGames = Math.min(remainingDoubleExpGames, Math.ceil(remainingExp / (BASE_EXP_PER_GAME * 2)));
+            remainingExp -= doubleExpGames * (BASE_EXP_PER_GAME * 2);
+            totalGames += doubleExpGames;
+            
+            // 나머지 경험치는 일반 판수로 계산
+            if (remainingExp > 0) {
+                totalGames += Math.ceil(remainingExp / BASE_EXP_PER_GAME);
+            }
+            
+            return totalGames;
+        }
 
+        // 전체 진행률 계산
+        function calculateProgress(currentLevel, currentExp) {
+            let totalExpToMax = 0;
+            let earnedExp = 0;
+            
+            // 1레벨부터 최대 레벨까지 총 경험치
+            for (let level = 1; level < MAX_LEVEL; level++) {
+                totalExpToMax += getLevelExp(level);
+            }
+            
+            // 현재까지 획득한 경험치
+            for (let level = 1; level < currentLevel; level++) {
+                earnedExp += getLevelExp(level);
+            }
+            earnedExp += currentExp;
+            
+            return (earnedExp / totalExpToMax) * 100;
+        }
 
-      
-      let rounds;
-      if (inputType === "meat") {
-        const adjustedMeatCount = Math.floor(meatCount / 10) * 10;
-rounds = adjustedMeatCount / 10;
-      } else if (inputType === "round") {
-        rounds = meatCount;
-      } else if (inputType === "마족 소환권" || inputType === "골드" || inputType === "다이아") {
-        const divisor = rewardsData[difficulty][inputType];
-        rounds = Math.ceil(meatCount / divisor);
-      }
-      
-      const estimatedTime = rounds * 11;
-      let estimatedTimeText = `${estimatedTime}분`;
-      if (estimatedTime > 60) {
-        const hours = Math.floor(estimatedTime / 60);
-        const minutes = estimatedTime % 60;
-        estimatedTimeText += ` (${hours}시간 ${minutes}분)`;
-      }
-      
-      const endTime = new Date(Date.now() + estimatedTime * 60000);
-      const startTime = new Date();
-      const startFormatted = `${startTime.getFullYear()}년 ${String(startTime.getMonth() + 1).padStart(2, '0')}월 ${String(startTime.getDate()).padStart(2, '0')}일 ${String(startTime.getHours()).padStart(2, '0')}:${String(startTime.getMinutes()).padStart(2, '0')}`;
-      const endFormatted = `${endTime.getFullYear()}년 ${String(endTime.getMonth() + 1).padStart(2, '0')}월 ${String(endTime.getDate()).padStart(2, '0')}일 ${String(endTime.getHours()).padStart(2, '0')}:${String(endTime.getMinutes()).padStart(2, '0')}`;
-      
-      startTimeEl.textContent = `시작 시간 : ${startFormatted}`;
-      endTimeEl.textContent = `종료 시간 : ${endFormatted}`;
-      roundsEl.innerHTML = `게임 판수 : <span class="highlight">${rounds}</span>`;
-      estimatedTimeEl.textContent = `예상 시간 : ${estimatedTimeText}`;
-      
-      const rewards = rewardsData[difficulty];
-      // 원하는 그룹 설정: [그룹1, 그룹2, 그룹3, 그룹4]
-      const groups = [
-        ["마족 소환권", "잡동사니 소환권"],
-        ["다이아", "골드"],
-        ["경험치", "잼"],
-        ["뺑뺑이"]
-      ];
-  
-      const rewardsText = groups
-        .map(group => group
-          .map(key => `${key}: ${(rewards[key] * rounds).toLocaleString()}`)
-          .join(' , ')
-        )
-        .join('<br>');
-  
-      rewardsEl.innerHTML = `보상 : ${rewardsText}`;
-    }
-  
-    function navigate(page) {
-      window.location.href = page;
-    }
-  
-    function updateButtonStyles() {
-      const labels = document.querySelectorAll('.difficulty-buttons label');
-      labels.forEach(label => label.style.boxShadow = '');
-      const selectedButton = document.querySelector('input[name="difficulty"]:checked + label');
-      if (selectedButton) {
-        selectedButton.style.boxShadow = '0 0 8px rgba(255,99,71,0.5)';
-      }
-    }
-  
-    document.getElementById('reset-btn').addEventListener('click', () => {
-      document.getElementById('meat-input').value = '';
-      ['error-msg', 'start-time', 'end-time', 'rounds', 'estimated-time', 'rewards']
-        .forEach(id => document.getElementById(id).textContent = '');
-    });
-  
-    document.addEventListener('DOMContentLoaded', () => {
-      const defaultDiff = document.querySelector('input[name="difficulty"][value="SS"]');
-      if (defaultDiff) {
-        defaultDiff.checked = true;
-      }
-    });
-  
-    (function() {
-      const images = ["img/back1.png", "img/back2.png", "img/back3.png"];
-      const randomImage = images[Math.floor(Math.random() * images.length)];
-      const bgDiv = document.getElementById("background");
-      bgDiv.style.backgroundImage = `url('${randomImage}')`;
-    })();
-  </script>
-  
+        // 플레이 후 예상 레벨 및 경험치 계산 (게임별 상세 추적)
+        function calculateFutureProgressDetailed(currentLevel, currentExp, gamesToPlay, useDoubleExp, remainingDoubleExpGames) {
+            let level = currentLevel;
+            let exp = currentExp;
+            let gamesPlayed = 0;
+            let maxLevelReached = false;
+            let maxLevelAtGame = 0;
+            let remainingGames = 0;
+            let resetLevelInfo = { level: 1, exp: 0 };
+            
+            // 남은 2배 경험치 판수 추적
+            let availableDoubleExpGames = useDoubleExp ? remainingDoubleExpGames : 0;
+            
+            // 한 게임씩 진행 상황 추적
+            while (gamesPlayed < gamesToPlay) {
+                // 현재 게임 경험치 계산
+                let gameExp = BASE_EXP_PER_GAME;
+                if (availableDoubleExpGames > 0) {
+                    gameExp *= 2;
+                    availableDoubleExpGames--;
+                }
+                
+                // 경험치 추가 및 레벨업 체크
+                exp += gameExp;
+                gamesPlayed++;
+                
+                // 레벨업 체크
+                while (exp >= getLevelExp(level) && level < MAX_LEVEL) {
+                    exp -= getLevelExp(level);
+                    level++;
+                    
+                    // 80레벨 도달 체크
+                    if (level === MAX_LEVEL && !maxLevelReached) {
+                        maxLevelReached = true;
+                        maxLevelAtGame = gamesPlayed;
+                        remainingGames = gamesToPlay - gamesPlayed;
+                        
+                        // 리셋 후 새로운 사이클 시작
+                        if (remainingGames > 0) {
+                            let resetLevel = 1;
+                            let resetExp = 0;
+                            let resetGamesPlayed = 0;
+                            let resetAvailableDoubleExpGames = availableDoubleExpGames;
+                            
+                            // 남은 게임으로 다시 1레벨부터 시작
+                            while (resetGamesPlayed < remainingGames) {
+                                let resetGameExp = BASE_EXP_PER_GAME;
+                                if (resetAvailableDoubleExpGames > 0) {
+                                    resetGameExp *= 2;
+                                    resetAvailableDoubleExpGames--;
+                                }
+                                
+                                resetExp += resetGameExp;
+                                resetGamesPlayed++;
+                                
+                                // 리셋 후 레벨업 체크
+                                while (resetExp >= getLevelExp(resetLevel) && resetLevel < MAX_LEVEL) {
+                                    resetExp -= getLevelExp(resetLevel);
+                                    resetLevel++;
+                                }
+                            }
+                            
+                            resetLevelInfo = { level: resetLevel, exp: resetExp };
+                        }
+                    }
+                }
+            }
+            
+            return { 
+                level, 
+                exp, 
+                maxLevelReached, 
+                maxLevelAtGame, 
+                remainingGames,
+                resetLevelInfo
+            };
+        }
+
+        // 계산 실행
+        function calculateHuntingPass() {
+            const currentLevel = parseInt(currentLevelInput.value) || 1;
+            const currentExp = parseInt(currentExpInput.value) || 0;
+            const gamesPerDay = parseInt(gamesPerDayInput.value) || 1;
+            const useDoubleExp = doubleExpCheckbox.checked;
+            const remainingDoubleExpGames = useDoubleExp ? (parseInt(remainingDoubleExpInput.value) || 0) : 0;
+            
+            // 입력값 유효성 검사
+            if (currentLevel < 1 || currentLevel >= MAX_LEVEL) {
+                currentLevelInput.value = Math.min(Math.max(1, currentLevel), MAX_LEVEL - 1);
+                return calculateHuntingPass();
+            }
+            
+            if (currentExp < 0 || currentExp >= getLevelExp(currentLevel)) {
+                currentExpInput.value = Math.min(Math.max(0, currentExp), getLevelExp(currentLevel) - 1);
+                return calculateHuntingPass();
+            }
+            
+            if (gamesPerDay < 1) {
+                gamesPerDayInput.value = 1;
+                return calculateHuntingPass();
+            }
+            
+            if (remainingDoubleExpGames < 0 || remainingDoubleExpGames > 10) {
+                remainingDoubleExpInput.value = Math.min(Math.max(0, remainingDoubleExpGames), 10);
+                return calculateHuntingPass();
+            }
+            
+            // 계산 수행
+            const totalExpNeeded = calculateTotalExpNeeded(currentLevel, currentExp);
+            const totalGamesNeeded = calculateTotalGamesNeeded(totalExpNeeded); // 항상 2배 경험치 미적용
+            const daysGamesNeeded = calculateDaysGamesNeeded(totalExpNeeded, gamesPerDay, useDoubleExp);
+            const gamesForNextLevel = calculateNextLevelGames(currentLevel, currentExp, useDoubleExp);
+            const daysEstimated = Math.ceil(daysGamesNeeded / gamesPerDay);
+            const progress = calculateProgress(currentLevel, currentExp);
+            
+            // 실제 필요한 판수 계산 (2배 경험치 고려)
+            const actualGamesNeeded = calculateActualGamesNeeded(totalExpNeeded, useDoubleExp, remainingDoubleExpGames);
+            
+            // 플레이 후 예상 레벨 및 경험치 계산 (상세 추적)
+            const futureDetailed = calculateFutureProgressDetailed(currentLevel, currentExp, gamesPerDay, useDoubleExp, remainingDoubleExpGames);
+            const futureProgress = calculateProgress(futureDetailed.level, futureDetailed.exp);
+            
+            // 결과 표시
+            nextLevelGames.textContent = `${gamesForNextLevel}판`;
+            totalGames.textContent = `${totalGamesNeeded}판`;
+            actualTotalGames.textContent = `${actualGamesNeeded}판`;
+            remainingExp.textContent = Utils.formatNumber(totalExpNeeded);
+            estimatedDays.textContent = `${daysEstimated}일`;
+            
+            progressFill.style.width = `${progress}%`;
+            progressPercent.textContent = `${progress.toFixed(1)}%`;
+            
+            futureProgressFill.style.width = `${futureProgress}%`;
+            futureProgressPercent.textContent = `${futureProgress.toFixed(1)}%`;
+            futureLevel.textContent = `${futureDetailed.level}레벨`;
+            
+            const expNeeded = getLevelExp(futureDetailed.level);
+            futureExp.textContent = `${futureDetailed.exp}/${expNeeded} (${((futureDetailed.exp / expNeeded) * 100).toFixed(1)}%)`;
+            
+            // 80레벨 달성 정보 표시
+            if (futureDetailed.maxLevelReached) {
+                maxLevelHeader.style.display = 'flex';
+                maxLevelGames.textContent = `${futureDetailed.maxLevelAtGame}판`;
+                
+                const resetLevelData = futureDetailed.resetLevelInfo;
+                resetLevel.textContent = `${resetLevelData.level}레벨`;
+                
+                const resetExpNeeded = getLevelExp(resetLevelData.level);
+                resetExp.textContent = `${resetLevelData.exp}/${resetExpNeeded} (${((resetLevelData.exp / resetExpNeeded) * 100).toFixed(1)}%)`;
+            } else {
+                maxLevelHeader.style.display = 'none';
+            }
+            
+            // 변경된 결과 영역에 효과 추가
+            Utils.pulseEffect(resultCard);
+        }
+
+        // 고기 계산기 스크립트
+        // 보상 데이터
+        const rewardsData = {
+            "SS": { "마족 소환권": 6, "잡동사니 소환권": 6, 다이아: 480, 골드: 9600, 경험치: 3200, 잼: 80, 뺑뺑이: 240 },
+            "어려움": { "마족 소환권": 6, "잡동사니 소환권": 6, 다이아: 480, 골드: 20000, 경험치: 3200, 잼: 80, 뺑뺑이: 240 },
+            "매우 어려움": { "마족 소환권": 7, "잡동사니 소환권": 7, 다이아: 480, 골드: 30000, 경험치: 3200, 잼: 80, 뺑뺑이: 240 },
+            "쉬움": { "마족 소환권": 2, "잡동사니 소환권": 2, 다이아: 160, 골드: 3200, 경험치: 3200, 잼: 80, 뺑뺑이: 240 },
+            "불지옥": { "마족 소환권": 7, "잡동사니 소환권": 7, 다이아: 480, 골드: 40000, 경험치: 3200, 잼: 80, 뺑뺑이: 240 }
+        };
+
+        // 고기 계산 함수
+        function calculateMeat() {
+            const meatInput = document.getElementById('meat-input');
+            const meatCount = parseInt(meatInput.value, 10);
+            const difficulty = document.querySelector('input[name="difficulty"]:checked').value;
+            const inputType = document.querySelector('input[name="inputType"]:checked').value;
+            
+            const errorMsgEl = document.getElementById('error-msg');
+            const rewardsEl = document.getElementById('rewards');
+            const startTimeEl = document.getElementById('start-time');
+            const endTimeEl = document.getElementById('end-time');
+            const roundsEl = document.getElementById('rounds');
+            const estimatedTimeEl = document.getElementById('estimated-time');
+            const resultArea = document.querySelector('.result-area');
+            
+            errorMsgEl.textContent = '';
+            startTimeEl.textContent = '';
+            endTimeEl.textContent = '';
+            roundsEl.textContent = '';
+            estimatedTimeEl.textContent = '';
+            rewardsEl.innerHTML = '';
+        
+            if (isNaN(meatCount) || meatCount <= 0) {
+                errorMsgEl.textContent = '정수를 입력하세요!';
+                meatInput.classList.add('invalid');
+                return;
+            } else {
+                meatInput.classList.remove('invalid');
+            }
+            
+            let rounds;
+            if (inputType === "meat") {
+                const adjustedMeatCount = Math.floor(meatCount / 10) * 10;
+                rounds = adjustedMeatCount / 10;
+            } else if (inputType === "round") {
+                rounds = meatCount;
+            } else if (inputType === "마족 소환권" || inputType === "골드" || inputType === "다이아") {
+                // 0으로 나누기 방지
+                const divisor = rewardsData[difficulty][inputType] || 1;
+                rounds = Math.ceil(meatCount / divisor);
+            }
+            
+            const estimatedTime = rounds * 11;
+            let estimatedTimeText = `${estimatedTime}분`;
+            if (estimatedTime > 60) {
+                const hours = Math.floor(estimatedTime / 60);
+                const minutes = estimatedTime % 60;
+                estimatedTimeText += ` (${hours}시간 ${minutes}분)`;
+            }
+            
+            const startTime = new Date();
+            const endTime = new Date(startTime.getTime() + estimatedTime * 60000);
+            
+            startTimeEl.textContent = `시작 시간 : ${Utils.formatDate(startTime)}`;
+            endTimeEl.textContent = `종료 시간 : ${Utils.formatDate(endTime)}`;
+            roundsEl.innerHTML = `게임 판수 : <span style="font-weight: bold;">${rounds}</span>`;
+            estimatedTimeEl.textContent = `예상 시간 : ${estimatedTimeText}`;
+            
+            const rewards = rewardsData[difficulty];
+            // 원하는 그룹 설정: [그룹1, 그룹2, 그룹3, 그룹4]
+            const groups = [
+                ["마족 소환권", "잡동사니 소환권"],
+                ["다이아", "골드"],
+                ["경험치", "잼"],
+                ["뺑뺑이"]
+            ];
+        
+            const rewardsText = groups
+                .map(group => group
+                    .map(key => `${key}: ${Utils.formatNumber(rewards[key] * rounds)}`)
+                    .join(' , ')
+                )
+                .join('<br>');
+        
+            rewardsEl.innerHTML = `<strong>보상</strong> : ${rewardsText}`;
+            
+            // 결과 영역에 효과 추가
+            Utils.pulseEffect(resultArea);
+        }
+
+        function navigate(page) {
+            window.location.href = page;
+        }
+
+        // 이벤트 리스너 등록 - 사냥패스 계산기
+        document.addEventListener('DOMContentLoaded', function() {
+            // 배경 이미지 랜덤 설정
+            (function() {
+                const images = ["https://github.com/SaeDing/ABCD123123AAA/blob/main/img/back1.png?raw=true", 
+                               "https://github.com/SaeDing/ABCD123123AAA/blob/main/img/back2.png?raw=true", 
+                               "https://github.com/SaeDing/ABCD123123AAA/blob/main/img/back3.png?raw=true"];
+                const randomImage = images[Math.floor(Math.random() * images.length)];
+                const bgDiv = document.getElementById("background");
+                bgDiv.style.backgroundImage = `url('${randomImage}')`;
+            })();
+
+            // 접을 수 있는 섹션 설정
+            toggleCollapsible(maxLevelHeader, maxLevelInfo);
+            toggleCollapsible(detailsHeader, detailsContent);
+            
+            // 2배 경험치 체크박스 상태에 따라 남은 2배 경험치 판수 입력란 표시/숨김
+            toggleRemainingDoubleExpField();
+            
+            // 입력값 변경 시 자동 계산 - 사냥패스 계산기
+            currentLevelInput.addEventListener('input', calculateHuntingPass);
+            currentExpInput.addEventListener('input', calculateHuntingPass);
+            gamesPerDayInput.addEventListener('input', calculateHuntingPass);
+            doubleExpCheckbox.addEventListener('change', function() {
+                toggleRemainingDoubleExpField();
+                calculateHuntingPass();
+            });
+            remainingDoubleExpInput.addEventListener('input', calculateHuntingPass);
+            
+            // 입력값 변경 시 자동 계산 - 고기 계산기
+            document.getElementById('meat-input').addEventListener('input', calculateMeat);
+            document.getElementById('meat-input').addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') calculateMeat();
+            });
+            
+            // 입력 타입 라디오 버튼 실시간 업데이트
+            document.querySelectorAll('input[name="inputType"]').forEach(button => {
+                button.addEventListener('change', calculateMeat);
+            });
+            
+            // 난이도 라디오 버튼 실시간 업데이트
+            document.querySelectorAll('input[name="difficulty"]').forEach(button => {
+                button.addEventListener('change', calculateMeat);
+            });
+            
+            // 페이지 로드 시 자동 계산
+            calculateHuntingPass();
+            calculateMeat();
+            
+            // URL 파라미터 처리 (계산 결과 공유 위한 기능)
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.has('level')) {
+                    currentLevelInput.value = urlParams.get('level');
+                }
+                if (urlParams.has('exp')) {
+                    currentExpInput.value = urlParams.get('exp');
+                }
+                if (urlParams.has('games')) {
+                    gamesPerDayInput.value = urlParams.get('games');
+                }
+                if (urlParams.has('double')) {
+                    doubleExpCheckbox.checked = urlParams.get('double') === '1';
+                    toggleRemainingDoubleExpField();
+                }
+                if (urlParams.has('remaining')) {
+                    remainingDoubleExpInput.value = urlParams.get('remaining');
+                }
+                if (urlParams.has('meat')) {
+                    document.getElementById('meat-input').value = urlParams.get('meat');
+                }
+                if (urlParams.has('inputType')) {
+                    const inputType = urlParams.get('inputType');
+                    document.querySelector(`input[name="inputType"][value="${inputType}"]`).checked = true;
+                }
+                if (urlParams.has('difficulty')) {
+                    const difficulty = urlParams.get('difficulty');
+                    document.querySelector(`input[name="difficulty"][value="${difficulty}"]`).checked = true;
+                }
+                
+                // URL 파라미터가 있으면 자동으로 계산 실행
+                if (urlParams.toString()) {
+                    calculateHuntingPass();
+                    calculateMeat();
+                }
+            } catch (e) {
+                console.error('URL 파라미터 처리 중 오류:', e);
+            }
+        });
+    </script>
 </body>
 </html>
