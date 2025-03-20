@@ -1065,15 +1065,15 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // 별 확률 표시 변경 - 요구사항대로 수정
         if (currentStars === 1) {
-            starProbabilityDisplay.textContent = "기존 등급";
-        } else if (currentStars === 2) {
             starProbabilityDisplay.textContent = "★ → ★★: 70%";
-        } else if (currentStars === 3) {
+        } else if (currentStars === 2) {
             starProbabilityDisplay.textContent = "★★ → ★★★: 20%";
+        } else if (currentStars === 3) {
+            starProbabilityDisplay.textContent = "★★★ →★★★★: 7%";
         } else if (currentStars === 4) {
-            starProbabilityDisplay.textContent = "★★★ → ★★★★: 7%";
-        } else {
             starProbabilityDisplay.textContent = "★★★★ → ★★★★★: 3%";
+        } else {
+            starProbabilityDisplay.textContent = "최고 등급";
         }
         
         // 실제 확률 계산
@@ -1507,7 +1507,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // 모달 닫기
             setTimeout(function() {
                 importModal.style.display = 'none';
-            }, 2000);
+            }, 500);
             
         } catch (error) {
             showImportStatus('error', error.message);
