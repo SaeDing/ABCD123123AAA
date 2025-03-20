@@ -1,0 +1,1599 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>스트리머 룰렛 확률 계산기</title>
+<style>
+:root {
+    --primary-color: #6c5ce7;
+    --secondary-color: #af2bc0;
+    --accent-color: #00cec9;
+    --background-color: #f9f9f9;
+    --card-color: #ffffff;
+    --text-color: #2d3436;
+    --border-color: #dfe6e9;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --error-color: #ff7675;
+    --success-color: #55efc4;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+html {
+    font-size: 13px; /* 기본 16px에서 약 20% 축소 */
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+}
+
+.container {
+    max-width: 960px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 24px;
+    padding: 16px;
+    background: linear-gradient(100deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px var(--shadow-color);
+}
+
+h1 {
+    font-size: 2rem;
+    margin-bottom: 8px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+h2 {
+    font-size: 1.5rem;
+    margin: 20px 0 12px;
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: 6px;
+}
+
+.calculator-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.calculator-section, .results-section {
+    flex: 1;
+    min-width: 240px;
+    background-color: var(--card-color);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 6px 12px var(--shadow-color);
+}
+
+.calculator-section {
+    position: relative;
+    overflow: hidden;
+}
+
+.calculator-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+}
+
+.input-group {
+    margin-bottom: 12px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+input, select, button {
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 13px;
+    transition: all 0.3s ease;
+}
+
+input:focus, select:focus {
+    border-color: var(--accent-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 206, 201, 0.25);
+}
+
+button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    margin: 12px 0;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background-color: #5a4ad1;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+.prize-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    padding: 8px;
+    border-radius: 6px;
+    background-color: #f8f9fa;
+    border-left: 3px solid var(--primary-color);
+}
+
+.prize-item input {
+    flex: 1;
+}
+
+.remove-prize {
+    background-color: var(--error-color);
+    width: 32px;
+    padding: 6px;
+}
+
+.remove-prize:hover {
+    background-color: #e74c3c;
+}
+
+.stars-container {
+    display: flex;
+    justify-content: space-between;
+    margin: 16px 0;
+}
+
+.star-level {
+    text-align: center;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    width: 18%;
+    border: 2px solid transparent;
+}
+
+.star-level.active {
+    border-color: var(--accent-color);
+    background-color: rgba(0, 206, 201, 0.1);
+}
+
+.star-display {
+    font-size: 0.7rem; /* 별 크기 절반으로 축소 */
+    color: gold;
+    margin-bottom: 4px;
+    text-shadow: 0 0 4px rgba(255, 215, 0, 0.5);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+}
+
+th, td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+th {
+    background-color: rgba(108, 92, 231, 0.1);
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+td:last-child, th:last-child {
+    text-align: right;
+}
+
+.highlight {
+    background-color: rgba(0, 206, 201, 0.2);
+}
+
+.star-info {
+    background-color: rgba(253, 121, 168, 0.1);
+    padding: 12px;
+    border-radius: 8px;
+    margin: 16px 0;
+    border-left: 3px solid var(--secondary-color);
+}
+
+.star-info h3 {
+    color: var(--secondary-color);
+    margin-bottom: 8px;
+}
+
+.star-info p {
+    margin-bottom: 6px;
+    line-height: 1.4;
+}
+
+.probability-info {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.probability-card {
+    background: linear-gradient(135deg, rgba(108, 92, 231, 0.9), rgba(108, 92, 231, 0.7));
+    color: white;
+    border-radius: 8px;
+    padding: 12px;
+    flex: 1;
+    min-width: 160px;
+    box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3);
+    text-align: center;
+}
+
+.probability-card h3 {
+    font-size: 1rem;
+    margin-bottom: 8px;
+}
+
+.probability-card .value {
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+.results-table-container {
+    overflow-x: auto;
+    margin-top: 16px;
+}
+
+.error-message {
+    color: var(--error-color);
+    font-size: 0.8rem;
+    margin-top: 4px;
+}
+
+.info-message {
+    background-color: rgba(108, 92, 231, 0.1);
+    padding: 12px;
+    border-radius: 6px;
+    margin: 12px 0;
+    border-left: 3px solid var(--primary-color);
+}
+
+.star-probability {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.star-probability .label {
+    flex: 2;
+}
+
+.star-probability .value {
+    flex: 1;
+    text-align: right;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.star-path {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 4px;
+}
+
+.star-path::before {
+    content: '★';
+    position: absolute;
+    left: 0;
+    color: gold;
+}
+
+.prize-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 12px;
+    margin-top: 8px;
+    border-top: 2px solid var(--border-color);
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .calculator-section, .results-section {
+        min-width: 100%;
+    }
+    .probability-card {
+        min-width: 45%;
+    }
+}
+
+@media (max-width: 480px) {
+    .probability-card {
+        min-width: 100%;
+    }
+}
+
+.animated-star {
+    display: inline-block;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+        color: #ffd700;
+        text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: help;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 160px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 6px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 0.7rem;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+.copy-button {
+    background-color: var(--accent-color);
+    margin-top: 8px;
+    font-size: 0.8rem;
+}
+
+.results-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    width: 100%;
+}
+
+.results-column {
+    flex: 1;
+    min-width: 240px;
+}
+
+.results-title {
+    margin: 0 0 12px 0;
+    color: var(--primary-color);
+    padding-bottom: 4px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.star-comparison-container {
+    overflow-x: auto;
+    margin-top: 12px;
+}
+
+.star-comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+}
+
+.star-comparison-table th {
+    background-color: rgba(108, 92, 231, 0.1);
+    padding: 10px 12px;
+    text-align: center;
+    font-weight: 600;
+    color: var(--primary-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.star-comparison-table td {
+    padding: 8px 12px;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.star-comparison-table tr.star-header {
+    background-color: rgba(108, 92, 231, 0.05);
+}
+
+.star-comparison-table tr.star-header td {
+    font-weight: 600;
+    color: var(--primary-color);
+    padding: 12px;
+    border-top: 2px solid var(--primary-color);
+}
+
+.star-comparison-table .star-rating {
+    color: gold;
+    font-size: 1rem;
+    margin-right: 6px;
+}
+
+.star-comparison-table .change-indicator {
+    font-weight: 600;
+    font-size: 0.7rem;
+    padding: 2px 4px;
+    border-radius: 3px;
+    margin-left: 4px;
+}
+
+.star-comparison-table .increase {
+    color: #2ecc71;
+}
+
+.star-comparison-table .decrease {
+    color: #e74c3c;
+}
+
+.change-value {
+    font-size: 0.7rem;
+    color: #7f8c8d;
+    font-weight: 400;
+}
+
+/* 데이터 가져오기 버튼 스타일 */
+.tab-container {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 16px;
+}
+
+.tab {
+    padding: 8px 16px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border-bottom: 2px solid transparent;
+}
+
+.tab.active {
+    border-bottom-color: var(--primary-color);
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.import-data-button {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 8px;
+    margin-left: auto;
+    cursor: pointer;
+    font-size: 0.7rem;
+    display: inline-flex;
+    align-items: center;
+    width: auto;
+    transition: all 0.3s ease;
+}
+
+.import-data-button:hover {
+    background-color: #00b3b3;
+    transform: translateY(-2px);
+}
+
+.import-data-button i {
+    margin-right: 4px;
+}
+
+/* 모달 스타일 */
+.import-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.import-modal-content {
+    background-color: var(--card-color);
+    margin: 15% auto;
+    padding: 16px;
+    border-radius: 8px;
+    width: 240px;
+    height: 240px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.close-button {
+    color: #aaa;
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-button:hover {
+    color: var(--primary-color);
+}
+
+.import-modal-content h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: var(--primary-color);
+}
+
+.import-modal-content p {
+    font-size: 0.7rem;
+    margin-bottom: 8px;
+    color: #666;
+}
+
+#import-data-text {
+    flex: 1;
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 0.8rem;
+    resize: none;
+    margin-bottom: 12px;
+}
+
+#apply-data-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#apply-data-btn:hover {
+    background-color: #75d14a;
+}
+
+#import-status {
+    margin-top: 8px;
+    font-size: 0.7rem;
+    text-align: center;
+    padding: 4px;
+    border-radius: 4px;
+    display: none;
+}
+
+#import-status.success {
+    background-color: rgba(46, 213, 115, 0.2);
+    color: #2ed573;
+}
+
+#import-status.error {
+    background-color: rgba(255, 71, 87, 0.2);
+    color: #ff4757;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+    <h1>스트리머 룰렛 확률 계산기</h1>
+    <p>별 개수에 따른 확률 변화를 정확하게 계산해보세요</p>
+</header>
+
+<div class="calculator-container">
+    <div class="calculator-section">
+        <h2>상품 및 확률 설정</h2>
+        <div class="tab-container">
+            <div class="tab active" data-tab="basic">기본 설정</div>
+            <button id="import-data-btn" class="import-data-button">
+                <i class="fas fa-file-import"></i> 데이터 가져오기
+            </button>
+        </div>
+
+        <div class="tab-content active" id="basic-tab">
+            <div class="info-message">
+                상품명과 확률을 입력하세요. 첫 번째 상품은 자동으로 '꽝'으로 설정됩니다.
+            </div>
+
+            <div id="prize-list">
+                <div class="prize-item" id="prize-item-0">
+                    <input type="text" class="prize-name" value="꽝" readonly>
+                    <input type="number" class="prize-probability" min="0" max="100" step="0.1" placeholder="확률(%)" required>
+                </div>
+            </div>
+
+            <button id="add-prize">+ 상품 추가</button>
+
+            <div id="error-container" class="error-message"></div>
+
+            <div class="prize-total">
+                <span>총 확률:</span>
+                <span id="total-probability">0%</span>
+            </div>
+
+            <button id="calculate-button">계산하기</button>
+        </div>
+
+        <div class="star-info" style="margin-top: 20px;">
+            <h3>별 증가 확률</h3>
+            <div class="star-probability">
+                <div class="label">★ → ★★:</div>
+                <div class="value">70%</div>
+            </div>
+            <div class="star-probability">
+                <div class="label">★★ → ★★★:</div>
+                <div class="value">20%</div>
+            </div>
+            <div class="star-probability">
+                <div class="label">★★★ → ★★★★:</div>
+                <div class="value">7%</div>
+            </div>
+            <div class="star-probability">
+                <div class="label">★★★★ → ★★★★★:</div>
+                <div class="value">3%</div>
+            </div>
+        
+            <h3 style="margin-top: 20px;">별 개수에 따른 부가효과</h3>
+            <div class="star-path">꽝 확률 100% 적용</div>
+            <div class="star-path">꽝 확률 80% 적용</div>
+            <div class="star-path">꽝 확률 50% 적용</div>
+            <div class="star-path">꽝 확률 30% 적용</div>
+            <div class="star-path">꽝 확률 10% 적용</div>
+        </div>
+
+        <div class="tab-content" id="star-info-tab">
+            <div class="star-info">
+                <h3>별 증가 확률</h3>
+                <div class="star-probability">
+                    <div class="label">★ → ★★:</div>
+                    <div class="value">70%</div>
+                </div>
+                <div class="star-probability">
+                    <div class="label">★★ → ★★★:</div>
+                    <div class="value">20%</div>
+                </div>
+                <div class="star-probability">
+                    <div class="label">★★★ → ★★★★:</div>
+                    <div class="value">7%</div>
+                </div>
+                <div class="star-probability">
+                    <div class="label">★★★★ → ★★★★★:</div>
+                    <div class="value">3%</div>
+                </div>
+
+                <h3 style="margin-top: 20px;">별 개수에 따른 부가효과</h3>
+                <div class="star-path">꽝 확률 100% 적용</div>
+                <div class="star-path">꽝 확률 80% 적용</div>
+                <div class="star-path">꽝 확률 50% 적용</div>
+                <div class="star-path">꽝 확률 30% 적용</div>
+                <div class="star-path">꽝 확률 10% 적용</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="results-section">
+        <h2>계산 결과</h2>
+        <div class="info-message">
+            <strong>현재 별 확률</strong>과 <strong>종합 확률</strong>을 함께 보여줍니다. 종합 확률은 모든 별 단계(1~5성)의 출현 확률을 고려한 결과입니다.
+        </div>
+        
+        <div class="probability-info">
+            <div class="probability-card">
+                <h3>현재 별 확률</h3>
+                <div class="value" id="star-probability">★ → ★★: 70%</div>
+            </div>
+            <div class="probability-card">
+                <h3>현재 꽝 확률</h3>
+                <div class="value" id="fail-probability">0%</div>
+            </div>
+            <div class="probability-card">
+                <h3>종합 꽝 확률</h3>
+                <div class="value" id="total-actual-probability">0%</div>
+            </div>
+        </div>
+
+        <div class="stars-container">
+            <div class="star-level active" data-stars="1">
+                <div class="star-display">★</div>
+                <div>1성</div>
+            </div>
+            <div class="star-level" data-stars="2">
+                <div class="star-display">★★</div>
+                <div>2성</div>
+            </div>
+            <div class="star-level" data-stars="3">
+                <div class="star-display">★★★</div>
+                <div>3성</div>
+            </div>
+            <div class="star-level" data-stars="4">
+                <div class="star-display">★★★★</div>
+                <div>4성</div>
+            </div>
+            <div class="star-level" data-stars="5">
+                <div class="star-display">★★★★★</div>
+                <div>5성</div>
+            </div>
+        </div>
+
+        <div class="tab-container" style="margin-top: 20px;">
+            <div class="tab active" data-results-tab="all">모든 확률 보기</div>
+            <div class="tab" data-results-tab="compare">별 단계별 비교</div>
+        </div>
+
+        <div class="results-table-container" id="all-results-tab">
+            <div class="results-grid">
+                <div class="results-column">
+                    <h3 class="results-title">현재 별 단계 확률 결과</h3>
+                    <table id="results-table">
+                        <thead>
+                            <tr>
+                                <th>상품</th>
+                                <th>등록확률</th>
+                                <th>현재 별 확률</th>
+                            </tr>
+                        </thead>
+                        <tbody id="results-body">
+                            <!-- 현재 별 결과가 여기에 표시됩니다 -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="results-column">
+                    <h3 class="results-title">종합 확률 결과 (1~5성)</h3>
+                    <table id="total-results-table">
+                        <thead>
+                            <tr>
+                                <th>상품</th>
+                                <th>등록확률</th>
+                                <th>종합 확률</th>
+                            </tr>
+                        </thead>
+                        <tbody id="total-results-body">
+                            <!-- 종합 결과가 여기에 표시됩니다 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="results-table-container" id="compare-results-tab" style="display: none;">
+            <h3 style="margin: 15px 0 10px 0; color: var(--primary-color);">별 단계별 확률 비교</h3>
+            <p style="margin-bottom: 15px;">각 별 단계에서 상품 확률이 어떻게 변화하는지 비교합니다.</p>
+            
+            <div class="star-comparison-container">
+                <!-- 별 단계별 비교 테이블이 여기에 표시됩니다 -->
+            </div>
+        </div>
+
+        <button id="copy-results" class="copy-button">종합 확률 복사하기</button>
+        <button id="copy-current-results" class="copy-button">현재 별 확률 복사하기</button>
+    </div>
+</div>
+</div>
+
+<!-- 모달 팝업 추가 -->
+<div id="import-modal" class="import-modal">
+    <div class="import-modal-content">
+        <span class="close-button">&times;</span>
+        <h3>상품 데이터 가져오기</h3>
+        <p>아래에 상품 데이터를 붙여넣으세요.<br>형식: 상품명 [탭/공백] 확률(%)</p>
+        <textarea id="import-data-text" placeholder="예시:
+상품 목록    확률
+꽝    84.489%
+1판 추가    12%
+2판 추가    3%
+3판 추가    0.5%
+5판 추가    0.01%
+10판 추가    0.001%"></textarea>
+        <button id="apply-data-btn">적용하기</button>
+        <div id="import-status"></div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // FontAwesome 추가
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css';
+    document.head.appendChild(link);
+    
+    // 요소 참조
+    const prizeList = document.getElementById('prize-list');
+    const addPrizeButton = document.getElementById('add-prize');
+    const calculateButton = document.getElementById('calculate-button');
+    const errorContainer = document.getElementById('error-container');
+    const totalProbability = document.getElementById('total-probability');
+    const starLevels = document.querySelectorAll('.star-level');
+    const resultsBody = document.getElementById('results-body');
+    const starProbabilityDisplay = document.getElementById('star-probability');
+    const failProbabilityDisplay = document.getElementById('fail-probability');
+    const copyResultsButton = document.getElementById('copy-results');
+    const tabs = document.querySelectorAll('.tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    // 결과 탭 전환 기능 설정
+    const resultsTabs = document.querySelectorAll('[data-results-tab]');
+    resultsTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            // 탭 활성화 상태 변경
+            resultsTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            
+            // 탭 내용 표시/숨김
+            const tabId = tab.getAttribute('data-results-tab');
+            
+            // 모든 결과 탭 컨테이너 숨기기
+            document.querySelectorAll('.results-table-container').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            // 선택한 탭 표시
+            if (tabId === 'all') {
+                document.getElementById('all-results-tab').style.display = 'block';
+            } else if (tabId === 'compare') {
+                document.getElementById('compare-results-tab').style.display = 'block';
+            }
+        });
+    });
+
+    // 탭 전환 기능
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const tabId = tab.getAttribute('data-tab');
+            if (!tabId) return; // 데이터 가져오기 버튼은 건너뛰기
+            
+            // 모든 탭 비활성화
+            tabs.forEach(t => {
+                if (t.getAttribute('data-tab')) {
+                    t.classList.remove('active');
+                }
+            });
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // 선택한 탭 활성화
+            tab.classList.add('active');
+            document.getElementById(`${tabId}-tab`).classList.add('active');
+        });
+    });
+
+    // 별 증가 확률 (기본값)
+    const starIncreaseRate = {
+        1: 0.70, // 1성 -> 2성: 70%
+        2: 0.20, // 2성 -> 3성: 20%
+        3: 0.07, // 3성 -> 4성: 7%
+        4: 0.03  // 4성 -> 5성: 3%
+    };
+
+    // 별 감소 계수 (꽝 확률 조정)
+    const starFailRateMultiplier = {
+        1: 1,    // 1성: 꽝 확률 100%
+        2: 0.8,  // 2성: 꽝 확률 80%
+        3: 0.5,  // 3성: 꽝 확률 50%
+        4: 0.3,  // 4성: 꽝 확률 30%
+        5: 0.1   // 5성: 꽝 확률 10%
+    };
+
+    // 현재 선택된 별 개수
+    let currentStars = 1;
+
+    // 별 개수 선택 이벤트
+    starLevels.forEach(level => {
+        level.addEventListener('click', () => {
+            starLevels.forEach(l => l.classList.remove('active'));
+            level.classList.add('active');
+            currentStars = parseInt(level.getAttribute('data-stars'));
+            calculateAndDisplayResults();
+        });
+    });
+
+    // 상품 추가 기능
+    addPrizeButton.addEventListener('click', () => {
+        const prizeCount = document.querySelectorAll('.prize-item').length;
+        if (prizeCount >= 10) {
+            showError('최대 10개의 상품만 추가할 수 있습니다.');
+            return;
+        }
+
+        const prizeItem = document.createElement('div');
+        prizeItem.className = 'prize-item';
+        prizeItem.id = `prize-item-${prizeCount}`;
+        
+        prizeItem.innerHTML = `
+            <input type="text" class="prize-name" placeholder="상품명" required>
+            <input type="number" class="prize-probability" min="0" max="100" step="0.1" placeholder="확률(%)" required>
+            <button class="remove-prize">✕</button>
+        `;
+        
+        prizeList.appendChild(prizeItem);
+        
+        // 삭제 버튼 이벤트 추가
+        const removeButton = prizeItem.querySelector('.remove-prize');
+        removeButton.addEventListener('click', () => {
+            prizeItem.remove();
+            updateTotalProbability();
+        });
+
+        // 확률 입력 이벤트 추가
+        const probabilityInput = prizeItem.querySelector('.prize-probability');
+        probabilityInput.addEventListener('input', updateTotalProbability);
+    });
+
+    // 초기 꽝 상품의 확률 입력 이벤트 추가
+    const initialProbabilityInput = document.querySelector('#prize-item-0 .prize-probability');
+    initialProbabilityInput.addEventListener('input', updateTotalProbability);
+
+    // 총 확률 업데이트 함수
+    function updateTotalProbability() {
+        const probabilityInputs = document.querySelectorAll('.prize-probability');
+        let total = 0;
+        
+        probabilityInputs.forEach(input => {
+            const value = parseFloat(input.value) || 0;
+            total += value;
+        });
+        
+        totalProbability.textContent = total.toFixed(3) + '%';
+        
+        // 100%가 아닌 경우 경고
+        if (Math.abs(total - 100) > 0.001) { // 소수점 3자리 비교에 맞게 오차 범위도 조정
+            totalProbability.style.color = 'var(--error-color)';
+        } else {
+            totalProbability.style.color = 'var(--success-color)';
+        }
+    }
+
+    // 오류 표시 함수
+    function showError(message) {
+        errorContainer.textContent = message;
+        errorContainer.style.display = 'block';
+        
+        // 3초 후 오류 메시지 숨기기
+        setTimeout(() => {
+            errorContainer.textContent = '';
+            errorContainer.style.display = 'none';
+        }, 3000);
+    }
+
+    // 계산 버튼 이벤트
+    calculateButton.addEventListener('click', calculateAndDisplayResults);
+
+    // 결과 계산 및 표시 함수
+    function calculateAndDisplayResults() {
+        // 입력 데이터 수집
+        const prizes = [];
+        const prizeItems = document.querySelectorAll('.prize-item');
+        let totalProbability = 0;
+        
+        prizeItems.forEach(item => {
+            const nameInput = item.querySelector('.prize-name');
+            const probabilityInput = item.querySelector('.prize-probability');
+            
+            const name = nameInput.value.trim();
+            const probability = parseFloat(probabilityInput.value) || 0;
+            
+            if (name && probability > 0) {
+                prizes.push({ name, probability });
+                totalProbability += probability;
+            }
+        });
+        
+        // 유효성 검사
+        if (prizes.length === 0) {
+            showError('최소 한 개 이상의 상품을 추가하세요.');
+            return;
+        }
+        
+        if (Math.abs(totalProbability - 100) > 0.1) {
+            showError('모든 상품의 확률 합이 100%가 되어야 합니다.');
+            return;
+        }
+        
+        // 꽝 상품이 첫 번째에 있는지 확인
+        if (prizes[0].name !== '꽝') {
+            showError('첫 번째 상품은 반드시 "꽝"이어야 합니다.');
+            return;
+        }
+
+        // 별 확률 계산
+        const starProbabilities = calculateStarProbabilities();
+        
+        // 별 확률 표시 변경 - 요구사항대로 수정
+        if (currentStars === 1) {
+            starProbabilityDisplay.textContent = "★ → ★★: 70%";
+        } else if (currentStars === 2) {
+            starProbabilityDisplay.textContent = "★★ → ★★★: 20%";
+        } else if (currentStars === 3) {
+            starProbabilityDisplay.textContent = "★★★ → ★★★★: 7%";
+        } else if (currentStars === 4) {
+            starProbabilityDisplay.textContent = "★★★★ → ★★★★★: 3%";
+        } else {
+            starProbabilityDisplay.textContent = "최고 등급";
+        }
+        
+        // 실제 확률 계산
+        const actualProbabilities = calculateActualProbabilities(prizes, currentStars);
+        
+        // 소수점 표시 방식 수정 - 백분율 정수로 표시
+        let failProbValue = actualProbabilities[0].actualProbability;
+        failProbabilityDisplay.textContent = formatPercentage(failProbValue) + '%';
+        
+        // 종합 확률 계산 (1~5성 모두 고려)
+        const totalActualProbabilities = calculateTotalActualProbabilities(prizes);
+        let totalFailProbValue = totalActualProbabilities[0].actualProbability;
+        document.getElementById('total-actual-probability').textContent = 
+            formatPercentage(totalFailProbValue) + '%';
+        
+        // 결과 테이블 업데이트
+        updateResultsTable(prizes, actualProbabilities);
+        
+        // 별 단계별 비교 테이블 업데이트
+        updateStarComparisonTable(prizes);
+    }
+    
+    // 백분율 형식화 함수 - 소수점 표시 방식 개선
+    function formatPercentage(value) {
+        if (value >= 10) {
+            // 10% 이상이면 정수로 표시
+            return Math.round(value);
+        } else if (value >= 1) {
+            // 1% 이상 10% 미만이면 소수점 한 자리까지 표시
+            return value.toFixed(1);
+        } else {
+            // 1% 미만이면 소수점 두 자리까지 표시
+            return value.toFixed(2);
+        }
+    }
+
+    // 별 확률 계산 함수
+    function calculateStarProbabilities() {
+        const probabilities = { 1: 1 }; // 기본 1성은 100%
+        
+        // 2성 확률 = 1성 확률 * 1성→2성 확률
+        probabilities[2] = probabilities[1] * starIncreaseRate[1];
+        
+        // 3성 확률 = 2성 확률 * 2성→3성 확률
+        probabilities[3] = probabilities[2] * starIncreaseRate[2];
+        
+        // 4성 확률 = 3성 확률 * 3성→4성 확률
+        probabilities[4] = probabilities[3] * starIncreaseRate[3];
+        
+        // 5성 확률 = 4성 확률 * 4성→5성 확률
+        probabilities[5] = probabilities[4] * starIncreaseRate[4];
+        
+        return probabilities;
+    }
+
+    // 실제 확률 계산 함수
+    function calculateActualProbabilities(prizes, stars) {
+        const results = [];
+        
+        // 꽝 확률 조정
+        const originalFailProbability = prizes[0].probability;
+        const adjustedFailProbability = originalFailProbability * starFailRateMultiplier[stars];
+        const failProbabilityDifference = originalFailProbability - adjustedFailProbability;
+        
+        // 비꽝 상품들의 원래 확률 합
+        let totalNonFailProbability = 0;
+        for (let i = 1; i < prizes.length; i++) {
+            totalNonFailProbability += prizes[i].probability;
+        }
+        
+        // 각 상품의 실제 확률 계산
+        for (let i = 0; i < prizes.length; i++) {
+            const prize = { ...prizes[i] };
+            
+            if (i === 0) { // 꽝
+                prize.actualProbability = adjustedFailProbability;
+            } else { // 비꽝 상품
+                // 감소한 꽝 확률을 비꽝 상품들에게 비율에 맞게 재분배
+                const redistributionRatio = prize.probability / totalNonFailProbability;
+                const additionalProbability = failProbabilityDifference * redistributionRatio;
+                prize.actualProbability = prize.probability + additionalProbability;
+            }
+            
+            results.push(prize);
+        }
+        
+        return results;
+    }
+    
+    // 종합 확률 계산 함수 (1~5성 모두 고려) - 제공된 코드 기반 수정
+    function calculateTotalActualProbabilities(prizes) {
+        const results = [];
+        const failProbability = prizes[0].probability;
+        
+        // 꽝 확률 계산 (제공된 코드 로직과 동일)
+        let actualFailProbability = 
+            (failProbability * 1.0) * (0.3) +                        // 1성일 때 (꽝 확률 100% * 0.3)
+            (failProbability * 0.8) * (0.7 * 0.8) +                  // 2성일 때 (꽝 확률 80% * 0.7 * 0.8)
+            (failProbability * 0.5) * (0.7 * 0.2 * 0.93) +           // 3성일 때 (꽝 확률 50% * 0.7 * 0.2 * 0.93)
+            (failProbability * 0.3) * (0.7 * 0.2 * 0.07 * 0.97) +    // 4성일 때 (꽝 확률 30% * 0.7 * 0.2 * 0.07 * 0.97)
+            (failProbability * 0.1) * (0.7 * 0.2 * 0.07 * 0.03);     // 5성일 때 (꽝 확률 10% * 0.7 * 0.2 * 0.07 * 0.03)
+        
+        // 실제 꽝 확률이 원래 꽝 확률보다 낮아진 비율을 계산
+        const extraProbabilityFactor = (failProbability - actualFailProbability) / (100 - failProbability);
+        
+        // 각 상품의 실제 확률 계산
+        for (let i = 0; i < prizes.length; i++) {
+            const prize = {
+                name: prizes[i].name,
+                probability: prizes[i].probability
+            };
+            
+            if (i === 0) { // 꽝
+                prize.actualProbability = actualFailProbability;
+            } else { // 비꽝 상품
+                // 비꽝 상품의 확률을 factor만큼 증가
+                prize.actualProbability = prize.probability * (1 + extraProbabilityFactor);
+            }
+            
+            results.push(prize);
+        }
+        
+        // 반올림 오차 보정 (합이 정확히 100%가 되도록)
+        let sum = 0;
+        results.forEach(item => {
+            sum += item.actualProbability;
+        });
+        
+        if (Math.abs(sum - 100) > 0.01) {
+            const ratio = 100 / sum;
+            results.forEach(item => {
+                item.actualProbability *= ratio;
+            });
+        }
+        
+        return results;
+    }
+
+    // 결과 테이블 업데이트 함수 - 백분율 표시 형식 개선
+    function updateResultsTable(prizes, actualProbabilities) {
+            // 현재 별 결과 테이블 업데이트
+    resultsBody.innerHTML = '';
+    
+    actualProbabilities.forEach((prize, index) => {
+        const row = document.createElement('tr');
+        if (index === 0) row.classList.add('highlight'); // 꽝 행 강조
+        
+        row.innerHTML = `
+            <td>${prize.name}</td>
+            <td>${prize.probability.toFixed(4)}%</td>
+            <td>${prize.actualProbability.toFixed(4)}%</td>
+        `;
+        
+        resultsBody.appendChild(row);
+    });
+    
+    // 종합 확률 결과 테이블 업데이트
+    const totalActualProbabilities = calculateTotalActualProbabilities(prizes);
+    const totalResultsBody = document.getElementById('total-results-body');
+    totalResultsBody.innerHTML = '';
+    
+    totalActualProbabilities.forEach((prize, index) => {
+        const row = document.createElement('tr');
+        if (index === 0) row.classList.add('highlight'); // 꽝 행 강조
+        
+        row.innerHTML = `
+            <td>${prize.name}</td>
+            <td>${prize.probability.toFixed(4)}%</td>
+            <td>${prize.actualProbability.toFixed(4)}%</td>
+        `;
+        
+        totalResultsBody.appendChild(row);
+    });
+        
+        // 별 단계별 비교 테이블 업데이트
+        updateStarComparisonTable(prizes);
+    }
+
+    // 결과 복사 기능 (document.execCommand 방식으로 수정)
+    copyResultsButton.addEventListener('click', function() {
+        let resultsText = `룰렛 종합 확률 (1~5성 모두 고려)\n\n`;
+        
+        const rows = document.querySelectorAll('#total-results-table tbody tr');
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            resultsText += `${cells[0].textContent}: ${cells[2].textContent}\n`;
+        });
+        
+        // 임시 textarea 요소 생성
+        const textarea = document.createElement('textarea');
+        textarea.value = resultsText;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+        
+        // 텍스트 선택 및 복사
+        textarea.select();
+        let successful = false;
+        try {
+            successful = document.execCommand('copy');
+        } catch (err) {
+            console.error('복사 실패:', err);
+        }
+        
+        // 임시 요소 제거
+        document.body.removeChild(textarea);
+        
+        // 결과 표시
+        const originalText = copyResultsButton.textContent;
+        if (successful) {
+            copyResultsButton.textContent = '복사 완료!';
+        } else {
+            copyResultsButton.textContent = '복사 실패';
+        }
+        
+        setTimeout(() => {
+            copyResultsButton.textContent = originalText;
+        }, 2000);
+    });
+
+    // 별 단계별 비교 테이블 업데이트 함수 - 백분율 표시 형식 개선
+    function updateStarComparisonTable(prizes) {
+        const comparisonContainer = document.querySelector('.star-comparison-container');
+        comparisonContainer.innerHTML = '';
+        
+        // 모든 별 단계에 대한 계산 결과를 저장할 객체
+        const allStarResults = {};
+        
+        // 1~5성 각각에 대한 확률 계산
+        for (let stars = 1; stars <= 5; stars++) {
+            allStarResults[stars] = calculateActualProbabilities(prizes, stars);
+        }
+        
+        // 비교 테이블 생성
+        const table = document.createElement('table');
+        table.className = 'star-comparison-table';
+        
+        // 테이블 헤더
+        const thead = document.createElement('thead');
+        let headerRow = document.createElement('tr');
+        headerRow.innerHTML = `
+            <th style="width: 20%;">상품</th>
+            <th style="width: 15%;">등록확률</th>
+            <th style="width: 13%;">1성 확률</th>
+            <th style="width: 13%;">2성 확률</th>
+            <th style="width: 13%;">3성 확률</th>
+            <th style="width: 13%;">4성 확률</th>
+            <th style="width: 13%;">5성 확률</th>
+        `;
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+        
+        // 테이블 바디
+        const tbody = document.createElement('tbody');
+        
+        // 별 단계별 꽝 확률 감소 및 재분배 정보 추가
+        const infoRow = document.createElement('tr');
+        infoRow.className = 'star-header';
+        infoRow.innerHTML = `
+            <td colspan="7">
+                <span class="star-rating">★</span> 별 단계별 꽝 확률 변화:
+                1성(100%) → 2성(80%) → 3성(50%) → 4성(30%) → 5성(10%)
+            </td>
+        `;
+        tbody.appendChild(infoRow);
+        
+    // 각 상품별 행 추가
+    prizes.forEach((prize, prizeIndex) => {
+        const row = document.createElement('tr');
+        
+        // 상품명과 등록확률
+        let rowHTML = `
+            <td>${prize.name}</td>
+            <td>${prize.probability.toFixed(4)}%</td>
+        `;
+        
+        // 1~5성 각각의 실제 확률
+        for (let stars = 1; stars <= 5; stars++) {
+            const actualProb = allStarResults[stars][prizeIndex].actualProbability;
+            let changeInfo = '';
+            
+            // 1성 이후부터는 확률 변화량 표시
+            if (stars > 1) {
+                const prevActualProb = allStarResults[stars-1][prizeIndex].actualProbability;
+                const change = actualProb - prevActualProb;
+                const changeClass = change > 0 ? 'increase' : (change < 0 ? 'decrease' : '');
+                const changeSign = change > 0 ? '↑' : (change < 0 ? '↓' : '');
+                
+                if (change !== 0) {
+                    changeInfo = `<span class="change-indicator ${changeClass}">${changeSign} <span class="change-value">${Math.abs(change).toFixed(3)}%</span></span>`;
+                }
+            }
+            
+            rowHTML += `<td>${actualProb.toFixed(3)}%${changeInfo}</td>`;
+        }
+        
+        row.innerHTML = rowHTML;
+        
+        // 꽝 행 강조
+        if (prizeIndex === 0) {
+            row.className = 'highlight';
+        }
+        
+        tbody.appendChild(row);
+    });
+        
+        table.appendChild(tbody);
+        comparisonContainer.appendChild(table);
+    }
+    
+    // 현재 별 확률 복사 기능
+    document.getElementById('copy-current-results').addEventListener('click', function() {
+        let resultsText = `별 ${currentStars}개 룰렛 확률\n\n`;
+        
+        const rows = document.querySelectorAll('#results-table tbody tr');
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            resultsText += `${cells[0].textContent}: ${cells[2].textContent}\n`;
+        });
+        
+        // 임시 textarea 요소 생성
+        const textarea = document.createElement('textarea');
+        textarea.value = resultsText;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+        
+        // 텍스트 선택 및 복사
+        textarea.select();
+        let successful = false;
+        try {
+            successful = document.execCommand('copy');
+        } catch (err) {
+            console.error('복사 실패:', err);
+        }
+        
+        // 임시 요소 제거
+        document.body.removeChild(textarea);
+        
+        // 결과 표시
+        const originalText = this.textContent;
+        if (successful) {
+            this.textContent = '복사 완료!';
+        } else {
+            this.textContent = '복사 실패';
+        }
+        
+        setTimeout(() => {
+            this.textContent = originalText;
+        }, 2000);
+    });
+    
+    // ---------------- 데이터 가져오기 기능 추가 ----------------
+    // 모달 요소 참조
+    const importBtn = document.getElementById('import-data-btn');
+    const importModal = document.getElementById('import-modal');
+    const closeBtn = document.querySelector('.close-button');
+    const applyBtn = document.getElementById('apply-data-btn');
+    const importText = document.getElementById('import-data-text');
+    const importStatus = document.getElementById('import-status');
+    
+    // 모달 열기
+    importBtn.addEventListener('click', function() {
+        importModal.style.display = 'block';
+    });
+    
+    // 모달 닫기
+    closeBtn.addEventListener('click', function() {
+        importModal.style.display = 'none';
+    });
+    
+    // 외부 클릭 시 모달 닫기
+    window.addEventListener('click', function(event) {
+        if (event.target === importModal) {
+            importModal.style.display = 'none';
+        }
+    });
+    
+    // 적용하기 버튼 클릭 함수에 계산하기 버튼 자동 클릭 추가
+    applyBtn.addEventListener('click', function() {
+        const text = importText.value.trim();
+        
+        if (!text) {
+            showImportStatus('error', '데이터를 입력해주세요');
+            return;
+        }
+        
+        try {
+            // 데이터 파싱
+            const items = parseImportData(text);
+            
+            if (items.length === 0) {
+                showImportStatus('error', '유효한 데이터가 없습니다');
+                return;
+            }
+            
+            // 기존 상품 초기화 (첫 번째 꽝은 유지)
+            clearExistingItems();
+            
+            // 첫 번째 항목이 꽝인 경우 확률 설정
+            const firstPrizeItem = document.querySelector('#prize-item-0');
+            const firstProbabilityInput = firstPrizeItem.querySelector('.prize-probability');
+            
+            if (items[0].name.toLowerCase().includes('꽝')) {
+                firstProbabilityInput.value = items[0].probability;
+                
+                // 나머지 항목 추가
+                for (let i = 1; i < items.length; i++) {
+                    addPrizeItem(items[i].name, items[i].probability);
+                }
+            } else {
+                // 첫 번째 항목이 꽝이 아닌 경우
+                firstProbabilityInput.value = '';
+                
+                // 모든 항목 추가
+                for (let i = 0; i < items.length; i++) {
+                    addPrizeItem(items[i].name, items[i].probability);
+                }
+            }
+            
+            // 총 확률 업데이트
+            updateTotalProbability();
+            
+            showImportStatus('success', `${items.length}개 항목 추가 완료`);
+            
+            // 모달 닫기 전에 계산하기 버튼 자동 클릭
+            calculateButton.click();
+            
+            // 모달 닫기
+            setTimeout(function() {
+                importModal.style.display = 'none';
+            }, 2000);
+            
+        } catch (error) {
+            showImportStatus('error', error.message);
+        }
+    });
+    
+    // 상태 메시지 표시
+    function showImportStatus(type, message) {
+        importStatus.textContent = message;
+        importStatus.className = type;
+        importStatus.style.display = 'block';
+        
+        setTimeout(function() {
+            importStatus.style.display = 'none';
+        }, 3000);
+    }
+    
+    // 데이터 파싱
+    function parseImportData(text) {
+        const lines = text.split('\n');
+        const result = [];
+        
+        // 첫 줄이 헤더인지 확인
+        let startLine = 0;
+        if (lines[0].includes('상품') && lines[0].includes('확률')) {
+            startLine = 1;
+        }
+        
+        for (let i = startLine; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (!line) continue;
+            
+            // 탭이나 여러 공백으로 분리
+            const parts = line.split(/[\t]+|[ ]{2,}/);
+            
+            if (parts.length >= 2) {
+                // 마지막 부분을 확률로 처리, 나머지는 상품명
+                const probability = parseFloat(parts[parts.length - 1].replace(/[^0-9.]/g, ''));
+                
+                // 상품명 조합 (마지막 부분 제외)
+                let name = '';
+                for (let j = 0; j < parts.length - 1; j++) {
+                    if (parts[j].trim()) {
+                        name += (name ? ' ' : '') + parts[j].trim();
+                    }
+                }
+                
+                if (name && !isNaN(probability)) {
+                    result.push({
+                        name: name,
+                        probability: probability
+                    });
+                }
+            }
+        }
+        
+        return result;
+    }
+    
+    // 기존 상품 아이템 초기화 (첫 번째 꽝은 유지)
+    function clearExistingItems() {
+        const prizeItems = document.querySelectorAll('.prize-item');
+        
+        // 첫 번째 항목(꽝)을 제외한 나머지 삭제
+        for (let i = prizeItems.length - 1; i > 0; i--) {
+            prizeItems[i].remove();
+        }
+    }
+    
+    // 상품 아이템 추가
+    function addPrizeItem(name, probability) {
+        // 기존 "상품 추가" 버튼 클릭 (이벤트 시뮬레이션)
+        document.getElementById('add-prize').click();
+        
+        // 방금 추가된 아이템 찾기
+        const prizeItems = document.querySelectorAll('.prize-item');
+        const newItem = prizeItems[prizeItems.length - 1];
+        
+        // 이름과 확률 설정
+        const nameInput = newItem.querySelector('.prize-name');
+        const probabilityInput = newItem.querySelector('.prize-probability');
+        
+        nameInput.value = name;
+        probabilityInput.value = probability;
+    }
+});
+</script>
+</body>
+</html>
