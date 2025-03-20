@@ -7,7 +7,7 @@
     
     <meta property="og:title" content="통합 계산기 - 고기 & 사냥패스">
     <meta property="og:description" content="사냥패스&고기 보상 계산">
-    <meta property="og:image" content="https://raw.githubusercontent.com/SaeDing/ABCD123123AAA/refs/heads/main/img/a.PNG">
+    <meta property="og:image" content="https://noinvadepls.com/img/a.PNG">
     <meta property="og:url" content="https://noinvadepls.com/roundsindex">
     
     <style>
@@ -542,31 +542,31 @@
             <div class="meat-container">
                 <div class="button-container13">
                     <button class="round-btn" id="btn2" onclick="navigate('길드대전.html')">
-                        <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/1.png?raw=true" alt="B">
+                        <img src="./img/1.png" alt="B">
                         <span>길드</span>
                     </button>
                     <button class="round-btn" id="btn3" onclick="navigate('월드보스1.html')">
-                        <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/1m.png?raw=true" alt="C">
+                        <img src="./img/1m.png" alt="C">
                         <span>보스1</span>
                     </button>
                     <button class="round-btn" id="btn4" onclick="navigate('월드보스2.html')">
-                        <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/4m.png?raw=true" alt="E">
+                        <img src="./img/4m.png" alt="E">
                         <span>보스2</span>
                     </button>
                     <button class="round-btn" id="btn5" onclick="navigate('월드보스3.html')">
-                        <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/5m.png?raw=true" alt="F">
+                        <img src="./img/5m.png" alt="F">
                         <span>보스3</span>
                     </button>
                     <button class="round-btn" id="btn6" onclick="navigate('일반.html')">
-                        <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/2m.png?raw=true" alt="G">
+                        <img src="./img/2m.png" alt="G">
                         <span>일반</span>
                     </button>
                     <button class="round-btn" id="btn7" onclick="navigate('어려움.html')">
-                        <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/3m.png?raw=true" alt="H">
+                        <img src="./img/3m.png" alt="H">
                         <span>어려움</span>
                     </button>
                     <button class="round-btn" id="btn8" onclick="navigate('index.html')">
-                        <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/A.PNG?raw=true" alt="Home">
+                        <img src="./img/A.PNG" alt="Home">
                         <span>홈</span>
                     </button>
                 </div>
@@ -1174,13 +1174,15 @@
         document.addEventListener('DOMContentLoaded', function() {
             // 배경 이미지 랜덤 설정
             (function() {
-                const images = ["https://github.com/SaeDing/ABCD123123AAA/blob/main/img/back1.png?raw=true", 
-                               "https://github.com/SaeDing/ABCD123123AAA/blob/main/img/back2.png?raw=true", 
-                               "https://github.com/SaeDing/ABCD123123AAA/blob/main/img/back3.png?raw=true"];
-                const randomImage = images[Math.floor(Math.random() * images.length)];
-                const bgDiv = document.getElementById("background");
-                bgDiv.style.backgroundImage = `url('${randomImage}')`;
-            })();
+        const images = [
+            "./img/back1.png",
+            "./img/back2.png",
+            "./img/back3.png"
+        ];
+        const randomImage = images[Math.floor(Math.random() * images.length)];
+        const bgDiv = document.getElementById("background");
+        bgDiv.style.backgroundImage = `url('${randomImage}')`;
+        })();
 
             // 접을 수 있는 섹션 설정
             toggleCollapsible(maxLevelHeader, maxLevelInfo);
