@@ -1576,25 +1576,27 @@ function closeNotification() {
 }
 
 // 일반 배치 파일 내용 생성
+// 일반 배치 파일 내용 생성
 function generateBatchContent(powerCommand, powerAction, timeParameter = '', timeInfo = '즉시') {
     let batchContent = '@echo off\n';
+    batchContent += 'chcp 949\n';
     batchContent += 'echo Power Manager - 전원 관리 스크립트\n';
     batchContent += 'echo ================================\n\n';
     
-    // ASCII 아트 추가
+    // ASCII 아트 추가 - 문제가 발생하는 부분을 수정
     batchContent += 'echo  _____                       __  __                                 \n';
-    batchContent += 'echo |  __ \\                     |  \\/  |                                \n';
-    batchContent += 'echo | |__) |____      _____ _ __| \\  / | __ _ _ __   __ _  __ _  ___ _ __\n';
-    batchContent += 'echo |  ___/ _ \\ \\ /\\ / / _ \\ \'__| |\\/| |/ _` | \'_ \\ / _` |/ _` |/ _ \\ \'__|\n';
-    batchContent += 'echo | |  | (_) \\ V  V /  __/ |  | |  | | (_| | | | | (_| | (_| |  __/ |   \n';
-    batchContent += 'echo |_|   \\___/ \\_/\\_/ \\___|_|  |_|  |_|\\__,_|_| |_|\\__,_|\\__, |\\___|_|   \n';
-    batchContent += 'echo                                                       __/ |          \n';
-    batchContent += 'echo                                                      |___/           \n\n';
+    batchContent += 'echo ^|  __ \\^|                     ^|  \\/  ^|                                \n';
+    batchContent += 'echo ^| ^|__) ^|____      _____ _ __^| \\  / ^| __ _ _ __   __ _  __ _  ___ _ __\n';
+    batchContent += 'echo ^|  ___/ _ \\ \\ /\\ / / _ \\ \'__^| ^|\\/^| ^|/ _` ^| \' \\ / _` ^|/ _` ^|/ _ \\ \'__^|\n';
+    batchContent += 'echo ^| ^|  ^| (_) \\ V  V /  __/ ^|  ^| ^|  ^| ^| (_^| ^| ^| ^| ^| (_^| ^| (_^| ^|  __/ ^|   \n';
+    batchContent += 'echo ^|_^|   \\___/ \\_/\\_/ \\___^|_^|  ^|_^|  ^|_^|\\__,_^|_^| ^|_^|\\__,_^|\\__, ^|\\___^|_^|   \n';
+    batchContent += 'echo                                                       __/ ^|          \n';
+    batchContent += 'echo                                                      ^|___/           \n\n';
     
     // 보안 경고 안내
     batchContent += 'echo [주의] 이 파일을 실행할 때 Windows 보안 경고가 표시될 수 있습니다.\n';
     batchContent += 'echo 이 경우 파일을 마우스 오른쪽 버튼으로 클릭 후 속성에서 "차단 해제"를 선택하세요.\n\n';
-    
+ 
     // 1. 알림 설정 적용
     const notificationPanel = document.querySelectorAll('.option-panel')[0];
     const notificationToggle = notificationPanel.querySelector('input[type="checkbox"]');
