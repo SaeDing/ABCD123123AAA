@@ -913,29 +913,16 @@ document.addEventListener('DOMContentLoaded', function() {
         return probabilities.length - 1;
     }
     
-    // 단순 시뮬레이션 결과 표시 함수 수정
-function displaySimpleSimulationResults(results) {
-    try {
-        // 요약 정보 업데이트 - 각 요소가 존재하는지 확인
-        const totalTriesElement = document.getElementById('sim-total-tries');
-        if (totalTriesElement) totalTriesElement.textContent = results.totalTries.toLocaleString();
-        
-        const totalCostElement = document.getElementById('sim-total-cost');
-        if (totalCostElement) totalCostElement.textContent = results.totalCost.toLocaleString() + '원';
-        
-        const startStarsElement = document.getElementById('sim-start-stars');
-        if (startStarsElement) startStarsElement.textContent = `${results.startStars}성`;
-        
-        const endStarsElement = document.getElementById('sim-end-stars');
-        if (endStarsElement) endStarsElement.textContent = `${results.endStars}성`;
+    // 단순 시뮬레이션 결과 표시 함수
+    function displaySimpleSimulationResults(results) {
+        // 요약 정보 업데이트
+        document.getElementById('sim-total-tries').textContent = results.totalTries.toLocaleString();
+        document.getElementById('sim-total-cost').textContent = results.totalCost.toLocaleString() + '원';
+        document.getElementById('sim-start-stars').textContent = `${results.startStars}성`;
+        document.getElementById('sim-end-stars').textContent = `${results.endStars}성`;
         
         // 결과 테이블 업데이트
         const simResultsBody = document.getElementById('sim-results-body');
-        if (!simResultsBody) {
-            console.error('결과 테이블 본문 요소를 찾을 수 없습니다');
-            return;
-        }
-        
         simResultsBody.innerHTML = '';
         
         // 선택된 모드에 따라 적절한 확률 정보 사용
@@ -962,16 +949,12 @@ function displaySimpleSimulationResults(results) {
                 <td>${prize.name}</td>
                 <td>${winCount.toLocaleString()}</td>
                 <td>${winRate.toFixed(2)}%</td>
-                <td>${expectedRate.toFixed(5)}%</td>
+                <td>${expectedRate.toFixed(4)}%</td>
             `;
             
             simResultsBody.appendChild(row);
         });
-    } catch (error) {
-        console.error('시뮬레이션 결과 표시 중 오류 발생:', error);
-        alert('시뮬레이션 결과를 표시하는 중 오류가 발생했습니다. HTML 요소가 누락되었을 수 있습니다.');
     }
-}
     
     // 목표 시뮬레이션 결과 표시 함수 수정
 function displayTargetSimulationResults(results, targetIndex, targetCount) {
@@ -1079,23 +1062,53 @@ function displayTargetSimulationResults(results, targetIndex, targetCount) {
             statsResultsBody.appendChild(row);
         });
         
-        // 분포 차트 표시 (간단한 텍스트 기반 시각화)
-        const distributionContainer = document.getElementById('stats-distribution-container');
-        distributionContainer.innerHTML = '';
+        // 분포 차트 표시 (표 형식의 시각화로 변경)
+    const distributionContainer = document.getElementById('stats-distribution-container');
+    distributionContainer.innerHTML = '';
+
+    // 표 형식 사용
+    const table = document.createElement('table');
+    table.style.width = '100%';
+    table.style.fontFamily = 'monospace';
+    table.style.borderCollapse = 'collapse';
+
+    // 헤더 추가
+    const headerRow = document.createElement('tr');
+    headerRow.innerHTML = `
+        <th style="text-align:left; width:30%; padding:5px;">상품명</th>
+        <th style="text-align:left; width:50%; padding:5px;">분포</th>
+        <th style="text-align:right; width:20%; padding:5px;">확률</th>
+    `;
+    table.appendChild(headerRow);
+
+    // 각 상품 행 추가
+    currentPrizes.forEach((prize, index) => {
+        const avgWinRate = (results.avgPrizeResults[index] / results.timesPerTrial) * 100;
+        const barLength = Math.round(avgWinRate); // 확률에 비례하는 막대 길이
+        const bar = '█'.repeat(Math.min(barLength, 50)); // 최대 50 길이로 제한
         
-        const distributionText = document.createElement('p');
-        distributionText.innerHTML = '각 상품의 당첨 분포 (막대 길이는 당첨 확률 비례):<br><br>';
+        const row = document.createElement('tr');
+        if (index === 0) row.style.backgroundColor = 'rgba(108, 92, 231, 0.1)'; // 꽝 행 강조
         
-        currentPrizes.forEach((prize, index) => {
-            const avgWinRate = (results.avgPrizeResults[index] / results.timesPerTrial) * 100;
-            const barLength = Math.round(avgWinRate); // 확률에 비례하는 막대 길이
-            
-            const bar = '█'.repeat(Math.min(barLength, 50)); // 최대 50 길이로 제한
-            
-            distributionText.innerHTML += `${prize.name}: ${bar} ${avgWinRate.toFixed(2)}%<br>`;
-        });
+        row.innerHTML = `
+            <td style="padding:5px; text-align:left;">${prize.name}</td>
+            <td style="padding:5px; text-align:left;">${bar}</td>
+            <td style="padding:5px; text-align:right; font-weight:bold;">${avgWinRate.toFixed(2)}%</td>
+        `;
         
-        distributionContainer.appendChild(distributionText);
+        table.appendChild(row);
+    });
+        // 설명 추가
+        const caption = document.createElement('caption');
+        caption.textContent = '* 막대 길이는 당첨 확률에 비례합니다.';
+        caption.style.captionSide = 'bottom';
+        caption.style.textAlign = 'left';
+        caption.style.fontSize = '0.8rem';
+        caption.style.color = '#666';
+        caption.style.padding = '5px';
+        table.appendChild(caption);
+
+        distributionContainer.appendChild(table);
     }
     
     // ====== 모달 관련 기능 ======

@@ -815,3 +815,31 @@ td:last-child, th:last-child {
     margin: 2px;
     font-size: 0.8rem;
 }
+
+/* 분포 테이블 스타일 추가 - styles.css 파일에 추가 */
+.distribution-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.distribution-table th {
+    background-color: rgba(108, 92, 231, 0.1);
+    color: var(--primary-color);
+    font-weight: 600;
+    text-align: left;
+    padding: 8px;
+}
+
+.distribution-table tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.distribution-table td {
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+#stats-distribution-container {
+    overflow-x: auto; /* 모바일에서도 잘 보이도록 */
+}
