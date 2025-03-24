@@ -1,0 +1,817 @@
+:root {
+    --primary-color: #6c5ce7;
+    --secondary-color: #af2bc0;
+    --accent-color: #00cec9;
+    --background-color: #f9f9f9;
+    --card-color: #ffffff;
+    --text-color: #2d3436;
+    --border-color: #dfe6e9;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --error-color: #ff7675;
+    --success-color: #55efc4;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+html {
+    font-size: 13px;
+}
+
+body {
+    background-color: #fdfdfd;
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+}
+
+.container {
+    max-width: 960px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 24px;
+    padding: 16px;
+    background: linear-gradient(100deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px var(--shadow-color);
+}
+
+h1 {
+    font-size: 2rem;
+    margin-bottom: 8px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+h2 {
+    font-size: 1.5rem;
+    margin: 20px 0 12px;
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: 6px;
+}
+
+.calculator-container, .simulation-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.calculator-section, .results-section, .simulation-settings, .simulation-results {
+    flex: 1;
+    min-width: 240px;
+    background-color: var(--card-color);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 6px 12px var(--shadow-color);
+}
+
+.calculator-section, .simulation-settings {
+    position: relative;
+    overflow: hidden;
+}
+
+.calculator-section::before, .simulation-settings::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+}
+
+.input-group {
+    margin-bottom: 12px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+input, select, button {
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 13px;
+    transition: all 0.3s ease;
+}
+
+input:focus, select:focus {
+    border-color: var(--accent-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 206, 201, 0.25);
+}
+
+button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    margin: 12px 0;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background-color: #5a4ad1;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+.prize-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    padding: 8px;
+    border-radius: 6px;
+    background-color: #f8f9fa;
+    border-left: 3px solid var(--primary-color);
+}
+
+.prize-item input {
+    flex: 1;
+}
+
+.remove-prize {
+    background-color: var(--error-color);
+    width: 32px;
+    padding: 6px;
+}
+
+.remove-prize:hover {
+    background-color: #e74c3c;
+}
+
+.stars-container {
+    display: flex;
+    justify-content: space-between;
+    margin: 16px 0;
+}
+
+.star-level {
+    text-align: center;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    width: 18%;
+    border: 2px solid transparent;
+}
+
+.star-level.active {
+    border-color: var(--accent-color);
+    background-color: rgba(0, 206, 201, 0.1);
+}
+
+.star-display {
+    font-size: 0.7rem;
+    color: gold;
+    margin-bottom: 4px;
+    text-shadow: 0 0 4px rgba(255, 215, 0, 0.5);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+}
+
+th, td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+th {
+    background-color: rgba(108, 92, 231, 0.1);
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+td:last-child, th:last-child {
+    text-align: right;
+}
+
+.highlight {
+    background-color: rgba(0, 206, 201, 0.2);
+}
+
+.star-info {
+    background-color: rgba(253, 121, 168, 0.1);
+    padding: 12px;
+    border-radius: 8px;
+    margin: 16px 0;
+    border-left: 3px solid var(--secondary-color);
+}
+
+.star-info h3 {
+    color: var(--secondary-color);
+    margin-bottom: 8px;
+}
+
+.star-info p {
+    margin-bottom: 6px;
+    line-height: 1.4;
+}
+
+.probability-info {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.probability-card, .summary-card {
+    background: linear-gradient(135deg, rgba(108, 92, 231, 0.9), rgba(108, 92, 231, 0.7));
+    color: white;
+    border-radius: 8px;
+    padding: 12px;
+    flex: 1;
+    min-width: 160px;
+    box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3);
+    text-align: center;
+}
+
+.probability-card h3, .summary-card h4 {
+    font-size: 1rem;
+    margin-bottom: 8px;
+}
+
+.probability-card .value, .summary-card .value {
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+.results-table-container, .sim-results-table-container {
+    overflow-x: auto;
+    margin-top: 16px;
+}
+
+.error-message {
+    color: var(--error-color);
+    font-size: 0.8rem;
+    margin-top: 4px;
+}
+
+.info-message {
+    background-color: rgba(108, 92, 231, 0.1);
+    padding: 12px;
+    border-radius: 6px;
+    margin: 12px 0;
+    border-left: 3px solid var(--primary-color);
+}
+
+.star-probability {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.star-probability .label {
+    flex: 2;
+}
+
+.star-probability .value {
+    flex: 1;
+    text-align: right;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.star-path {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 4px;
+}
+
+.star-path::before {
+    content: '★';
+    position: absolute;
+    left: 0;
+    color: gold;
+}
+
+.prize-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 12px;
+    margin-top: 8px;
+    border-top: 2px solid var(--border-color);
+    font-weight: 600;
+}
+
+.tab-container {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 16px;
+}
+
+.tab {
+    padding: 8px 16px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border-bottom: 2px solid transparent;
+}
+
+.tab.active {
+    border-bottom-color: var(--primary-color);
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.import-data-button {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 8px;
+    margin-left: auto;
+    cursor: pointer;
+    font-size: 0.7rem;
+    display: inline-flex;
+    align-items: center;
+    width: auto;
+    transition: all 0.3s ease;
+}
+
+.import-data-button:hover {
+    background-color: #00b3b3;
+    transform: translateY(-2px);
+}
+
+.import-data-button i {
+    margin-right: 4px;
+}
+
+.import-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.import-modal-content {
+    background-color: var(--card-color);
+    margin: 15% auto;
+    padding: 16px;
+    border-radius: 8px;
+    width: 240px;
+    height: 240px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.close-button {
+    color: #aaa;
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-button:hover {
+    color: var(--primary-color);
+}
+
+.import-modal-content h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: var(--primary-color);
+}
+
+.import-modal-content p {
+    font-size: 0.7rem;
+    margin-bottom: 8px;
+    color: #666;
+}
+
+#import-data-text {
+    flex: 1;
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 0.8rem;
+    resize: none;
+    margin-bottom: 12px;
+}
+
+#apply-data-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#apply-data-btn:hover {
+    background-color: #75d14a;
+}
+
+#import-status {
+    margin-top: 8px;
+    font-size: 0.7rem;
+    text-align: center;
+    padding: 4px;
+    border-radius: 4px;
+    display: none;
+}
+
+#import-status.success {
+    background-color: rgba(46, 213, 115, 0.2);
+    color: #2ed573;
+}
+
+#import-status.error {
+    background-color: rgba(255, 71, 87, 0.2);
+    color: #ff4757;
+}
+
+.copy-button {
+    background-color: var(--accent-color);
+    margin-top: 8px;
+    font-size: 0.8rem;
+}
+
+.results-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    width: 100%;
+}
+
+.results-column {
+    flex: 1;
+    min-width: 240px;
+}
+
+.results-title {
+    margin: 0 0 12px 0;
+    color: var(--primary-color);
+    padding-bottom: 4px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+/* 시뮬레이션 섹션 스타일 */
+.simulation-container {
+    display: block;
+    margin-bottom: 32px;
+}
+
+.simulation-settings, .simulation-results {
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.simulation-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.simulation-row .input-group {
+    flex: 1;
+}
+
+.radio-group {
+    display: flex;
+    gap: 16px;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.radio-label input {
+    width: auto;
+}
+
+.simulation-button {
+    background-color: var(--secondary-color);
+}
+
+.simulation-button:hover {
+    background-color: #9b219b;
+}
+
+.sim-type-tabs {
+    margin-top: 8px;
+    border: none;
+}
+
+.sim-type-tabs .tab {
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    margin-right: 8px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+}
+
+.sim-type-tabs .tab.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.sim-type-content {
+    background-color: rgba(108, 92, 231, 0.05);
+    padding: 12px;
+    border-radius: 8px;
+    margin: 12px 0;
+}
+
+.simulation-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.target-details, .stats-details {
+    background-color: rgba(108, 92, 231, 0.05);
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.target-details h4, .stats-details h4 {
+    color: var(--primary-color);
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+}
+
+.stats-distribution {
+    margin-top: 24px;
+}
+
+.stats-distribution h4 {
+    margin-bottom: 12px;
+}
+
+#stats-distribution-container {
+    height: 200px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    padding: 16px;
+}
+
+@media (max-width: 768px) {
+    .calculator-section, .results-section {
+        min-width: 100%;
+    }
+    .probability-card {
+        min-width: 45%;
+    }
+    .simulation-row {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .probability-card, .summary-card {
+        min-width: 100%;
+    }
+    .sim-type-tabs {
+        flex-direction: column;
+    }
+    .sim-type-tabs .tab {
+        width: 100%;
+        margin-bottom: 8px;
+    }
+}
+
+.seo-footer {
+    text-align: center;
+    margin-top: 20px;
+    padding: 15px;
+    border-top: 1px solid var(--border-color);
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* 광고 컨테이너 스타일 */
+.ad-container {
+    width: 100%;
+    margin: 20px auto;
+    text-align: center;
+    overflow: hidden;
+    position: relative;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    background-color: #f8f9fa;
+    padding: 10px 0;
+    transition: all 0.3s ease;
+}
+
+.ad-container:hover {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.ad-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    border-radius: 4px;
+}
+
+.ad-label {
+    position: absolute;
+    top: 3px;
+    right: 5px;
+    background-color: rgba(0,0,0,0.5);
+    color: white;
+    font-size: 8px;
+    padding: 2px 5px;
+    border-radius: 3px;
+    z-index: 2;
+}
+
+/* 캐러셀 광고 컨테이너 */
+.carousel-ad-container {
+    width: 100%;
+    max-width: 680px;
+    margin: 20px auto;
+    position: relative;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    padding: 10px 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.carousel-ad-container:hover {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.carousel-ad-container iframe {
+    max-width: 100%;
+    height: auto;
+    min-height: 140px;
+}
+
+/* 고정 위치 광고 (하단) */
+.sticky-ad {
+    position: sticky;
+    bottom: 20px;
+    z-index: 100;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 720px;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+/* 비용 카드 스타일 추가 - Rustyles.css 파일에 추가 */
+.cost-summary-container {
+    background-color: rgba(108, 92, 231, 0.05);
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.cost-summary-container h4 {
+    color: var(--primary-color);
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+}
+
+.cost-cards {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.cost-card {
+    flex: 1;
+    min-width: 100px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.cost-label {
+    font-size: 0.8rem;
+    opacity: 0.9;
+    margin-bottom: 4px;
+}
+
+.cost-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.cost-tries {
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+
+/* 이론적 시도 횟수 강조 스타일 */
+#theoretical-tries-row {
+    background-color: rgba(108, 92, 231, 0.1);
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+#theoretical-tries {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+
+.related-keywords {
+    margin: 15px 0;
+    padding: 10px;
+    background-color: rgba(0, 206, 201, 0.05);
+    border-radius: 8px;
+}
+
+.related-keywords h3 {
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+}
+
+.keyword-tag {
+    display: inline-block;
+    padding: 4px 8px;
+    background-color: rgba(108, 92, 231, 0.1);
+    border-radius: 4px;
+    margin: 2px;
+    font-size: 0.8rem;
+}
