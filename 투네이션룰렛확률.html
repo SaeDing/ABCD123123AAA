@@ -386,7 +386,44 @@
         </div>
     </div>
 </div>
-            
+            <!-- 단순 시뮬레이션 결과 -->
+<div class="sim-result-content" id="simple-sim-results">
+    <div class="simulation-summary">
+        <div class="summary-card">
+            <h4>총 시도 횟수</h4>
+            <div class="value" id="sim-total-tries">0</div>
+        </div>
+        <div class="summary-card">
+            <h4>총 비용</h4>
+            <div class="value" id="sim-total-cost">0원</div>
+        </div>
+        <div class="summary-card">
+            <h4>초기 별 등급</h4>
+            <div class="value" id="sim-start-stars">1성</div>
+        </div>
+        <div class="summary-card">
+            <h4>최종 별 등급</h4>
+            <div class="value" id="sim-end-stars">1성</div>
+        </div>
+    </div>
+    
+    <div class="sim-results-table-container">
+        <table id="sim-results-table">
+            <thead>
+                <tr>
+                    <th>상품</th>
+                    <th>당첨 횟수</th>
+                    <th>당첨 비율</th>
+                    <th>기대 확률</th>
+                </tr>
+            </thead>
+            <tbody id="sim-results-body">
+                <!-- 시뮬레이션 결과가 여기에 표시됩니다 -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
             <!-- 통계 시뮬레이션 결과 -->
             <div class="sim-result-content" id="stats-sim-results" style="display: none;">
                 <div class="simulation-summary">

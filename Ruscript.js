@@ -913,16 +913,29 @@ document.addEventListener('DOMContentLoaded', function() {
         return probabilities.length - 1;
     }
     
-    // 단순 시뮬레이션 결과 표시 함수
-    function displaySimpleSimulationResults(results) {
-        // 요약 정보 업데이트
-        document.getElementById('sim-total-tries').textContent = results.totalTries.toLocaleString();
-        document.getElementById('sim-total-cost').textContent = results.totalCost.toLocaleString() + '원';
-        document.getElementById('sim-start-stars').textContent = `${results.startStars}성`;
-        document.getElementById('sim-end-stars').textContent = `${results.endStars}성`;
+    // 단순 시뮬레이션 결과 표시 함수 수정
+function displaySimpleSimulationResults(results) {
+    try {
+        // 요약 정보 업데이트 - 각 요소가 존재하는지 확인
+        const totalTriesElement = document.getElementById('sim-total-tries');
+        if (totalTriesElement) totalTriesElement.textContent = results.totalTries.toLocaleString();
+        
+        const totalCostElement = document.getElementById('sim-total-cost');
+        if (totalCostElement) totalCostElement.textContent = results.totalCost.toLocaleString() + '원';
+        
+        const startStarsElement = document.getElementById('sim-start-stars');
+        if (startStarsElement) startStarsElement.textContent = `${results.startStars}성`;
+        
+        const endStarsElement = document.getElementById('sim-end-stars');
+        if (endStarsElement) endStarsElement.textContent = `${results.endStars}성`;
         
         // 결과 테이블 업데이트
         const simResultsBody = document.getElementById('sim-results-body');
+        if (!simResultsBody) {
+            console.error('결과 테이블 본문 요소를 찾을 수 없습니다');
+            return;
+        }
+        
         simResultsBody.innerHTML = '';
         
         // 선택된 모드에 따라 적절한 확률 정보 사용
@@ -949,12 +962,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>${prize.name}</td>
                 <td>${winCount.toLocaleString()}</td>
                 <td>${winRate.toFixed(2)}%</td>
-                <td>${expectedRate.toFixed(4)}%</td>
+                <td>${expectedRate.toFixed(5)}%</td>
             `;
             
             simResultsBody.appendChild(row);
         });
+    } catch (error) {
+        console.error('시뮬레이션 결과 표시 중 오류 발생:', error);
+        alert('시뮬레이션 결과를 표시하는 중 오류가 발생했습니다. HTML 요소가 누락되었을 수 있습니다.');
     }
+}
     
     // 목표 시뮬레이션 결과 표시 함수 수정
 function displayTargetSimulationResults(results, targetIndex, targetCount) {
