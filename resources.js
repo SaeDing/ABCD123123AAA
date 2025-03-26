@@ -57,6 +57,7 @@ function updateResourceTotals() {
         });
         
         // 소유자별 사용자 수정값 적용
+        // 소유자별 사용자 수정값 적용
         if (state.ownerResources) {
             Object.entries(state.ownerResources).forEach(([owner, resources]) => {
                 if (!finalOwnerResources[owner]) {
@@ -64,12 +65,16 @@ function updateResourceTotals() {
                         arti: 0, coins: 0, exp: 0, contribution: 0
                     };
                 }
-
-                // 수정된 코드: 기존 값에 추가하는 방식으로 변경
-                if (resources.arti !== undefined) finalOwnerResources[owner].arti += resources.arti;
-                if (resources.coins !== undefined) finalOwnerResources[owner].coins += resources.coins;
-                if (resources.exp !== undefined) finalOwnerResources[owner].exp += resources.exp;
-                if (resources.contribution !== undefined) finalOwnerResources[owner].contribution += resources.contribution;
+            
+                // 기존 방식 -> 수정자 사용 시 중복 적용되는 문제 수정
+                // 이미 수정자(resourceModifiers)가 위에서 적용되었으므로, 
+                // 아래 코드는 수정자가 없는 경우를 위한 예외 처리로만 사용
+                if (!state.resourceModifiers || !state.resourceModifiers[owner]) {
+                    if (resources.arti !== undefined) finalOwnerResources[owner].arti = resources.arti;
+                    if (resources.coins !== undefined) finalOwnerResources[owner].coins = resources.coins;
+                    if (resources.exp !== undefined) finalOwnerResources[owner].exp = resources.exp;
+                    if (resources.contribution !== undefined) finalOwnerResources[owner].contribution = resources.contribution;
+                }
             });
         }
         
@@ -597,16 +602,16 @@ function showResourceEditModal(resourceType, owner = 'all') {
 function saveResourceEdit() {
     try {
         if (!currentEditingResource) return;
-        
+       
         if (!elements.resourceEditValue) return;
         const newValue = parseInt(elements.resourceEditValue.value) || 0;
-        
+       
         // 음수 값은 0으로 처리
         if (newValue < 0) {
             showToast('음수 값은 입력할 수 없습니다.', 'warning');
             return;
         }
-        
+       
         // 상태 업데이트
         if (currentEditingOwner === 'all') {
             // 전체 자원 수정
@@ -614,13 +619,13 @@ function saveResourceEdit() {
             state.resources[currentEditingResource] = newValue; // 이 부분은 변경 없음
         } else {
             // 소유자별 자원 수정 - 사용자가 입력한 절대값을 그대로 사용
-            
+           
             // 기존 동작 보존 - 수정자 값 저장
             if (!state.resourceModifiers) state.resourceModifiers = {};
             if (!state.resourceModifiers[currentEditingOwner]) {
                 state.resourceModifiers[currentEditingOwner] = {};
             }
-            
+           
             // 1. 현재 기부로 계산된 값 가져오기 (UI 표시용)
             let calculatedValue = 0;
             state.characters.forEach(char => {
@@ -633,37 +638,45 @@ function saveResourceEdit() {
                     }
                 }
             });
-            
+           
             // 절대값 대신 수정자 값으로 저장 (수정된 부분)
             state.resourceModifiers[currentEditingOwner][currentEditingResource] = newValue - calculatedValue;
-            
+           
             // 소유자별 자원도 동일하게 수정자로 저장
             if (!state.ownerResources) state.ownerResources = {};
             if (!state.ownerResources[currentEditingOwner]) {
                 state.ownerResources[currentEditingOwner] = {};
             }
-            
+           
             // 절대값으로 저장 (기존 코드와 동일)
             state.ownerResources[currentEditingOwner][currentEditingResource] = newValue;
         }
-        
+       
         // UI 업데이트
         updateResourceTotals();
         updateResourcesCharts();
-        
+       
         // 모달 닫기
         hideResourceEditModal();
-        
+       
         // 저장
         saveDataToFirebase();
-        
-        const resourceName = 
-            currentEditingResource === 'arti' ? '아티' : 
-            currentEditingResource === 'coins' ? '길드 코인' : 
+       
+        const resourceName =
+            currentEditingResource === 'arti' ? '아티' :
+            currentEditingResource === 'coins' ? '길드 코인' :
             currentEditingResource === 'exp' ? '길드 경험치' : '기여도';
-            
-        const ownerName = currentEditingOwner === 'all' ? '전체' : currentEditingOwner;
-        
+           
+        // 수정된 부분: 소유자 이름 처리 개선
+        let ownerName;
+        if (currentEditingOwner === 'all') {
+            ownerName = '전체';
+        } else if (!currentEditingOwner || currentEditingOwner === 'null' || String(currentEditingOwner).toLowerCase() === 'null' || String(currentEditingOwner).toLowerCase() === 'undefined') {
+            ownerName = '미지정 소유자';  // null이나 undefined 대신 표시할 이름
+        } else {
+            ownerName = currentEditingOwner;
+        }
+       
         showToast(`${ownerName}의 ${resourceName} 값이 수정되었습니다.`, 'success');
     } catch (error) {
         console.error('자원 수정 저장 에러:', error);
