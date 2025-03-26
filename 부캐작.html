@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>길드 부캐 관리 시스템</title>
+    <link rel="stylesheet" href="guildstyles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 캐릭터 통계 스타일 추가 */
+        .character-stats {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .diamonds-badge {
+            background-color: #00b4d8;
+            color: white;
+            font-size: var(--font-xs);
+            padding: 2px var(--spacing-sm);
+            border-radius: var(--border-radius-sm);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        /* 누적 자원 섹션 확장 */
+        .dashboard {
+            grid-template-columns: 1fr;
+        }
+        
+        /* 리셋 버튼 스타일 */
+        .reset-button-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        #reset-donations {
+            padding: var(--spacing-md) var(--spacing-lg);
+            font-size: var(--font-md);
+            background: linear-gradient(135deg, var(--error), #d32f2f);
+            color: white;
+            animation: pulse-attention 2s infinite;
+        }
+        
+        @keyframes pulse-attention {
+            0% {
+                box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(244, 67, 54, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(244, 67, 54, 0);
+            }
+        }
+        
+        .last-reset-info {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-top: var(--spacing-sm);
+        }
+        
+        /* 자원 수정 버튼 */
+        .resource-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .edit-resource-btn {
+            background: none;
+            border: none;
+            color: var(--accent-primary);
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .edit-resource-btn:hover {
+            color: var(--accent-tertiary);
+            transform: scale(1.1);
+        }
+
+        /* 소유자별 자원 탭 */
+        .resources-tabs {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+            overflow-x: auto;
+            padding-bottom: var(--spacing-sm);
+        }
+
+        .resources-tab {
+            padding: var(--spacing-xs) var(--spacing-md);
+            background-color: var(--bg-tertiary);
+            color: var(--text-secondary);
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            white-space: nowrap;
+        }
+
+        .resources-tab.active {
+            background-color: var(--accent-primary);
+            color: white;
+        }
+
+        .resources-content {
+            display: none;
+        }
+
+        .resources-content.active {
+            display: block;
+        }
+
+        .edit-character-btn {
+            background: none;
+            border: none;
+            color: var(--text-tertiary);
+            cursor: pointer;
+            font-size: var(--font-md);
+            transition: var(--transition);
+        }
+
+        .edit-character-btn:hover {
+            color: var(--accent-tertiary);
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 헤더 영역 -->
+        <header>
+            <div class="logo">
+                <i class="fas fa-crown"></i>
+                <h1>길드 부캐 관리 시스템</h1>
+            </div>
+            <div class="theme-toggle">
+                <i class="fas fa-moon"></i>
+            </div>
+        </header>
+
+        <!-- 기부 리셋 버튼 (상단으로 이동) -->
+        <div class="reset-button-container">
+            <button id="reset-donations" class="btn btn-primary">
+                <i class="fas fa-redo"></i> 오늘의 기부 리셋
+            </button>
+        </div>
+        <div class="last-reset-info">
+            마지막 리셋: <span id="last-reset-date">2023-07-21</span>
+        </div>
+
+        <!-- 공지사항 영역 -->
+        <section class="notice-section">
+            <div class="section-header">
+                <h2><i class="fas fa-bullhorn"></i> 길드 공지사항</h2>
+                <button id="edit-notice" class="btn btn-small"><i class="fas fa-edit"></i></button>
+            </div>
+            <div class="notice-content" id="notice-display">
+                <p>장수도 놀랄만한 부캐수!</p>
+            </div>
+            <div class="notice-edit hidden" id="notice-edit">
+                <textarea id="notice-text"></textarea>
+                <div class="button-group">
+                    <button id="save-notice" class="btn btn-primary">저장</button>
+                    <button id="cancel-notice" class="btn btn-secondary">취소</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 대시보드 영역 (다이아 상태 탭 제거하고 누적 자원 탭 확장) -->
+        <section class="dashboard">
+            <div class="dashboard-item resources">
+                <h2><i class="fas fa-chart-line"></i> 누적 획득 자원</h2>
+
+                <!-- 소유자별 탭 추가 -->
+                <div class="resources-tabs" id="resources-tabs">
+                    <button class="resources-tab active" data-owner="all">전체</button>
+                    <button class="resources-tab" data-owner="쫌붕이">쫌붕이</button>
+                    <button class="resources-tab" data-owner="스턴">스턴</button>
+                    <!-- 다른 소유자 탭은 JavaScript로 동적 생성 -->
+                </div>
+
+                <!-- 전체 자원 콘텐츠 -->
+                <div class="resources-content active" data-owner="all">
+                    <div class="resources-grid">
+                        <div class="resource">
+                            <div class="resource-header">
+                                <i class="fas fa-scroll"></i>
+                                <button class="edit-resource-btn" data-resource="arti"><i class="fas fa-edit"></i></button>
+                            </div>
+                            <h3>아티팩트</h3>
+                            <span id="total-arti">0</span>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-header">
+                                <i class="fas fa-coins"></i>
+                                <button class="edit-resource-btn" data-resource="coins"><i class="fas fa-edit"></i></button>
+                            </div>
+                            <h3>길드 코인</h3>
+                            <span id="total-coins">0</span>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-header">
+                                <i class="fas fa-star"></i>
+                                <button class="edit-resource-btn" data-resource="exp"><i class="fas fa-edit"></i></button>
+                            </div>
+                            <h3>길드 경험치</h3>
+                            <span id="total-exp">0</span>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-header">
+                                <i class="fas fa-hands-helping"></i>
+                                <button class="edit-resource-btn" data-resource="contribution"><i class="fas fa-edit"></i></button>
+                            </div>
+                            <h3>기여도</h3>
+                            <span id="total-contribution">0</span>
+                        </div>
+                    </div>
+                    <div class="resource-chart">
+                        <canvas id="resources-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 쫌붕이 자원 콘텐츠 -->
+                <div class="resources-content" data-owner="쫌붕이">
+                    <div class="resources-grid">
+                        <div class="resource">
+                            <div class="resource-header">
+                                <i class="fas fa-scroll"></i>
+                                <button class="edit-resource-btn" data-resource="arti" data-owner="쫌붕이"><i class="fas fa-edit"></i></button>
+                            </div>
+                            <h3>아티팩트</h3>
+                            <span id="쫌붕이-total-arti">0</span>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-header">
+                                <i class="fas fa-coins"></i>
+                                <button class="edit-resource-btn" data-resource="coins" data-owner="쫌붕이"><i class="fas fa-edit"></i></button>
+                            </div>
+                            <h3>길드 코인</h3>
+                            <span id="쫌붕이-total-coins">0</span>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-header">
+                                <i class="fas fa-star"></i>
+                                <button class="edit-resource-btn" data-resource="exp" data-owner="쫌붕이"><i class="fas fa-edit"></i></button>
+                            </div>
+                            <h3>길드 경험치</h3>
+                            <span id="쫌붕이-total-exp">0</span>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-header">
+                                <i class="fas fa-hands-helping"></i>
+                                <button class="edit-resource-btn" data-resource="contribution" data-owner="쫌붕이"><i class="fas fa-edit"></i></button>
+                            </div>
+                            <h3>기여도</h3>
+                            <span id="쫌붕이-total-contribution">0</span>
+                        </div>
+                    </div>
+                    <div class="resource-chart">
+                        <canvas id="쫌붕이-resources-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 스턴 자원 콘텐츠 -->
+                <div class="resources-content" data-owner="스턴">
+                    <div class="resources-grid">
+                        <div class="resource">
+                            <div class="resource-header">
+                                <i class="fas fa-scroll"></i>
+                                <button class="edit-resource-btn" data-resource="arti" data-owner="스턴"><i class="fas fa-edit"></i></button>
+                            </div>
+                            <h3>아티팩트</h3>
+                            <span id="스턴-total-arti">0</span>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-header">
+                                <i class="fas fa-coins"></i>
+                                <button class="edit-resource-btn" data-resource="coins" data-owner="스턴"><i class="fas fa-edit"></i></button>
+                            </div>
+                            <h3>길드 코인</h3>
+                            <span id="스턴-total-coins">0</span>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-header">
+                                <i class="fas fa-star"></i>
+                                <button class="edit-resource-btn" data-resource="exp" data-owner="스턴"><i class="fas fa-edit"></i></button>
+                            </div>
+                            <h3>길드 경험치</h3>
+                            <span id="스턴-total-exp">0</span>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-header">
+                                <i class="fas fa-hands-helping"></i>
+                                <button class="edit-resource-btn" data-resource="contribution" data-owner="스턴"><i class="fas fa-edit"></i></button>
+                            </div>
+                            <h3>기여도</h3>
+                            <span id="스턴-total-contribution">0</span>
+                        </div>
+                    </div>
+                    <div class="resource-chart">
+                        <canvas id="스턴-resources-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 다른 소유자 자원 콘텐츠는 JavaScript로 동적 생성 -->
+                <div id="dynamic-owner-resources"></div>
+            </div>
+        </section>
+
+        <!-- 소유자 관리 영역 -->
+        <section class="owner-section">
+            <div class="section-header">
+                <h2><i class="fas fa-users-cog"></i> 소유자 관리</h2>
+                <button id="add-owner-btn" class="btn btn-primary">
+                    <i class="fas fa-user-plus"></i> 소유자 추가
+                </button>
+            </div>
+            
+            <!-- 소유자 추가 폼 -->
+            <div class="owner-form hidden" id="owner-form">
+                <div class="form-fields">
+                    <div class="form-group">
+                        <label for="new-owner">새 소유자 이름</label>
+                        <input type="text" id="new-owner" placeholder="소유자 이름 입력">
+                    </div>
+                </div>
+                <div class="form-buttons">
+                    <button id="save-owner" class="btn btn-primary">저장</button>
+                    <button id="cancel-owner" class="btn btn-secondary">취소</button>
+                </div>
+            </div>
+            
+            <!-- 소유자 목록 -->
+            <div class="owner-list" id="owner-list">
+                <!-- 소유자 목록은 JS로 동적 생성됩니다 -->
+            </div>
+        </section>
+
+        <!-- 캐릭터 관리 영역 -->
+        <section class="character-section">
+            <div class="section-header">
+                <h2><i class="fas fa-users"></i> 부캐릭터 관리</h2>
+                <div class="filter-controls">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="character-search" placeholder="캐릭터 검색...">
+                    </div>
+                    <select id="owner-filter" class="select-fancy">
+                        <option value="all">모든 소유자</option>
+                    </select>
+                    <button id="add-character-btn" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> 캐릭터 추가
+                    </button>
+                    <button id="delete-selected-chars" class="btn btn-secondary">
+                        <i class="fas fa-trash-alt"></i> 선택 캐릭터 삭제
+                    </button>
+                </div>
+            </div>
+
+            <!-- 캐릭터 추가 폼 -->
+            <div class="character-form hidden" id="character-form">
+                <h3>새 캐릭터 등록</h3>
+                <div class="form-fields">
+                    <div class="form-group">
+                        <label for="char-name">닉네임</label>
+                        <input type="text" id="char-name" placeholder="닉네임 입력">
+                    </div>
+                    <div class="form-group">
+                        <label for="char-level">레벨</label>
+                        <input type="number" id="char-level" placeholder="레벨 입력">
+                    </div>
+                    <div class="form-group">
+                        <label for="char-diamonds">초기 재화</label>
+                        <input type="number" id="char-diamonds" placeholder="다이아 입력">
+                    </div>
+                    <div class="form-group">
+                        <label for="char-owner">소유자</label>
+                        <select id="char-owner" class="select-fancy">
+                            <option value="쫌붕이">쫌붕이</option>
+                            <option value="스턴">스턴</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-buttons">
+                    <button id="save-character" class="btn btn-primary">저장</button>
+                    <button id="cancel-character" class="btn btn-secondary">취소</button>
+                </div>
+            </div>
+
+            <!-- 캐릭터 목록 -->
+            <div class="character-list" id="character-list">
+                <!-- 캐릭터 그룹은 JS로 동적 생성됩니다 -->
+            </div>
+
+            <!-- 기부 컨트롤 -->
+            
+            <div class="donation-controls">
+                <button id="select-all-visible" class="btn btn-secondary">
+                    <i class="fas fa-check-double"></i> 전체선택
+                </button>
+                <button id="donate-selected" class="btn btn-primary">
+                    <i class="fas fa-check-square"></i> 선택 캐릭터 최대기부
+                </button>
+                <button id="reset-selected-donations" class="btn btn-secondary">
+                    <i class="fas fa-undo"></i> 선택 캐릭터<br>기부횟수초기화
+                </button>
+                <button id="donate-all" class="btn btn-secondary">
+                    <i class="fas fa-users"></i> 전체 캐릭터 최대기부(3회)
+                </button>
+            </div>
+        </section>
+
+        <!-- 기부 정보 표 -->
+        <section class="donation-info">
+            <h2><i class="fas fa-info-circle"></i> 기부 정보</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>기부 횟수</th>
+                        <th>다이아 소모량</th>
+                        <th>아티팩트</th>
+                        <th>길드 코인</th>
+                        <th>길드 경험치</th>
+                        <th>기여도</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1번째</td>
+                        <td>500</td>
+                        <td>2,000</td>
+                        <td>200</td>
+                        <td>2,000</td>
+                        <td>2,000</td>
+                    </tr>
+                    <tr>
+                        <td>2번째</td>
+                        <td>1,000</td>
+                        <td>5,000</td>
+                        <td>500</td>
+                        <td>5,000</td>
+                        <td>5,000</td>
+                    </tr>
+                    <tr>
+                        <td>3번째</td>
+                        <td>1,000</td>
+                        <td>10,000</td>
+                        <td>1,000</td>
+                        <td>10,000</td>
+                        <td>10,000</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 저장 상태 -->
+        <div id="save-status" class="save-status">
+            <i class="fas fa-cloud-upload-alt"></i> 자동 저장 중...
+        </div>
+    </div>
+
+    <!-- 확인 모달 -->
+    <div class="modal" id="confirm-modal">
+        <div class="modal-content">
+            <h3>기부 확인</h3>
+            <p id="modal-message"></p>
+            <div class="modal-buttons">
+                <button id="modal-confirm" class="btn btn-primary">확인</button>
+                <button id="modal-cancel" class="btn btn-secondary">취소</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 리소스 수정 모달 -->
+    <div class="modal" id="resource-edit-modal">
+        <div class="modal-content">
+            <h3>자원 수정</h3>
+            <div class="form-group">
+                <label id="resource-edit-label">값 수정</label>
+                <input type="number" id="resource-edit-value" placeholder="값 입력">
+            </div>
+            <div class="modal-buttons">
+                <button id="resource-edit-confirm" class="btn btn-primary">저장</button>
+                <button id="resource-edit-cancel" class="btn btn-secondary">취소</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 캐릭터 수정 모달 -->
+    <div class="modal" id="character-edit-modal">
+        <div class="modal-content">
+            <h3>캐릭터 정보 수정</h3>
+            <div class="form-fields">
+                <div class="form-group">
+                    <label for="edit-char-name">닉네임</label>
+                    <input type="text" id="edit-char-name" placeholder="닉네임 입력">
+                </div>
+                <div class="form-group">
+                    <label for="edit-char-level">레벨</label>
+                    <input type="number" id="edit-char-level" placeholder="레벨 입력">
+                </div>
+                <div class="form-group">
+                    <label for="edit-char-diamonds">남은 다이아</label>
+                    <input type="number" id="edit-char-diamonds" placeholder="다이아 입력">
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button id="character-edit-confirm" class="btn btn-primary">저장</button>
+                <button id="character-edit-cancel" class="btn btn-secondary">취소</button>
+            </div>
+        </div>
+    </div>
+      
+    <!-- 알림 토스트 -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Firebase -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.2/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.2/firebase-database-compat.min.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    
+    <!-- 애니메이션 라이브러리 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    
+    <!-- 자바스크립트 -->
+<!-- 변경 전: -->
+<!-- <script src="script.js"></script> -->
+
+<!-- 변경 후: -->
+    <script src="core.js"></script>
+    <script src="resources.js"></script>
+    <script src="characters.js"></script>
+</body>
+</html>
