@@ -27,13 +27,19 @@ function createCharacterCard(character) {
         // 이름과 레벨 표시
         cardTitle.innerHTML = `<h4>${character.name}</h4>`;
         
-        // 아래에 레벨과 다이아를 별도로 표시
+        // 레벨, 다이아, 기부횟수 표시
         const levelBadge = document.createElement('div');
         levelBadge.className = 'card-details';
+        
+        // 캐릭터 기부횟수 확인
+        const donationCount = character.donationCount || 0;
+        
         levelBadge.innerHTML = `
             <span class="level-badge">Lv.${character.level}</span>
-            <span style="margin: 0 2px;"></span>  <!-- 여기에 간격 추가 -->
+            <span style="margin: 0 2px;"></span>
             <span class="diamonds-badge">💎 ${formatNumber(character.diamonds || 0)}</span>
+            <span style="margin: 0 2px;"></span>
+            <span class="donation-count-badge">기부 ${donationCount}회</span>
         `;
         cardTitle.appendChild(levelBadge);
         
@@ -430,6 +436,7 @@ function saveCharacter() {
             diamonds,
             owner,
             donationLevel: 0,
+            donationCount: 0, // 기부 횟수 필드 추가
             memo: '',
             createdAt: new Date().toISOString()
         };
@@ -556,8 +563,16 @@ function resetSelectedCharacterDonations() {
             return;
         }
         
-        const selectedCharacters = state.characters.filter(char => selectedIds.includes(char.id));
-        const characterNames = selectedCharacters.map(char => char.name).join(', ');
+        // 3회차인 캐릭터만 필터링
+        const selected3Characters = state.characters.filter(char => 
+            selectedIds.includes(char.id) && char.donationLevel >= 3);
+        
+        if (selected3Characters.length === 0) {
+            showToast('선택된 캐릭터 중 3회차 기부 완료된 캐릭터가 없습니다.', 'warning');
+            return;
+        }
+        
+        const characterNames = selected3Characters.map(char => char.name).join(', ');
         
         // 총 회수할 자원 및 환불할 다이아 계산
         let totalRefundDiamonds = 0;
@@ -570,7 +585,7 @@ function resetSelectedCharacterDonations() {
         const ownerResourcesRecover = {};
         
         // 각 캐릭터별 회수 자원 계산
-        selectedCharacters.forEach(char => {
+        selected3Characters.forEach(char => {
             const donationLevel = char.donationLevel || 0;
             const owner = char.owner || '소유자 미지정';
             
@@ -619,11 +634,11 @@ function resetSelectedCharacterDonations() {
         });
         
         showModal(
-            `선택한 ${selectedIds.length}명의 캐릭터의 기부 횟수를 초기화하고 자원을 회수합니다.\n\n총 회수 자원:\n아티팩트 ${formatNumber(totalRecoverArti)}\n코인 ${formatNumber(totalRecoverCoins)}\n경험치 ${formatNumber(totalRecoverExp)}\n기여도 ${formatNumber(totalRecoverContribution)}\n\n총 환불 다이아: ${formatNumber(totalRefundDiamonds)}\n\n캐릭터: ${characterNames}`,
+            `선택한 ${selected3Characters.length}명의 3회차 캐릭터의 기부 횟수를 초기화하고 자원을 회수합니다.\n\n총 회수 자원:\n아티팩트 ${formatNumber(totalRecoverArti)}\n코인 ${formatNumber(totalRecoverCoins)}\n경험치 ${formatNumber(totalRecoverExp)}\n기여도 ${formatNumber(totalRecoverContribution)}\n\n총 환불 다이아: ${formatNumber(totalRefundDiamonds)}\n\n캐릭터: ${characterNames}`,
             () => {
                 // 선택된 캐릭터의 기부 횟수 초기화 및 다이아 환불
-                selectedIds.forEach(id => {
-                    const characterIndex = state.characters.findIndex(char => char.id === id);
+                selected3Characters.forEach(char => {
+                    const characterIndex = state.characters.findIndex(c => c.id === char.id);
                     if (characterIndex !== -1) {
                         const char = state.characters[characterIndex];
                         const donationLevel = char.donationLevel || 0;
@@ -641,6 +656,14 @@ function resetSelectedCharacterDonations() {
                         
                         // 기부 레벨 초기화
                         state.characters[characterIndex].donationLevel = 0;
+                        
+                        // 기부횟수 감소 (최소 0으로 유지)
+                        if (state.characters[characterIndex].donationCount > 0) {
+                            state.characters[characterIndex].donationCount--;
+                        }
+                        
+                        // 기부 로그 추가
+                        addDonationLog(char.id, char.name, -1, char.owner); // -1은 초기화를 의미
                     }
                 });
                 
@@ -675,13 +698,149 @@ function resetSelectedCharacterDonations() {
                 
                 updateUI();
                 saveDataToFirebase();
-                showToast(`${selectedIds.length}명의 캐릭터 기부 횟수가 초기화되고 자원이 회수되었습니다.`, 'success');
+                showToast(`${selected3Characters.length}명의 캐릭터 기부 횟수가 초기화되고 자원이 회수되었습니다.`, 'success');
             }
         );
     } catch (error) {
         console.error('선택한 캐릭터 기부 초기화 에러:', error);
         showToast('선택한 캐릭터 기부 초기화 중 오류가 발생했습니다.', 'error');
     }
+}
+
+
+
+// 기부 로그 업데이트
+function updateDonationLogs() {
+    try {
+        // 로그 컨테이너 확인
+        const logContainer = document.getElementById('donation-log-content');
+        if (!logContainer) {
+            console.error('기부 로그 컨테이너를 찾을 수 없습니다.');
+            return;
+        }
+        
+        // 로그 컨테이너 초기화
+        logContainer.innerHTML = '';
+        
+        // 로그가 없는 경우
+        if (!state.donationLogs || state.donationLogs.length === 0) {
+            logContainer.innerHTML = `
+                <div class="no-logs">
+                    <i class="fas fa-history"></i>
+                    <p>기부 기록이 없습니다.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        // 디버깅: 콘솔에 로그 데이터 출력
+        console.log("기부 로그 업데이트 중:", state.donationLogs.length);
+        
+        // 로그 날짜별로 그룹화
+        const logsByDate = {};
+        state.donationLogs.forEach(log => {
+            // 로그의 날짜 부분만 추출
+            const logDate = new Date(log.timestamp);
+            const dateKey = `${logDate.getFullYear()}-${padZero(logDate.getMonth() + 1)}-${padZero(logDate.getDate())}`;
+            
+            if (!logsByDate[dateKey]) {
+                logsByDate[dateKey] = [];
+            }
+            logsByDate[dateKey].push(log);
+        });
+        
+        // 날짜별로 정렬된 키 배열 생성 (최근 날짜 먼저)
+        const sortedDates = Object.keys(logsByDate).sort().reverse();
+        
+        // 각 날짜별 로그 추가
+        sortedDates.forEach(dateKey => {
+            // 날짜 헤더 추가
+            const dateHeader = document.createElement('div');
+            dateHeader.className = 'log-date-header';
+            dateHeader.textContent = formatDateHeader(dateKey);
+            logContainer.appendChild(dateHeader);
+            
+            // 해당 날짜의 로그를 시간 역순으로 정렬
+            const dateChangedLogs = logsByDate[dateKey]
+                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            // 로그 항목 생성 및 추가
+            dateChangedLogs.forEach(log => {
+                const logItem = createLogItem(log);
+                logContainer.appendChild(logItem);
+            });
+        });
+    } catch (error) {
+        console.error('기부 로그 업데이트 에러:', error);
+    }
+}
+
+// 로그 아이템 생성 함수
+function createLogItem(log) {
+    const logItem = document.createElement('div');
+    logItem.className = 'donation-log-item';
+    
+    // 로그 시간 포맷팅
+    const logDate = new Date(log.timestamp);
+    const formattedTime = `${padZero(logDate.getHours())}:${padZero(logDate.getMinutes())}`;
+    
+    // 기부 레벨에 따른 아이콘 및 스타일
+    let levelIcon, levelClass, actionText;
+    if (log.donationLevel === -1) {
+        levelIcon = 'fa-undo';
+        levelClass = 'log-reset';
+        actionText = '기부 초기화';
+    } else {
+        levelIcon = 'fa-gift';
+        levelClass = `log-level-${log.donationLevel}`;
+        actionText = `${log.donationLevel}회차 기부 완료`;
+    }
+    
+    // 소유자 색상 적용
+    const ownerColor = state.ownerColors[log.owner] || '#8a2be2';
+    
+    // 로그 내용 생성
+    logItem.innerHTML = `
+        <div class="log-timestamp">${formattedTime}</div>
+        <div class="log-icon ${levelClass}"><i class="fas ${levelIcon}"></i></div>
+        <div class="log-content">
+            <span class="log-character" style="color: ${ownerColor};">${log.characterName}</span>
+            <span class="log-action">${actionText}</span>
+        </div>
+    `;
+    
+    return logItem;
+}
+
+
+// 날짜/시간 포맷팅용 함수
+function padZero(num) {
+    return num.toString().padStart(2, '0');
+}
+
+// 날짜 헤더 포맷팅
+function formatDateHeader(dateStr) {
+    const date = new Date(dateStr);
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    
+    // 오늘, 어제 표시
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    if (date.toDateString() === today.toDateString()) {
+        return `오늘 (${month}월 ${day}일)`;
+    } else if (date.toDateString() === yesterday.toDateString()) {
+        return `어제 (${month}월 ${day}일)`;
+    } else {
+        return `${month}월 ${day}일`;
+    }
+}
+
+// 숫자에 0 패딩 추가
+function padZero(num) {
+    return num.toString().padStart(2, '0');
 }
 
 // 단일 캐릭터 기부 처리
@@ -747,23 +906,40 @@ function donateSingleCharacter(characterId, count = 1) {
 }
 
 // 애니메이션과 함께 기부 처리
+// 이 함수를 완전히 새로 작성합니다
 function processDonationWithAnimation(characterIndex, count) {
     try {
+        // characterIndex가 유효하지 않거나, 더 이상 기부할 횟수가 없거나, 이미 3회차를 완료한 경우
         if (characterIndex === -1 || count <= 0 || state.characters[characterIndex].donationLevel >= 3) {
+            // UI 업데이트 및 저장
             updateUI();
             saveDataToFirebase();
             showToast('기부가 완료되었습니다.', 'success');
             return;
         }
         
-        // 현재 단계 기부 처리
-        const currentDonationLevel = state.characters[characterIndex].donationLevel;
+        const character = state.characters[characterIndex];
+        const currentDonationLevel = character.donationLevel;
         
-        // 기부 레벨 1 증가
+        // 현재 기부 레벨 증가
         state.characters[characterIndex].donationLevel += 1;
         
+        // 증가된 기부 레벨 확인
+        const newDonationLevel = state.characters[characterIndex].donationLevel;
+        
+        // 기부 로그에 추가
+        addDonationLog(character.id, character.name, newDonationLevel, character.owner);
+        
+        // 3회차 기부 완료했으면 기부횟수 증가
+        if (newDonationLevel === 3) {
+            if (state.characters[characterIndex].donationCount === undefined) {
+                state.characters[characterIndex].donationCount = 0;
+            }
+            state.characters[characterIndex].donationCount += 1;
+        }
+        
         // 캐릭터 카드 요소 찾기
-        const cardElement = document.querySelector(`.character-card[data-id="${state.characters[characterIndex].id}"]`);
+        const cardElement = document.querySelector(`.character-card[data-id="${character.id}"]`);
         if (cardElement && typeof gsap !== 'undefined') {
             // 진행 단계 표시에 애니메이션 적용
             const progressSteps = cardElement.querySelectorAll('.progress-step');
@@ -808,6 +984,56 @@ function processDonationWithAnimation(characterIndex, count) {
         updateUI();
         saveDataToFirebase();
         showToast('기부 처리가 완료되었습니다.', 'success');
+    }
+}
+
+// 기부 로그 추가 함수
+function addDonationLog(characterId, characterName, donationLevel, owner) {
+    try {
+        if (!state.donationLogs) {
+            state.donationLogs = [];
+        }
+        
+        // 중복 체크 (최근 5초 이내 같은 캐릭터에 대한 같은 레벨 로그)
+        const now = new Date();
+        const recentLogs = state.donationLogs.filter(log => {
+            const logTime = new Date(log.timestamp);
+            const timeElapsed = now - logTime; // 밀리초 단위 시간 차이
+            return (
+                log.characterId === characterId &&
+                log.donationLevel === donationLevel &&
+                timeElapsed < 5000 // 5초 이내
+            );
+        });
+        
+        // 중복이 있으면 로그 추가하지 않음
+        if (recentLogs.length > 0) {
+            console.log('중복 로그 방지:', characterName, donationLevel);
+            return;
+        }
+        
+        // 고유한 ID 생성 (타임스탬프 + 랜덤값)
+        const uniqueId = Date.now() + Math.random().toString(36).substring(2, 8);
+        
+        // 로그 항목 생성
+        const logEntry = {
+            id: uniqueId,
+            characterId,
+            characterName,
+            donationLevel,
+            owner,
+            timestamp: new Date().toISOString()
+        };
+        
+        // 로그 배열에 추가
+        state.donationLogs.push(logEntry);
+        
+        // 로그 UI 업데이트
+        updateDonationLogs();
+        
+        // 여기서는 Firebase 저장하지 않음 - 부모 함수에서 한 번에 저장할 것
+    } catch (error) {
+        console.error('기부 로그 추가 에러:', error);
     }
 }
 
@@ -1123,8 +1349,12 @@ function resetDonationStatus() {
                 const currentOwnerResourcesBackup = JSON.parse(JSON.stringify(state.ownerResources || {}));
                 const currentResourceModifiersBackup = JSON.parse(JSON.stringify(state.resourceModifiers || {}));
                 
+                // 현재 3회차인 캐릭터들 기록
+                const completed3Characters = state.characters.filter(char => char.donationLevel >= 3);
+                
                 // 기부 상태 초기화
                 state.characters.forEach(char => {
+                    // 3회차 캐릭터는 기부횟수 증가시키지 않음 (이미 processDonationWithAnimation에서 증가했으므로)
                     char.donationLevel = 0;
                 });
                 

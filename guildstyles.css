@@ -1285,3 +1285,302 @@ tr:hover {
     border: none;
     border-radius: 50%;
 }
+
+/* 카드 정보 컨테이너 - 한 줄에 모든 정보 표시하기 위한 스타일 */
+.card-info-container {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/* 기부횟수 뱃지 스타일 */
+.donation-count-badge {
+    background-color: #ff9800;
+    color: white;
+    font-size: 10px; /* 더 작은 폰트 크기로 변경 */
+    padding: 2px 4px; /* 여백 줄임 */
+    border-radius: var(--border-radius-sm);
+    display: inline-flex;
+    align-items: center;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+/* 다이아 뱃지 스타일 조정 */
+.diamonds-badge {
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* 레벨 뱃지 스타일 조정 */
+.level-badge {
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* 기부 로그 섹션 스타일 */
+.donation-log-section {
+    margin-bottom: var(--spacing-lg);
+}
+
+.donation-log-container {
+    background-color: var(--bg-tertiary);
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-md);
+    max-height: 300px;
+    overflow-y: auto;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.donation-log-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.donation-log-item {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-sm);
+    transition: transform 0.3s;
+}
+
+.donation-log-item:hover {
+    transform: translateX(3px);
+    background-color: rgba(138, 43, 226, 0.1);
+}
+
+.log-timestamp {
+    color: var(--text-tertiary);
+    font-size: var(--font-xs);
+    min-width: 80px;
+}
+
+.log-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    margin: 0 var(--spacing-sm);
+    color: white;
+    font-size: var(--font-xs);
+}
+
+.log-level-1 {
+    background-color: #4caf50;
+}
+
+.log-level-2 {
+    background-color: #00b4d8;
+}
+
+.log-level-3 {
+    background-color: #8a2be2;
+}
+
+.log-reset {
+    background-color: #f44336;
+}
+
+.log-content {
+    flex: 1;
+    display: flex;
+    gap: var(--spacing-xs);
+    align-items: center;
+}
+
+.log-character {
+    font-weight: bold;
+}
+
+.log-action {
+    color: var(--text-secondary);
+}
+
+.no-logs {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-lg);
+    color: var(--text-tertiary);
+    text-align: center;
+}
+
+.no-logs i {
+    font-size: var(--font-xl);
+    margin-bottom: var(--spacing-sm);
+    color: var(--accent-primary);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .donation-log-container {
+        max-height: 200px;
+    }
+    
+    .log-timestamp {
+        min-width: 60px;
+        font-size: calc(var(--font-xs) - 1px);
+    }
+    
+    .log-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .donation-log-item {
+        padding: var(--spacing-xs);
+    }
+    
+    .log-icon {
+        width: 20px;
+        height: 20px;
+        margin: 0 var(--spacing-xs);
+    }
+}
+
+/* 기부 로그 섹션 스타일 */
+.donation-log-section {
+    margin-bottom: var(--spacing-lg);
+}
+
+.donation-log-container {
+    background-color: var(--bg-tertiary);
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-md);
+    max-height: 300px;
+    overflow-y: auto;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.donation-log-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+/* 로그 날짜 헤더 */
+.log-date-header {
+    color: var(--accent-primary);
+    font-weight: bold;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    margin: var(--spacing-sm) 0 var(--spacing-xs) 0;
+    border-bottom: 1px solid rgba(138, 43, 226, 0.3);
+    font-size: var(--font-sm);
+}
+
+.donation-log-item {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-sm);
+    margin-left: var(--spacing-md);
+    transition: transform 0.3s;
+}
+
+.donation-log-item:hover {
+    transform: translateX(3px);
+    background-color: rgba(138, 43, 226, 0.1);
+}
+
+.log-timestamp {
+    color: var(--text-tertiary);
+    font-size: var(--font-xs);
+    min-width: 50px;
+}
+
+.log-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    margin: 0 var(--spacing-sm);
+    color: white;
+    font-size: var(--font-xs);
+}
+
+.log-level-1 {
+    background-color: #4caf50;
+}
+
+.log-level-2 {
+    background-color: #00b4d8;
+}
+
+.log-level-3 {
+    background-color: #8a2be2;
+}
+
+.log-reset {
+    background-color: #f44336;
+}
+
+.log-content {
+    flex: 1;
+    display: flex;
+    gap: var(--spacing-xs);
+    align-items: center;
+}
+
+.log-character {
+    font-weight: bold;
+}
+
+.log-action {
+    color: var(--text-secondary);
+}
+
+.no-logs {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-lg);
+    color: var(--text-tertiary);
+    text-align: center;
+}
+
+.no-logs i {
+    font-size: var(--font-xl);
+    margin-bottom: var(--spacing-sm);
+    color: var(--accent-primary);
+}
+
+/* 새로운 카드 정보 컨테이너 스타일 */
+.card-info-container {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 4px;
+}
+
+.level-badge, .diamonds-badge, .donation-count-badge {
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+}
+
+.donation-count-badge {
+    background-color: #ff9800;
+    color: white;
+    font-size: 10px;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-weight: bold;
+}

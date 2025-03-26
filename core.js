@@ -91,8 +91,12 @@ const elements = {
 
     // 리셋 버튼
     resetDonations: document.getElementById('reset-donations'),
-    lastResetDate: document.getElementById('last-reset-date')
+    lastResetDate: document.getElementById('last-reset-date'),
+    
+    // 기부 로그
+    donationLogContent: document.getElementById('donation-log-content')
 };
+
 
 // 리소스 차트 객체들
 let resourcesCharts = {
@@ -115,7 +119,7 @@ const defaultResources = {
 
 // 데이터 상태 객체
 let state = {
-    notice: '길드원 여러분, 부캐작을 통해 경험치를 모아주세요!',
+    notice: '부캐작을 통해 경험치를 모아주세요!',
     initialDiamonds: 0,
     usedDiamonds: 0,
     characters: [],
@@ -124,7 +128,8 @@ let state = {
     selectedCharacters: [],
     lastResetDate: new Date().toISOString().split('T')[0],
     resources: { ...defaultResources },
-    ownerResources: {} // 소유자별 자원 수정값을 저장할 객체 추가
+    ownerResources: {},  // 소유자별 자원 수정값을 저장할 객체 추가
+    donationLogs: []     // 기부 로그 추가
 };
 
 // 페이지 로드 시 데이터 불러오기
@@ -135,6 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Firebase에서 데이터 로드
+// Firebase에서 데이터 로드
 function loadDataFromFirebase() {
     showSaveStatus('로드 중...', 'saving');
     
@@ -142,26 +148,31 @@ function loadDataFromFirebase() {
         .then(snapshot => {
             const data = snapshot.val();
             if (data) {
-                state = { 
-                    ...state, 
-                    ...data,
-                    owners: new Set(['쫌붕이', '스턴']),
-                    resources: data.resources || { ...defaultResources },
-                    ownerResources: data.ownerResources || {}, // 소유자별 자원 로드
-                    ownerColors: data.ownerColors || DEFAULT_OWNER_COLORS // 색상 데이터 로드
-                };
+                // 소유자 목록을 Set으로 먼저 변환
+                const ownersSet = new Set(['쫌붕이', '스턴']);
                 
-                // 소유자 목록 업데이트
-                if (state.characters) {
-                    state.characters.forEach(char => {
-                        if (char.owner && (char.owner === '쫌붕이' || char.owner === '스턴')) {
-                            state.owners.add(char.owner);
-                        } else {
-                            // 소유자가 변경된 경우 기본값으로 설정
-                            char.owner = char.owner || '쫌붕이';
+                // 기존 데이터가 있으면 소유자 목록에 추가
+                if (data.characters) {
+                    data.characters.forEach(char => {
+                        if (char.owner) {
+                            ownersSet.add(char.owner);
                         }
                     });
                 }
+                
+                // 상태 업데이트 (주요 객체들은 개별적으로 처리)
+                state = {
+                    ...state,
+                    ...data,
+                    owners: ownersSet,
+                    resources: data.resources || { ...defaultResources },
+                    ownerResources: data.ownerResources || {},
+                    ownerColors: data.ownerColors || DEFAULT_OWNER_COLORS,
+                    donationLogs: data.donationLogs || [] // 로그 데이터 로드 확인
+                };
+                
+                // 콘솔에 로그 데이터 확인 (디버깅용)
+                console.log("로드된 기부 로그:", state.donationLogs ? state.donationLogs.length : 0);
                 
                 // 캐릭터 데이터 유효성 검사 및 수정
                 if (state.characters) {
@@ -173,6 +184,10 @@ function loadDataFromFirebase() {
                         // 기부 레벨이 없으면 0으로 초기화
                         if (char.donationLevel === undefined || char.donationLevel === null) {
                             char.donationLevel = 0;
+                        }
+                        // 기부 횟수가 없으면 0으로 초기화
+                        if (char.donationCount === undefined || char.donationCount === null) {
+                            char.donationCount = 0;
                         }
                     });
                 } else {
@@ -197,6 +212,12 @@ function loadDataFromFirebase() {
 function saveDataToFirebase() {
     showSaveStatus('저장 중...', 'saving');
     
+    // 로그 데이터가 너무 커지지 않도록 최근 500개만 저장 (선택 사항)
+    let logsToSave = state.donationLogs || [];
+    if (logsToSave.length > 500) {
+        logsToSave = logsToSave.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 500);
+    }
+    
     const dataToSave = {
         notice: state.notice,
         initialDiamonds: state.initialDiamonds,
@@ -204,9 +225,13 @@ function saveDataToFirebase() {
         characters: state.characters,
         lastResetDate: state.lastResetDate,
         resources: state.resources,
-        ownerResources: state.ownerResources, // 소유자별 자원 저장
-        ownerColors: state.ownerColors // 소유자 색상 저장
+        ownerResources: state.ownerResources,
+        ownerColors: state.ownerColors,
+        donationLogs: logsToSave // 로그 데이터 저장 확인
     };
+    
+    // 콘솔에 저장되는 로그 데이터 확인 (디버깅용)
+    console.log("저장되는 기부 로그:", logsToSave ? logsToSave.length : 0);
     
     database.ref('guildData').set(dataToSave)
         .then(() => {
@@ -218,11 +243,8 @@ function saveDataToFirebase() {
             showToast('데이터를 저장하는데 문제가 발생했습니다.', 'error');
         });
 }
-
 // 이벤트 리스너 설정
 function setupEventListeners() {
-
-
     // 전체 선택 버튼
     const selectAllVisibleBtn = document.getElementById('select-all-visible');
     if (selectAllVisibleBtn) {
@@ -329,6 +351,9 @@ function updateUI() {
     
     // 리소스 차트 업데이트
     updateResourcesCharts();
+
+    // 추가: 기부 로그 업데이트
+    updateDonationLogs();
 }
 
 // 공지사항 수정 토글
@@ -544,8 +569,22 @@ function setupAutoReset() {
                 lastResetDate.getMonth() !== today.getMonth() ||
                 lastResetDate.getFullYear() !== today.getFullYear()) {
                 
-                // 기부 상태만 초기화
+                // 3회차 캐릭터 기록하여 기부횟수 증가
+                const completed3Characters = state.characters.filter(char => char.donationLevel >= 3);
+                
+                // 기부 상태 초기화
                 state.characters.forEach(char => {
+                    // 기존 캐릭터의 기부횟수 필드 확인 및 초기화
+                    if (char.donationCount === undefined) {
+                        char.donationCount = 0;
+                    }
+                    
+                    // 3회차 캐릭터는 기부횟수 증가
+                    if (char.donationLevel >= 3) {
+                        // 이미 증가했을 수도 있으므로 여기서는 증가시키지 않음
+                    }
+                    
+                    // 기부 레벨 초기화
                     char.donationLevel = 0;
                 });
                 
