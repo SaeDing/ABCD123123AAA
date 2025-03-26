@@ -11,8 +11,8 @@ const database = firebase.database();
 
 // 기부 정보 테이블 (상수)
 const DONATION_INFO = [
-    { level: 1, diamonds: 500, arti: 2000, coins: 200, exp: 2000, contribution: 2000 },
-    { level: 2, diamonds: 1000, arti: 5000, coins: 500, exp: 5000, contribution: 5000 },
+    { level: 1, diamonds: 0, arti: 2000, coins: 200, exp: 2000, contribution: 2000 },
+    { level: 2, diamonds: 500, arti: 5000, coins: 500, exp: 5000, contribution: 5000 },
     { level: 3, diamonds: 1000, arti: 10000, coins: 1000, exp: 10000, contribution: 10000 }
 ];
 
