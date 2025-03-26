@@ -58,25 +58,25 @@ function updateResourceTotals() {
         
         // 소유자별 사용자 수정값 적용
         // 소유자별 사용자 수정값 적용
-        if (state.ownerResources) {
-            Object.entries(state.ownerResources).forEach(([owner, resources]) => {
-                if (!finalOwnerResources[owner]) {
-                    finalOwnerResources[owner] = {
-                        arti: 0, coins: 0, exp: 0, contribution: 0
-                    };
-                }
+        // if (state.ownerResources) {
+        //     Object.entries(state.ownerResources).forEach(([owner, resources]) => {
+        //         if (!finalOwnerResources[owner]) {
+        //             finalOwnerResources[owner] = {
+        //                 arti: 0, coins: 0, exp: 0, contribution: 0
+        //             };
+        //         }
             
-                // 기존 방식 -> 수정자 사용 시 중복 적용되는 문제 수정
-                // 이미 수정자(resourceModifiers)가 위에서 적용되었으므로, 
-                // 아래 코드는 수정자가 없는 경우를 위한 예외 처리로만 사용
-                if (!state.resourceModifiers || !state.resourceModifiers[owner]) {
-                    if (resources.arti !== undefined) finalOwnerResources[owner].arti = resources.arti;
-                    if (resources.coins !== undefined) finalOwnerResources[owner].coins = resources.coins;
-                    if (resources.exp !== undefined) finalOwnerResources[owner].exp = resources.exp;
-                    if (resources.contribution !== undefined) finalOwnerResources[owner].contribution = resources.contribution;
-                }
-            });
-        }
+        //         // 기존 방식 -> 수정자 사용 시 중복 적용되는 문제 수정
+        //         // 이미 수정자(resourceModifiers)가 위에서 적용되었으므로, 
+        //         // 아래 코드는 수정자가 없는 경우를 위한 예외 처리로만 사용
+        //         if (!state.resourceModifiers || !state.resourceModifiers[owner]) {
+        //             if (resources.arti !== undefined) finalOwnerResources[owner].arti = resources.arti;
+        //             if (resources.coins !== undefined) finalOwnerResources[owner].coins = resources.coins;
+        //             if (resources.exp !== undefined) finalOwnerResources[owner].exp = resources.exp;
+        //             if (resources.contribution !== undefined) finalOwnerResources[owner].contribution = resources.contribution;
+        //         }
+        //     });
+        // }
         
         // 전체 합계 계산 (모든 소유자 합산)
         let calculatedTotalArti = 0;
