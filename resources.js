@@ -1,6 +1,15 @@
 // 자원 총합 업데이트
+// 자원 총합 업데이트
 function updateResourceTotals() {
     try {
+        // 이전에 저장된 총 자원 값 보존 (추가)
+        const savedTotalResources = {
+            arti: state.resources?.arti || 0,
+            coins: state.resources?.coins || 0,
+            exp: state.resources?.exp || 0,
+            contribution: state.resources?.contribution || 0
+        };
+        
         // 소유자별 자원 계산 (기부로 인한 기본 계산값)
         const calculatedOwnerResources = {};
         
@@ -37,7 +46,7 @@ function updateResourceTotals() {
                 }
             }
         });
-        //
+        
         // 최종 소유자별 자원 (사용자 수정값 적용)
         const finalOwnerResources = {};
 
@@ -56,28 +65,6 @@ function updateResourceTotals() {
             }
         });
         
-        // 소유자별 사용자 수정값 적용
-        // 소유자별 사용자 수정값 적용
-        // if (state.ownerResources) {
-        //     Object.entries(state.ownerResources).forEach(([owner, resources]) => {
-        //         if (!finalOwnerResources[owner]) {
-        //             finalOwnerResources[owner] = {
-        //                 arti: 0, coins: 0, exp: 0, contribution: 0
-        //             };
-        //         }
-            
-        //         // 기존 방식 -> 수정자 사용 시 중복 적용되는 문제 수정
-        //         // 이미 수정자(resourceModifiers)가 위에서 적용되었으므로, 
-        //         // 아래 코드는 수정자가 없는 경우를 위한 예외 처리로만 사용
-        //         if (!state.resourceModifiers || !state.resourceModifiers[owner]) {
-        //             if (resources.arti !== undefined) finalOwnerResources[owner].arti = resources.arti;
-        //             if (resources.coins !== undefined) finalOwnerResources[owner].coins = resources.coins;
-        //             if (resources.exp !== undefined) finalOwnerResources[owner].exp = resources.exp;
-        //             if (resources.contribution !== undefined) finalOwnerResources[owner].contribution = resources.contribution;
-        //         }
-        //     });
-        // }
-        
         // 전체 합계 계산 (모든 소유자 합산)
         let calculatedTotalArti = 0;
         let calculatedTotalCoins = 0;
@@ -91,11 +78,12 @@ function updateResourceTotals() {
             calculatedTotalContribution += resources.contribution;
         });
         
-        // 최종 전체 합계 - 항상 소유자별 자원 값의 합계로 계산
-        let finalTotalArti = calculatedTotalArti;
-        let finalTotalCoins = calculatedTotalCoins;
-        let finalTotalExp = calculatedTotalExp;
-        let finalTotalContribution = calculatedTotalContribution;
+        // 변경: 기존에 저장된 자원 값 유지
+        // 새로 계산된 값이 이전 저장값보다 크면 업데이트, 아니면 이전 값 유지
+        let finalTotalArti = Math.max(savedTotalResources.arti, calculatedTotalArti);
+        let finalTotalCoins = Math.max(savedTotalResources.coins, calculatedTotalCoins);
+        let finalTotalExp = Math.max(savedTotalResources.exp, calculatedTotalExp);
+        let finalTotalContribution = Math.max(savedTotalResources.contribution, calculatedTotalContribution);
         
         // 전체 자원 상태 업데이트 (계산된 값으로 덮어쓰기)
         if (!state.resources) state.resources = {};
