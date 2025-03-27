@@ -136,7 +136,6 @@ let state = {
 document.addEventListener('DOMContentLoaded', () => {
     loadDataFromFirebase();
     setupEventListeners();
-    setupAutoReset();
 });
 
 // Firebase에서 데이터 로드
@@ -539,75 +538,6 @@ function addAnimationEffects() {
     }
 }
 
-// 수정된 setupAutoReset 함수
-function setupAutoReset() {
-    try {
-        // 현재 한국 시간 확인 (UTC+9)
-        const now = new Date();
-        const koreaTime = new Date(now.getTime() + (9 * 60 * 60 * 1000)); // UTC+9 적용
-        
-        // 다음 한국 시간 00시 계산
-        const nextMidnight = new Date(koreaTime);
-        nextMidnight.setHours(24, 0, 0, 0); // 다음날 00:00:00로 설정
-        
-        // UTC 기준으로 변환
-        const nextMidnightUTC = new Date(nextMidnight.getTime() - (9 * 60 * 60 * 1000));
-        
-        // 대기 시간 계산 (밀리초)
-        const timeUntilReset = nextMidnightUTC - now;
-        
-        console.log(`다음 자동 리셋까지 ${timeUntilReset / (1000 * 60 * 60)} 시간 남았습니다.`);
-        
-        // 자정에 실행될 타이머 설정
-        setTimeout(() => {
-            // 자동 리셋 실행
-            const lastResetDate = new Date(state.lastResetDate);
-            const today = new Date();
-            
-            // 날짜가 다를 경우에만 리셋
-            if (lastResetDate.getDate() !== today.getDate() ||
-                lastResetDate.getMonth() !== today.getMonth() ||
-                lastResetDate.getFullYear() !== today.getFullYear()) {
-                
-                // 3회차 캐릭터 기록하여 기부횟수 증가
-                const completed3Characters = state.characters.filter(char => char.donationLevel >= 3);
-                
-                // 기부 상태 초기화
-                state.characters.forEach(char => {
-                    // 기존 캐릭터의 기부횟수 필드 확인 및 초기화
-                    if (char.donationCount === undefined) {
-                        char.donationCount = 0;
-                    }
-                    
-                    // 3회차 캐릭터는 기부횟수 증가
-                    if (char.donationLevel >= 3) {
-                        // 이미 증가했을 수도 있으므로 여기서는 증가시키지 않음
-                    }
-                    
-                    // 기부 레벨 초기화
-                    char.donationLevel = 0;
-                });
-                
-                state.lastResetDate = today.toISOString().split('T')[0];
-                
-                // 캐릭터 목록만 업데이트 (전체 UI는 업데이트하지 않음)
-                updateCharacterList();
-                
-                // 저장 (자원은 변경되지 않음)
-                saveDataToFirebase();
-                
-                showToast('기부 상태가 자동으로 리셋되었습니다.', 'info');
-            }
-            
-            // 리셋 후 다음 날을 위한 타이머 재설정
-            setupAutoReset();
-        }, timeUntilReset);
-    } catch (error) {
-        console.error('자동 리셋 설정 에러:', error);
-        // 오류 발생 시 5분 후 다시 시도
-        setTimeout(setupAutoReset, 5 * 60 * 1000);
-    }
-}
 
 const DEFAULT_OWNER_COLORS = {
     '쫌붕이': '#8a2be2', // 보라색

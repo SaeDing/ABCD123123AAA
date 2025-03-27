@@ -1342,7 +1342,7 @@ function processSelectedMaxDonation() {
 function resetDonationStatus() {
     try {
         showModal(
-            "모든 캐릭터의 기부 상태를 리셋하시겠습니까?\n이 작업은 되돌릴 수 없습니다.\n해당 버튼은 00시 자동 초기화 기능과 동일하게 작동되며\n기부횟수가 00시가 넘어도 초기화 되지 않았을때 눌러주세요",
+            "모든 캐릭터의 기부 상태를 리셋하시겠습니까?\n이 작업은 되돌릴 수 없습니다.\n해당 버튼은 00시가 지난후에 눌러주세요.\n00시 자동 초기화 기능은 오류가 많아서 안만듭니다..",
             () => {
                 // 중요: 현재 자원 상태 백업
                 const currentResourcesBackup = JSON.parse(JSON.stringify(state.resources || {}));
