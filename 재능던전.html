@@ -209,12 +209,18 @@
     border-radius: 4px;
     object-fit: cover;
     cursor: grab;
-    transition: transform 0.2s ease, box-shadow 0.3s ease;
+    transition: transform 0.2s ease, box-shadow 0.3s ease, opacity 0.3s ease;
   }
   
   .image-container img:hover {
     transform: scale(1.1);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* 사용된 유닛 스타일 */
+  .image-container img.used {
+    opacity: 0.4;
+    cursor: not-allowed;
   }
   
   /* 하단 컨트롤 버튼 영역 */
@@ -479,16 +485,30 @@
     const dropZones = document.querySelectorAll(".drop-zone");
     const resetButton = document.getElementById("reset-button");
     const saveButton = document.getElementById("save-button");
+    
+    // 이미지 사용 여부를 추적하는 객체
+    let usedImages = {};
+    
     function navigate(page) {
       window.location.href = page;
     }
+    
     let selectedImage = null;
+    let selectedElement = null;
     
     // 추가: page3 전용 드롭존 상태 저장 객체 및 기존 데이터 불러오기
     let dropData = {};
     const savedDropData = localStorage.getItem('dropData_pagetm');
     if (savedDropData) {
       dropData = JSON.parse(savedDropData);
+      
+      // 저장된 데이터로부터 사용된 이미지 상태 복원
+      for (const index in dropData) {
+        const imageSrc = dropData[index];
+        if (imageSrc) {
+          usedImages[imageSrc] = true;
+        }
+      }
     }
     
     // 페이지 로딩 시 저장된 dropData로 드롭존 복원 (page3 전용)
@@ -504,6 +524,9 @@
         // 이미지가 있으면 테두리와 배경 제거
         zone.style.border = "none";
         zone.style.backgroundColor = "rgba(0, 0, 0, 0)";
+        
+        // 이미지가 사용됨으로 표시
+        usedImages[dropData[index]] = true;
       }
     });
     
@@ -513,10 +536,22 @@
       img.src = `img/${file}`;
       img.alt = file;
       img.draggable = false;
+      
+      // 이미 사용된 이미지면 비활성화 처리
+      if (usedImages[img.src]) {
+        img.classList.add('used');
+      }
+      
       img.addEventListener("click", () => {
+        // 이미 사용된 이미지면 선택 불가
+        if (img.classList.contains('used')) {
+          return;
+        }
+        
         if (img.style.backgroundColor === "lightpink") {
           img.style.backgroundColor = "";
           selectedImage = null;
+          selectedElement = null;
           dropZones.forEach(zone => {
             const zoneImage = zone.querySelector("img");
             zone.style.border = "none";
@@ -527,17 +562,22 @@
           });
           return;
         }
+        
         document.querySelectorAll(".image-container img").forEach(image => {
           image.style.backgroundColor = "";
         });
+        
         img.style.backgroundColor = "lightpink";
         selectedImage = img.src;
+        selectedElement = img;
+        
         dropZones.forEach(zone => {
           zone.style.visibility = "visible";
           zone.style.border = "1px dashed rgba(150, 150, 150, 0.8)";
           zone.style.backgroundColor = "rgba(255, 255, 255, 0.8)";
         });
       });
+      
       imageContainer.appendChild(img);
     });
     
@@ -545,37 +585,105 @@
     dropZones.forEach((zone, index) => {
       zone.addEventListener("click", () => {
         if (selectedImage) {
-          if (zone.querySelector("img")) {
-            zone.querySelector("img").remove();
+          // 기존에 이미지가 있었다면 해당 이미지를 다시 사용 가능하게 표시
+          const existingImg = zone.querySelector("img");
+          if (existingImg) {
+            const existingSrc = existingImg.src;
+            existingImg.remove();
+            
+            // 다른 드롭존에서 같은 이미지를 사용 중인지 확인
+            let stillInUse = false;
+            dropZones.forEach((otherZone, otherIndex) => {
+              if (index !== otherIndex) {
+                const otherImg = otherZone.querySelector("img");
+                if (otherImg && otherImg.src === existingSrc) {
+                  stillInUse = true;
+                }
+              }
+            });
+            
+            // 다른 곳에서 사용 중이 아니면 사용 가능하게 변경
+            if (!stillInUse) {
+              usedImages[existingSrc] = false;
+              document.querySelectorAll(".image-container img").forEach(img => {
+                if (img.src === existingSrc) {
+                  img.classList.remove('used');
+                }
+              });
+            }
+            
+            // dropData에서 제거
+            delete dropData[index];
           }
+          
+          // 새 이미지 추가
           const img = document.createElement("img");
           img.src = selectedImage;
           img.alt = "dropped-image";
           img.style.width = "150%";
           img.style.height = "150%";
           zone.appendChild(img);
+          
+          // 이미지 사용됨으로 표시
+          usedImages[selectedImage] = true;
+          
+          // 이미지 선택 목록에서 비활성화
+          if (selectedElement) {
+            selectedElement.classList.add('used');
+            selectedElement.style.backgroundColor = "";
+          }
+          
           // dropData 업데이트 및 localStorage 저장 (page3 전용)
           dropData[index] = selectedImage;
           localStorage.setItem('dropData_pagetm', JSON.stringify(dropData));
+          
           document.querySelectorAll(".image-container img").forEach(image => {
             image.style.backgroundColor = "";
           });
+          
           selectedImage = null;
+          selectedElement = null;
+          
           dropZones.forEach(zone => {
             zone.style.border = "none";
             zone.style.backgroundColor = "rgba(0, 0, 0, 0)";
           });
         }
       });
+      
       // 데스크톱: 더블클릭 시 이미지 제거 및 localStorage 업데이트 (page3 전용)
       zone.addEventListener("dblclick", () => {
         const img = zone.querySelector("img");
         if (img) {
+          const imgSrc = img.src;
           img.remove();
+          
+          // 다른 드롭존에서 같은 이미지를 사용 중인지 확인
+          let stillInUse = false;
+          dropZones.forEach((otherZone, otherIndex) => {
+            if (index !== otherIndex) {
+              const otherImg = otherZone.querySelector("img");
+              if (otherImg && otherImg.src === imgSrc) {
+                stillInUse = true;
+              }
+            }
+          });
+          
+          // 다른 곳에서 사용 중이 아니면 사용 가능하게 변경
+          if (!stillInUse) {
+            usedImages[imgSrc] = false;
+            document.querySelectorAll(".image-container img").forEach(image => {
+              if (image.src === imgSrc) {
+                image.classList.remove('used');
+              }
+            });
+          }
+          
           delete dropData[index];
           localStorage.setItem('dropData_pagetm', JSON.stringify(dropData));
         }
       });
+      
       // 모바일: 터치 후 더블탭 감지
       zone.addEventListener("touchend", function(e) {
         const currentTime = new Date().getTime();
@@ -583,7 +691,30 @@
         if (tapLength > 0 && tapLength < 300) {
           const img = zone.querySelector("img");
           if (img) {
+            const imgSrc = img.src;
             img.remove();
+            
+            // 다른 드롭존에서 같은 이미지를 사용 중인지 확인
+            let stillInUse = false;
+            dropZones.forEach((otherZone, otherIndex) => {
+              if (index !== otherIndex) {
+                const otherImg = otherZone.querySelector("img");
+                if (otherImg && otherImg.src === imgSrc) {
+                  stillInUse = true;
+                }
+              }
+            });
+            
+            // 다른 곳에서 사용 중이 아니면 사용 가능하게 변경
+            if (!stillInUse) {
+              usedImages[imgSrc] = false;
+              document.querySelectorAll(".image-container img").forEach(image => {
+                if (image.src === imgSrc) {
+                  image.classList.remove('used');
+                }
+              });
+            }
+            
             delete dropData[index];
             localStorage.setItem('dropData_pagetm', JSON.stringify(dropData));
           }
@@ -607,8 +738,13 @@
       // 선택 상태 초기화
       document.querySelectorAll(".image-container img").forEach(image => {
         image.style.backgroundColor = "";
+        image.classList.remove('used'); // 모든 이미지 사용 가능하게 초기화
       });
+      
+      // 사용된 이미지 추적 초기화
+      usedImages = {};
       selectedImage = null;
+      selectedElement = null;
     
       // wave와 gold 입력값 초기화
       const waveInput = document.getElementById("wave");
