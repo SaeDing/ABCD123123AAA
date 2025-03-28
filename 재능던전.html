@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <!-- 확대/축소를 막기 위한 meta viewport 설정 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>월드보스2 배치 템플릿</title>
+  <title>재능던전</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
  /* 화면 전체 컨테이너 */
@@ -116,6 +116,7 @@
     padding: 0;
   }
 
+  
   /* 내부 컨테이너: 맵 + 유닛 리스트를 세로로 배치 */
   .container {
     flex: 1;               /* 세로 공간 전부 사용 */
@@ -149,8 +150,8 @@
 
   /* 드롭존 스타일 (기존과 동일) */
   .drop-zone {
-    width: 20px;
-    height: 20px;
+    width: 32px;
+    height: 32px;
     position: absolute;
     border: 1px dashed rgba(102, 102, 102, 0.6);
     display: flex;
@@ -185,13 +186,12 @@
   }
   
   .image-container h2 {
-      text-align: center;
-      margin-bottom: 5px;
-      margin: 0px;
-      font-size: 16px;
-      color: #444;
-    }
-
+    text-align: center;
+    margin-bottom: 5px;
+    margin: 0px;
+    font-size: 16px;
+    color: #444;
+  }
   
   .image-container h4 {
     font-size: 10px;
@@ -217,7 +217,6 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
   }
   
-
   /* 하단 컨트롤 버튼 영역 */
   .controls {
     width: 360px;
@@ -232,7 +231,6 @@
     background-color: #fff;
     border-top: 1px solid #ddd;
   }
-
   
   .controls .input-container {
     display: flex;
@@ -309,47 +307,50 @@
       font-weight: normal;
       text-align: center;
     }
-    
+
+
+
+
   </style>
 </head>
 <body>
     
-  <div class="fixed-container">
-    <!-- 상단 네비게이션 버튼 (가로 배열) -->
-    <div class="nav-container">
-      <button class="round-btn" id="btn1" onclick="navigate('roundsindex.html')">
-        <img src="./img/a.png" alt="A">
-        <span>고기</span>
-      </button>
-      <button class="round-btn" id="btn2" onclick="navigate('길드대전.html')">
-        <img src="./img/1.png" alt="B">
-        <span>길드</span>
-      </button>
-      <button class="round-btn" id="btn3" onclick="navigate('월드보스1.html')">
-        <img src="./img/1m.png" alt="C">
-        <span>보스1</span>
-      </button>
-      <button class="round-btn" id="btn4" onclick="navigate('월드보스2.html')">
-        <img src="./img/4m.png" alt="E">
-        <span>보스2</span>
-      </button>
-      <button class="round-btn" id="btn4" onclick="navigate('월드보스3.html')">
-        <img src="./img/5m.png" alt="F">
-        <span>보스3</span>
-      </button>
-      <button class="round-btn" id="btn4" onclick="navigate('일반.html')">
-        <img src="./img/2m.png" alt="G">
-        <span>일반</span>
-      </button>
-      <button class="round-btn" id="btn4" onclick="navigate('어려움.html')">
-        <img src="./img/3m.png" alt="H">
-        <span>어려움</span>
-      </button>
-      <button class="round-btn" id="btn4" onclick="navigate('재능던전.html')">
-        <img src="./img/tm.png" alt="H">
-        <span>재능</span>
-      </button>
-    </div>
+    <div class="fixed-container">
+        <!-- 상단 네비게이션 버튼 (가로 배열) -->
+        <div class="nav-container">
+          <button class="round-btn" id="btn1" onclick="navigate('roundsindex.html')">
+            <img src="./img/a.png" alt="A">
+            <span>고기</span>
+          </button>
+          <button class="round-btn" id="btn2" onclick="navigate('길드대전.html')">
+            <img src="./img/1.png" alt="B">
+            <span>길드</span>
+          </button>
+          <button class="round-btn" id="btn3" onclick="navigate('월드보스1.html')">
+            <img src="./img/1m.png" alt="C">
+            <span>보스1</span>
+          </button>
+          <button class="round-btn" id="btn4" onclick="navigate('월드보스2.html')">
+            <img src="./img/4m.png" alt="E">
+            <span>보스2</span>
+          </button>
+          <button class="round-btn" id="btn4" onclick="navigate('월드보스3.html')">
+            <img src="./img/5m.png" alt="F">
+            <span>보스3</span>
+          </button>
+          <button class="round-btn" id="btn4" onclick="navigate('일반.html')">
+            <img src="./img/2m.png" alt="G">
+            <span>일반</span>
+          </button>
+          <button class="round-btn" id="btn4" onclick="navigate('어려움.html')">
+            <img src="./img/3m.png" alt="H">
+            <span>어려움</span>
+          </button>
+          <button class="round-btn" id="btn4" onclick="navigate('재능던전.html')">
+            <img src="./img/tm.png" alt="H">
+            <span>재능</span>
+          </button>
+        </div>
       <!-- 상단 타이틀 -->
 
     <div class="container">
@@ -359,47 +360,36 @@
 
       <div class="container">
         <div class="map-container" id="map-container">
-            <img id="mapImage" src="./img/4m.png" alt="Map Background">
+            <img id="mapImage" src="./img/tm.png" alt="Map Background">
 
           <div id="wave-gold-display"></div>
           <!-- 드롭존 (360x360 맵 기준 좌표 재조정 예시) -->
-          <div class="drop-zone" style="top:100px; left:83px;"></div>
-          <div class="drop-zone" style="top:125px; left:83px;"></div>
-          
-          <div class="drop-zone" style="top:100px; left:110px;"></div>
-          <div class="drop-zone" style="top:125px; left:110px;"></div>
-          
-          <div class="drop-zone" style="top:100px; left:137px;"></div>
-          <div class="drop-zone" style="top:125px; left:137px;"></div>
-          
-          <div class="drop-zone" style="top:100px; left:164px;"></div>
-          <div class="drop-zone" style="top:125px; left:164px;"></div>
-          
-          <div class="drop-zone" style="top:100px; left:191px;"></div>
-          <div class="drop-zone" style="top:125px; left:191px;"></div>
-          
-          <div class="drop-zone" style="top:100px; left:218px;"></div>
-          <div class="drop-zone" style="top:125px; left:218px;"></div>
+          <div class="drop-zone" style="top:185px; left:65px;"></div>
+          <div class="drop-zone" style="top:220px; left:65px;"></div>
+          <div class="drop-zone" style="top:255px; left:65px;"></div>
+
+          <div class="drop-zone" style="top:185px; left:102px;"></div>
+          <div class="drop-zone" style="top:220px; left:102px;"></div>
+          <div class="drop-zone" style="top:255px; left:102px;"></div>
+
+          <div class="drop-zone" style="top:185px; left:139px;"></div>
+          <div class="drop-zone" style="top:220px; left:139px;"></div>
+          <div class="drop-zone" style="top:255px; left:139px;"></div>
+
+          <div class="drop-zone" style="top:185px; left:176px;"></div>
+          <div class="drop-zone" style="top:220px; left:176px;"></div>
+          <div class="drop-zone" style="top:255px; left:176px;"></div>
+
+          <div class="drop-zone" style="top:185px; left:213px;"></div>
+          <div class="drop-zone" style="top:220px; left:213px;"></div>
+          <div class="drop-zone" style="top:255px; left:213px;"></div>
+
+          <div class="drop-zone" style="top:185px; left:250px;"></div>
+          <div class="drop-zone" style="top:220px; left:250px;"></div>
+          <div class="drop-zone" style="top:255px; left:250px;"></div>
           
 
-                    <!-- 드롭존 (360x360 맵 기준 좌표 재조정 예시) -->
-                    <div class="drop-zone" style="top:175px; left:110px;"></div>
-                    <div class="drop-zone" style="top:200px; left:110px;"></div>
-                    
-                    <div class="drop-zone" style="top:175px; left:133.6px;"></div>
-                    <div class="drop-zone" style="top:200px; left:133.6px;"></div>
-                    
-                    <div class="drop-zone" style="top:175px; left:157.2px;"></div>
-                    <div class="drop-zone" style="top:200px; left:157.2px;"></div>
-                    
-                    <div class="drop-zone" style="top:175px; left:180.8px;"></div>
-                    <div class="drop-zone" style="top:200px; left:180.8px;"></div>
-                    
-                    <div class="drop-zone" style="top:175px; left:204.4px;"></div>
-                    <div class="drop-zone" style="top:200px; left:204.4px;"></div>
-                    
-                    <div class="drop-zone" style="top:175px; left:228px;"></div>
-                    <div class="drop-zone" style="top:200px; left:228px;"></div>
+    
                     
           
           
@@ -427,7 +417,7 @@
     </div>
     
   </div>
-  <div class="title-text">월드 보스 2 배치표<br>[두 번 누르면 취소 가능]<br>(넣은 유닛 더블클릭으로 제거 가능)</div>
+  <div class="title-text">재능 던전 배치표<br>[두 번 누르면 취소 가능]<br>(넣은 유닛 더블클릭으로 제거 가능)</div>
   <script>
       // img 폴더에 있는 파일명 리스트
       const imageFiles = [
@@ -494,21 +484,21 @@
     }
     let selectedImage = null;
     
-    // 추가: page4 전용 드롭존 상태 저장 객체 및 기존 데이터 불러오기 (키: dropData_page4)
+    // 추가: page3 전용 드롭존 상태 저장 객체 및 기존 데이터 불러오기
     let dropData = {};
-    const savedDropData = localStorage.getItem('dropData_page4');
+    const savedDropData = localStorage.getItem('dropData_pagetm');
     if (savedDropData) {
       dropData = JSON.parse(savedDropData);
     }
     
-    // 페이지 로딩 시 저장된 dropData를 복원 (page4 전용)
+    // 페이지 로딩 시 저장된 dropData로 드롭존 복원 (page3 전용)
     dropZones.forEach((zone, index) => {
       if (dropData[index]) {
         const img = document.createElement("img");
         img.src = dropData[index];
         img.alt = "dropped-image";
-        img.style.width = "160%";
-        img.style.height = "160%";
+        img.style.width = "150%";
+        img.style.height = "150%";
         zone.appendChild(img);
         zone.style.visibility = "visible";
         // 이미지가 있으면 테두리와 배경 제거
@@ -551,7 +541,7 @@
       imageContainer.appendChild(img);
     });
     
-    // 드롭존 이벤트: 클릭 시 이미지 추가, 더블클릭/더블탭 시 이미지 제거 (page4 전용)
+    // 드롭존 이벤트: 클릭 시 이미지 추가, 더블클릭/더블탭 시 이미지 제거 (page3 전용)
     dropZones.forEach((zone, index) => {
       zone.addEventListener("click", () => {
         if (selectedImage) {
@@ -561,12 +551,12 @@
           const img = document.createElement("img");
           img.src = selectedImage;
           img.alt = "dropped-image";
-          img.style.width = "160%";
-          img.style.height = "160%";
+          img.style.width = "150%";
+          img.style.height = "150%";
           zone.appendChild(img);
-          // dropData 업데이트 후 page4 전용 localStorage에 저장
+          // dropData 업데이트 및 localStorage 저장 (page3 전용)
           dropData[index] = selectedImage;
-          localStorage.setItem('dropData_page4', JSON.stringify(dropData));
+          localStorage.setItem('dropData_pagetm', JSON.stringify(dropData));
           document.querySelectorAll(".image-container img").forEach(image => {
             image.style.backgroundColor = "";
           });
@@ -577,13 +567,13 @@
           });
         }
       });
-      // 데스크톱: 더블클릭 시 이미지 제거 및 localStorage 업데이트 (page4 전용)
+      // 데스크톱: 더블클릭 시 이미지 제거 및 localStorage 업데이트 (page3 전용)
       zone.addEventListener("dblclick", () => {
         const img = zone.querySelector("img");
         if (img) {
           img.remove();
           delete dropData[index];
-          localStorage.setItem('dropData_page4', JSON.stringify(dropData));
+          localStorage.setItem('dropData_pagetm', JSON.stringify(dropData));
         }
       });
       // 모바일: 터치 후 더블탭 감지
@@ -595,7 +585,7 @@
           if (img) {
             img.remove();
             delete dropData[index];
-            localStorage.setItem('dropData_page4', JSON.stringify(dropData));
+            localStorage.setItem('dropData_pagetm', JSON.stringify(dropData));
           }
           zone.lastTap = 0;
           e.preventDefault();
@@ -630,9 +620,9 @@
       const waveGoldDisplay = document.getElementById("wave-gold-display");
       waveGoldDisplay.textContent = "";
     
-      // page4 전용 캐시 데이터 초기화
+      // page3 전용 캐시 데이터 초기화
       dropData = {};
-      localStorage.removeItem('dropData_page4');
+      localStorage.removeItem('dropData_pagetm');
     });
     
     saveButton.addEventListener("click", () => {
@@ -667,14 +657,14 @@
       // 100ms 대기 후 캡처 실행 (텍스트 업데이트 반영)
       setTimeout(() => {
         const mapImageElement = document.getElementById("mapImage");
-        const imageHeight = mapImageElement.clientHeight; // 실제 이미지 높이 (예: 360px)
+        const imageHeight = mapImageElement.clientHeight;
         html2canvas(document.getElementById("map-container"), {
           scrollX: 0,
           scrollY: 0,
           height: imageHeight,
           windowWidth: document.documentElement.offsetWidth,
           windowHeight: document.documentElement.offsetHeight,
-          scale: 10,  // 기존 6 → 8 또는 10로 고해상도 설정
+          scale: 10,
           useCORS: true,
           allowTaint: true,
           backgroundColor: null
