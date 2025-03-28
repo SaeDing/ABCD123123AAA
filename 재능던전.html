@@ -426,418 +426,315 @@
   <div class="title-text">재능 던전 배치표<br>[두 번 누르면 취소 가능]<br>(넣은 유닛 더블클릭으로 제거 가능)</div>
   <script>
       // img 폴더에 있는 파일명 리스트
-      const imageFiles = [
-        "우주인 3단 마딜.png",
-        "보루 변신 물딜.png",
-        "라이양 변신 마딜.png",
-        "빅토리어스 마딜.png",
-        "미믹 물딜.png",
-        "눈보라 예티 변신 마딜.png",
-        "슈퍼시바 마딜.png",
-        "죽음의 기사 물딜.png",
-        "스핑 물딜.png",
-        "아마존 물딜.png",
-        "마녀 마딜.png",
-        "캔드리 물딜.png",
-        "새싹이 물딜.png",
-        "눈보라 예티 마딜.png",
-        "라이양 마딜.png",
-        "그린딩딩 물딜.png",
-        "빅헤드 물딜.png",
-        "역병의사 마딜.png",
-        "해골룡 변신 마딜.png",
-        "로큰롤스 마딜.png",
-        "메카 좀비 마딜.png",
-        "개굴 단장 변신 마딜.png",
-        "선인장 건맨 물딜.png",
-        "메카콩 마딜.png",
-        "스시 선생 물딜.png",
-        "카우보이 밥 물딜.png",
-        "할로윈퀸 마딜.png",
-        "오우거 전사 물딜.png",
-        "돌팔이 마딜.png",
-        "미라씨 물딜.png",
-        "꼬꼬질라 물딜.png",
-        "포크몬 물딜.png",
-        "악마 토끼 마딜.png",
-        "샤키 물딜.png",
-        "스리슬쩍냥 물딜.png",
-        "해골 궁수 물딜.png",
-        "식빵 복서 물딜.png",
-        "크레이지 핫도그 물딜.png",
-        "오크라이더 물딜.png",
-        "잭 오 마딜.png",
-        "잭 오 변신 마딜.png",
-        "전투 달팽이 물딜.png",
-        "전투 달팽이 변신 물딜.png",
-        "데드베어 마딜.png",
-        "보루 물딜.png",
-        "드라큐 마딜.png",
-        "드라큐 변신 마딜.png",
-        "크레이지 핫도그 변신 물딜.png",
-        "프랑키 물딜.png",
-        "해골룡 마딜.png",
-        "개굴 단장 마딜.png",
-        "우주인 1단 마딜.png",
-        "우주인 2단 마딜.png"
-      ];
-    const imageContainer = document.getElementById("image-container");
-    const dropZones = document.querySelectorAll(".drop-zone");
-    const resetButton = document.getElementById("reset-button");
-    const saveButton = document.getElementById("save-button");
-    
-    // 이미지 사용 여부를 추적하는 객체
-    let usedImages = {};
-    
-    function navigate(page) {
-      window.location.href = page;
-    }
-    
-    let selectedImage = null;
-    let selectedElement = null;
-    
-    // 추가: page3 전용 드롭존 상태 저장 객체 및 기존 데이터 불러오기
-    let dropData = {};
-    const savedDropData = localStorage.getItem('dropData_pagetm');
-    if (savedDropData) {
-      dropData = JSON.parse(savedDropData);
-      
-      // 저장된 데이터로부터 사용된 이미지 상태 복원
-      for (const index in dropData) {
-        const imageSrc = dropData[index];
-        if (imageSrc) {
-          usedImages[imageSrc] = true;
-        }
-      }
-    }
-    
-    // 페이지 로딩 시 저장된 dropData로 드롭존 복원 (page3 전용)
-    dropZones.forEach((zone, index) => {
-      if (dropData[index]) {
-        const img = document.createElement("img");
-        img.src = dropData[index];
-        img.alt = "dropped-image";
-        img.style.width = "150%";
-        img.style.height = "150%";
-        zone.appendChild(img);
-        zone.style.visibility = "visible";
-        // 이미지가 있으면 테두리와 배경 제거
-        zone.style.border = "none";
-        zone.style.backgroundColor = "rgba(0, 0, 0, 0)";
-        
-        // 이미지가 사용됨으로 표시
-        usedImages[dropData[index]] = true;
-      }
-    });
-    
-    // 유닛 클릭 시 선택 및 배경색 변경
-    imageFiles.forEach(file => {
-      const img = document.createElement("img");
-      img.src = `img/${file}`;
-      img.alt = file;
-      img.draggable = false;
-      
-      // 이미 사용된 이미지면 비활성화 처리
-      if (usedImages[img.src]) {
-        img.classList.add('used');
-      }
-      
-      img.addEventListener("click", () => {
-        // 이미 사용된 이미지면 선택 불가
-        if (img.classList.contains('used')) {
-          return;
-        }
-        
-        if (img.style.backgroundColor === "lightpink") {
-          img.style.backgroundColor = "";
-          selectedImage = null;
-          selectedElement = null;
-          dropZones.forEach(zone => {
-            const zoneImage = zone.querySelector("img");
-            zone.style.border = "none";
-            zone.style.backgroundColor = "rgba(0, 0, 0, 0)";
-            if (!zoneImage) {
-              zone.style.visibility = "hidden";
-            }
-          });
-          return;
-        }
-        
-        document.querySelectorAll(".image-container img").forEach(image => {
-          image.style.backgroundColor = "";
-        });
-        
-        img.style.backgroundColor = "lightpink";
-        selectedImage = img.src;
-        selectedElement = img;
-        
-        dropZones.forEach(zone => {
-          zone.style.visibility = "visible";
-          zone.style.border = "1px dashed rgba(150, 150, 150, 0.8)";
-          zone.style.backgroundColor = "rgba(255, 255, 255, 0.8)";
-        });
-      });
-      
-      imageContainer.appendChild(img);
-    });
-    
-    // 드롭존 이벤트: 클릭 시 이미지 추가, 더블클릭/더블탭 시 이미지 제거 (page3 전용)
-    dropZones.forEach((zone, index) => {
-      zone.addEventListener("click", () => {
-        if (selectedImage) {
-          // 기존에 이미지가 있었다면 해당 이미지를 다시 사용 가능하게 표시
-          const existingImg = zone.querySelector("img");
-          if (existingImg) {
-            const existingSrc = existingImg.src;
-            existingImg.remove();
-            
-            // 다른 드롭존에서 같은 이미지를 사용 중인지 확인
-            let stillInUse = false;
-            dropZones.forEach((otherZone, otherIndex) => {
-              if (index !== otherIndex) {
-                const otherImg = otherZone.querySelector("img");
-                if (otherImg && otherImg.src === existingSrc) {
-                  stillInUse = true;
-                }
-              }
-            });
-            
-            // 다른 곳에서 사용 중이 아니면 사용 가능하게 변경
-            if (!stillInUse) {
-              usedImages[existingSrc] = false;
-              document.querySelectorAll(".image-container img").forEach(img => {
-                if (img.src === existingSrc) {
-                  img.classList.remove('used');
-                }
-              });
-            }
-            
-            // dropData에서 제거
-            delete dropData[index];
-          }
-          
-          // 새 이미지 추가
-          const img = document.createElement("img");
-          img.src = selectedImage;
-          img.alt = "dropped-image";
-          img.style.width = "150%";
-          img.style.height = "150%";
-          zone.appendChild(img);
-          
-          // 이미지 사용됨으로 표시
-          usedImages[selectedImage] = true;
-          
-          // 이미지 선택 목록에서 비활성화
-          if (selectedElement) {
-            selectedElement.classList.add('used');
-            selectedElement.style.backgroundColor = "";
-          }
-          
-          // dropData 업데이트 및 localStorage 저장 (page3 전용)
-          dropData[index] = selectedImage;
-          localStorage.setItem('dropData_pagetm', JSON.stringify(dropData));
-          
-          document.querySelectorAll(".image-container img").forEach(image => {
-            image.style.backgroundColor = "";
-          });
-          
-          selectedImage = null;
-          selectedElement = null;
-          
-          dropZones.forEach(zone => {
-            zone.style.border = "none";
-            zone.style.backgroundColor = "rgba(0, 0, 0, 0)";
-          });
-        }
-      });
-      
-      // 데스크톱: 더블클릭 시 이미지 제거 및 localStorage 업데이트 (page3 전용)
-      zone.addEventListener("dblclick", () => {
-        const img = zone.querySelector("img");
-        if (img) {
-          const imgSrc = img.src;
-          img.remove();
-          
-          // 다른 드롭존에서 같은 이미지를 사용 중인지 확인
-          let stillInUse = false;
-          dropZones.forEach((otherZone, otherIndex) => {
-            if (index !== otherIndex) {
-              const otherImg = otherZone.querySelector("img");
-              if (otherImg && otherImg.src === imgSrc) {
-                stillInUse = true;
-              }
-            }
-          });
-          
-          // 다른 곳에서 사용 중이 아니면 사용 가능하게 변경
-          if (!stillInUse) {
-            usedImages[imgSrc] = false;
-            document.querySelectorAll(".image-container img").forEach(image => {
-              if (image.src === imgSrc) {
-                image.classList.remove('used');
-              }
-            });
-          }
-          
-          delete dropData[index];
-          localStorage.setItem('dropData_pagetm', JSON.stringify(dropData));
-        }
-      });
-      
-      // 모바일: 터치 후 더블탭 감지
-      zone.addEventListener("touchend", function(e) {
-        const currentTime = new Date().getTime();
-        const tapLength = currentTime - (zone.lastTap || 0);
-        if (tapLength > 0 && tapLength < 300) {
-          const img = zone.querySelector("img");
-          if (img) {
-            const imgSrc = img.src;
-            img.remove();
-            
-            // 다른 드롭존에서 같은 이미지를 사용 중인지 확인
-            let stillInUse = false;
-            dropZones.forEach((otherZone, otherIndex) => {
-              if (index !== otherIndex) {
-                const otherImg = otherZone.querySelector("img");
-                if (otherImg && otherImg.src === imgSrc) {
-                  stillInUse = true;
-                }
-              }
-            });
-            
-            // 다른 곳에서 사용 중이 아니면 사용 가능하게 변경
-            if (!stillInUse) {
-              usedImages[imgSrc] = false;
-              document.querySelectorAll(".image-container img").forEach(image => {
-                if (image.src === imgSrc) {
-                  image.classList.remove('used');
-                }
-              });
-            }
-            
-            delete dropData[index];
-            localStorage.setItem('dropData_pagetm', JSON.stringify(dropData));
-          }
-          zone.lastTap = 0;
-          e.preventDefault();
-          return false;
-        } else {
-          zone.lastTap = currentTime;
-        }
-      });
-    });
-    
-    resetButton.addEventListener("click", () => {
-      dropZones.forEach(zone => {
-        zone.innerHTML = ""; // 드롭존 비우기
-        zone.style.visibility = "hidden";
-        zone.style.border = "0.2px dashed rgba(102, 102, 102, 0.3)";
-        zone.style.backgroundColor = "rgba(200, 200, 200, 0.7)";
-      });
-    
-      // 선택 상태 초기화
-      document.querySelectorAll(".image-container img").forEach(image => {
-        image.style.backgroundColor = "";
-        image.classList.remove('used'); // 모든 이미지 사용 가능하게 초기화
-      });
-      
-      // 사용된 이미지 추적 초기화
-      usedImages = {};
+const imageFiles = [
+  "우주인 3단 마딜.png",
+  "보루 변신 물딜.png",
+  "라이양 변신 마딜.png",
+  "빅토리어스 마딜.png",
+  "미믹 물딜.png",
+  "눈보라 예티 변신 마딜.png",
+  "슈퍼시바 마딜.png",
+  "죽음의 기사 물딜.png",
+  "스핑 물딜.png",
+  "아마존 물딜.png",
+  "마녀 마딜.png",
+  "캔드리 물딜.png",
+  "새싹이 물딜.png",
+  "눈보라 예티 마딜.png",
+  "라이양 마딜.png",
+  "그린딩딩 물딜.png",
+  "빅헤드 물딜.png",
+  "역병의사 마딜.png",
+  "해골룡 변신 마딜.png",
+  "로큰롤스 마딜.png",
+  "메카 좀비 마딜.png",
+  "개굴 단장 변신 마딜.png",
+  "선인장 건맨 물딜.png",
+  "메카콩 마딜.png",
+  "스시 선생 물딜.png",
+  "카우보이 밥 물딜.png",
+  "할로윈퀸 마딜.png",
+  "오우거 전사 물딜.png",
+  "돌팔이 마딜.png",
+  "미라씨 물딜.png",
+  "꼬꼬질라 물딜.png",
+  "포크몬 물딜.png",
+  "악마 토끼 마딜.png",
+  "샤키 물딜.png",
+  "스리슬쩍냥 물딜.png",
+  "해골 궁수 물딜.png",
+  "식빵 복서 물딜.png",
+  "크레이지 핫도그 물딜.png",
+  "오크라이더 물딜.png",
+  "잭 오 마딜.png",
+  "잭 오 변신 마딜.png",
+  "전투 달팽이 물딜.png",
+  "전투 달팽이 변신 물딜.png",
+  "데드베어 마딜.png",
+  "보루 물딜.png",
+  "드라큐 마딜.png",
+  "드라큐 변신 마딜.png",
+  "크레이지 핫도그 변신 물딜.png",
+  "프랑키 물딜.png",
+  "해골룡 마딜.png",
+  "개굴 단장 마딜.png",
+  "우주인 1단 마딜.png",
+  "우주인 2단 마딜.png"
+];
+
+const imageContainer = document.getElementById("image-container");
+const dropZones = document.querySelectorAll(".drop-zone");
+const resetButton = document.getElementById("reset-button");
+const saveButton = document.getElementById("save-button");
+
+let selectedImage = null;
+let selectedElement = null;
+
+// 추가: page3 전용 드롭존 상태 저장 객체 및 기존 데이터 불러오기
+let dropData = {};
+const savedDropData = localStorage.getItem('dropData_pagetm');
+if (savedDropData) {
+  dropData = JSON.parse(savedDropData);
+}
+
+// 페이지 로딩 시 저장된 dropData로 드롭존 복원 (page3 전용)
+dropZones.forEach((zone, index) => {
+  if (dropData[index]) {
+    const img = document.createElement("img");
+    img.src = dropData[index];
+    img.alt = "dropped-image";
+    img.style.width = "150%";
+    img.style.height = "150%";
+    zone.appendChild(img);
+    zone.style.visibility = "visible";
+    // 이미지가 있으면 테두리와 배경 제거
+    zone.style.border = "none";
+    zone.style.backgroundColor = "rgba(0, 0, 0, 0)";
+  }
+});
+
+// 유닛 클릭 시 선택 및 배경색 변경
+imageFiles.forEach(file => {
+  const img = document.createElement("img");
+  img.src = `img/${file}`;
+  img.alt = file;
+  img.draggable = false;
+  
+  img.addEventListener("click", () => {
+    if (img.style.backgroundColor === "lightpink") {
+      img.style.backgroundColor = "";
       selectedImage = null;
       selectedElement = null;
-    
-      // wave와 gold 입력값 초기화
-      const waveInput = document.getElementById("wave");
-      const goldInput = document.getElementById("gold");
-      waveInput.value = "";
-      goldInput.value = "";
-    
-      // wave와 gold 값 초기화
-      const waveGoldDisplay = document.getElementById("wave-gold-display");
-      waveGoldDisplay.textContent = "";
-    
-      // page3 전용 캐시 데이터 초기화
-      dropData = {};
-      localStorage.removeItem('dropData_pagetm');
-    });
-    
-    saveButton.addEventListener("click", () => {
-      const waveInput = document.getElementById("wave");
-      const goldInput = document.getElementById("gold");
-      const waveValue = waveInput.value.trim();
-      const goldValue = goldInput.value.trim();
-    
-      // WAVE & GOLD 텍스트 설정
-      let displayText = "";
-      if (waveValue) {
-        displayText += `WAVE: ${waveValue}`;
-      }
-      if (goldValue) {
-        if (displayText) displayText += " | ";
-        displayText += `Gold: ${goldValue}`;
-      }
-    
-      // 텍스트 표시 영역 업데이트
-      const waveGoldDisplay = document.getElementById("wave-gold-display");
-      waveGoldDisplay.textContent = displayText;
-      waveGoldDisplay.style.color = "white";
-      waveGoldDisplay.style.position = "absolute";
-      waveGoldDisplay.style.top = "9px";
-      waveGoldDisplay.style.right = "0px";
-      waveGoldDisplay.style.fontSize = "9px";
-      waveGoldDisplay.style.fontWeight = "bold";
-      waveGoldDisplay.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
-      waveGoldDisplay.style.padding = "5px 10px";
-      waveGoldDisplay.style.borderRadius = "5px";
-    
-      // 100ms 대기 후 캡처 실행 (텍스트 업데이트 반영)
-      setTimeout(() => {
-        const mapImageElement = document.getElementById("mapImage");
-        const imageHeight = mapImageElement.clientHeight;
-        html2canvas(document.getElementById("map-container"), {
-          scrollX: 0,
-          scrollY: 0,
-          height: imageHeight,
-          windowWidth: document.documentElement.offsetWidth,
-          windowHeight: document.documentElement.offsetHeight,
-          scale: 10,
-          useCORS: true,
-          allowTaint: true,
-          backgroundColor: null
-        }).then((canvas) => {
-          const link = document.createElement("a");
-          link.download = "map.png";
-          link.href = canvas.toDataURL("image/png", 1.0);
-          link.click();
-    
-          // 캡처 후 텍스트 초기화
-          waveGoldDisplay.textContent = "";
-        });
-      }, 100);
-    });
-    
-    // 드롭존과 관련된 요소 선택
-    const mapContainer = document.getElementById("map-container");
-    const mapImage = document.getElementById("mapImage");
-    
-    // mapImage의 실제 표시 영역 계산 후 드롭존 위치 보정
-    mapImage.onload = () => {
-      const imageRect = mapImage.getBoundingClientRect();
-      const containerRect = mapContainer.getBoundingClientRect();
-      const offsetX = imageRect.left - containerRect.left;
-      const offsetY = imageRect.top - containerRect.top;
-    
       dropZones.forEach(zone => {
-        const origTop = parseInt(zone.style.top, 10);
-        const origLeft = parseInt(zone.style.left, 10);
-        zone.style.top = (origTop + offsetY) + "px";
-        zone.style.left = (origLeft + offsetX) + "px";
+        const zoneImage = zone.querySelector("img");
+        zone.style.border = "none";
+        zone.style.backgroundColor = "rgba(0, 0, 0, 0)";
+        if (!zoneImage) {
+          zone.style.visibility = "hidden";
+        }
       });
-    };
+      return;
+    }
     
-    document.addEventListener('dragstart', function(e) {
-      e.preventDefault();
+    document.querySelectorAll(".image-container img").forEach(image => {
+      image.style.backgroundColor = "";
     });
+    
+    img.style.backgroundColor = "lightpink";
+    selectedImage = img.src;
+    selectedElement = img;
+    
+    dropZones.forEach(zone => {
+      zone.style.visibility = "visible";
+      zone.style.border = "1px dashed rgba(150, 150, 150, 0.8)";
+      zone.style.backgroundColor = "rgba(255, 255, 255, 0.8)";
+    });
+  });
+  
+  imageContainer.appendChild(img);
+});
+
+// 드롭존 이벤트: 클릭 시 이미지 추가, 더블클릭/더블탭 시 이미지 제거 (page3 전용)
+dropZones.forEach((zone, index) => {
+  zone.addEventListener("click", () => {
+    if (selectedImage) {
+      // 기존에 이미지가 있었다면 제거
+      const existingImg = zone.querySelector("img");
+      if (existingImg) {
+        existingImg.remove();
+        
+        // dropData에서 제거
+        delete dropData[index];
+      }
+      
+      // 새 이미지 추가
+      const img = document.createElement("img");
+      img.src = selectedImage;
+      img.alt = "dropped-image";
+      img.style.width = "150%";
+      img.style.height = "150%";
+      zone.appendChild(img);
+      
+      if (selectedElement) {
+        selectedElement.style.backgroundColor = "";
+      }
+      
+      // dropData 업데이트 및 localStorage 저장 (page3 전용)
+      dropData[index] = selectedImage;
+      localStorage.setItem('dropData_pagetm', JSON.stringify(dropData));
+      
+      document.querySelectorAll(".image-container img").forEach(image => {
+        image.style.backgroundColor = "";
+      });
+      
+      selectedImage = null;
+      selectedElement = null;
+      
+      dropZones.forEach(zone => {
+        zone.style.border = "none";
+        zone.style.backgroundColor = "rgba(0, 0, 0, 0)";
+      });
+    }
+  });
+  
+  // 데스크톱: 더블클릭 시 이미지 제거 및 localStorage 업데이트 (page3 전용)
+  zone.addEventListener("dblclick", () => {
+    const img = zone.querySelector("img");
+    if (img) {
+      img.remove();
+      delete dropData[index];
+      localStorage.setItem('dropData_pagetm', JSON.stringify(dropData));
+    }
+  });
+  
+  // 모바일: 터치 후 더블탭 감지
+  zone.addEventListener("touchend", function(e) {
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - (zone.lastTap || 0);
+    if (tapLength > 0 && tapLength < 300) {
+      const img = zone.querySelector("img");
+      if (img) {
+        img.remove();
+        delete dropData[index];
+        localStorage.setItem('dropData_pagetm', JSON.stringify(dropData));
+      }
+      zone.lastTap = 0;
+      e.preventDefault();
+      return false;
+    } else {
+      zone.lastTap = currentTime;
+    }
+  });
+});
+
+resetButton.addEventListener("click", () => {
+  dropZones.forEach(zone => {
+    zone.innerHTML = ""; // 드롭존 비우기
+    zone.style.visibility = "hidden";
+    zone.style.border = "0.2px dashed rgba(102, 102, 102, 0.3)";
+    zone.style.backgroundColor = "rgba(200, 200, 200, 0.7)";
+  });
+
+  // 선택 상태 초기화
+  document.querySelectorAll(".image-container img").forEach(image => {
+    image.style.backgroundColor = "";
+  });
+  
+  selectedImage = null;
+  selectedElement = null;
+
+  // wave와 gold 입력값 초기화
+  const waveInput = document.getElementById("wave");
+  const goldInput = document.getElementById("gold");
+  waveInput.value = "";
+  goldInput.value = "";
+
+  // wave와 gold 값 초기화
+  const waveGoldDisplay = document.getElementById("wave-gold-display");
+  waveGoldDisplay.textContent = "";
+
+  // page3 전용 캐시 데이터 초기화
+  dropData = {};
+  localStorage.removeItem('dropData_pagetm');
+});
+
+saveButton.addEventListener("click", () => {
+  const waveInput = document.getElementById("wave");
+  const goldInput = document.getElementById("gold");
+  const waveValue = waveInput.value.trim();
+  const goldValue = goldInput.value.trim();
+
+  // WAVE & GOLD 텍스트 설정
+  let displayText = "";
+  if (waveValue) {
+    displayText += `WAVE: ${waveValue}`;
+  }
+  if (goldValue) {
+    if (displayText) displayText += " | ";
+    displayText += `Gold: ${goldValue}`;
+  }
+
+  // 텍스트 표시 영역 업데이트
+  const waveGoldDisplay = document.getElementById("wave-gold-display");
+  waveGoldDisplay.textContent = displayText;
+  waveGoldDisplay.style.color = "white";
+  waveGoldDisplay.style.position = "absolute";
+  waveGoldDisplay.style.top = "9px";
+  waveGoldDisplay.style.right = "0px";
+  waveGoldDisplay.style.fontSize = "9px";
+  waveGoldDisplay.style.fontWeight = "bold";
+  waveGoldDisplay.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+  waveGoldDisplay.style.padding = "5px 10px";
+  waveGoldDisplay.style.borderRadius = "5px";
+
+  // 100ms 대기 후 캡처 실행 (텍스트 업데이트 반영)
+  setTimeout(() => {
+    const mapImageElement = document.getElementById("mapImage");
+    const imageHeight = mapImageElement.clientHeight;
+    html2canvas(document.getElementById("map-container"), {
+      scrollX: 0,
+      scrollY: 0,
+      height: imageHeight,
+      windowWidth: document.documentElement.offsetWidth,
+      windowHeight: document.documentElement.offsetHeight,
+      scale: 10,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: null
+    }).then((canvas) => {
+      const link = document.createElement("a");
+      link.download = "map.png";
+      link.href = canvas.toDataURL("image/png", 1.0);
+      link.click();
+
+      // 캡처 후 텍스트 초기화
+      waveGoldDisplay.textContent = "";
+    });
+  }, 100);
+});
+
+// 드롭존과 관련된 요소 선택
+const mapContainer = document.getElementById("map-container");
+const mapImage = document.getElementById("mapImage");
+
+// mapImage의 실제 표시 영역 계산 후 드롭존 위치 보정
+mapImage.onload = () => {
+  const imageRect = mapImage.getBoundingClientRect();
+  const containerRect = mapContainer.getBoundingClientRect();
+  const offsetX = imageRect.left - containerRect.left;
+  const offsetY = imageRect.top - containerRect.top;
+
+  dropZones.forEach(zone => {
+    const origTop = parseInt(zone.style.top, 10);
+    const origLeft = parseInt(zone.style.left, 10);
+    zone.style.top = (origTop + offsetY) + "px";
+    zone.style.left = (origLeft + offsetX) + "px";
+  });
+};
+
+document.addEventListener('dragstart', function(e) {
+  e.preventDefault();
+});
     </script>
     
 </body>
