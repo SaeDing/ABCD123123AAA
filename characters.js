@@ -17,6 +17,14 @@ function createCharacterCard(character) {
             card.appendChild(badge);
         }
         
+        // 메모 표시 (맨 위에 배치)
+        if (character.memo) {
+            const memoDiv = document.createElement('div');
+            memoDiv.className = 'character-memo';
+            memoDiv.innerHTML = `<i class="fas fa-sticky-note"></i> ${character.memo}`;
+            card.appendChild(memoDiv);
+        }
+        
         // 카드 헤더
         const cardHeader = document.createElement('div');
         cardHeader.className = 'card-header';
@@ -24,8 +32,17 @@ function createCharacterCard(character) {
         const cardTitle = document.createElement('div');
         cardTitle.className = 'card-title';
         
-        // 이름과 레벨 표시
-        cardTitle.innerHTML = `<h4>${character.name}</h4>`;
+        // 현재 다이아 기준으로 남은 기부 횟수 계산
+        const diamonds = character.diamonds || 0;
+        const remainingDonations = Math.max(0, Math.floor(diamonds / 1500));
+        
+        // 이름과 남은 기부 횟수 표시
+        cardTitle.innerHTML = `
+            <div style="display: flex; align-items: center;">
+                <h4 style="margin-right: 8px;">${character.name}</h4>
+                <span class="donation-count-badge" style="background-color: #4caf50; font-size: 10px;">남은기부 ${remainingDonations}회</span>
+            </div>
+        `;
         
         // 레벨, 다이아, 기부횟수 표시
         const levelBadge = document.createElement('div');
@@ -37,42 +54,17 @@ function createCharacterCard(character) {
         levelBadge.innerHTML = `
             <span class="level-badge">Lv.${character.level}</span>
             <span style="margin: 0 2px;"></span>
-            <span class="diamonds-badge">💎 ${formatNumber(character.diamonds || 0)}</span>
+            <span class="diamonds-badge">💎 ${formatNumber(diamonds)}</span>
             <span style="margin: 0 2px;"></span>
             <span class="donation-count-badge">기부 ${donationCount}회</span>
         `;
         cardTitle.appendChild(levelBadge);
         
-        const cardActions = document.createElement('div');
-        cardActions.className = 'card-actions';
-        
-        // 수정 버튼 (톱니바퀴 아이콘)
-        const editBtn = document.createElement('button');
-        editBtn.className = 'edit-character-btn';
-        editBtn.innerHTML = '<i class="fas fa-cog"></i>';
-        editBtn.title = '캐릭터 정보 수정';
-        editBtn.addEventListener('click', () => editCharacter(character.id));
-        
-        // 메모 버튼
-        const memoBtn = document.createElement('button');
-        memoBtn.className = 'memo-btn';
-        memoBtn.innerHTML = '<i class="fas fa-sticky-note"></i>';
-        memoBtn.title = '메모 추가';
-        memoBtn.addEventListener('click', () => addCharacterMemo(character.id));
-        
-        // 삭제 버튼
-        const deleteBtn = document.createElement('button');
-        deleteBtn.className = 'delete-btn';
-        deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
-        deleteBtn.title = '캐릭터 삭제';
-        deleteBtn.addEventListener('click', () => deleteCharacter(character.id));
-        
-        cardActions.appendChild(editBtn);
-        cardActions.appendChild(memoBtn);
-        cardActions.appendChild(deleteBtn);
-        
+        // 카드 헤더에는 이제 카드 타이틀만 포함
         cardHeader.appendChild(cardTitle);
-        cardHeader.appendChild(cardActions);
+        
+        // 카드 조립
+        card.appendChild(cardHeader);
         
         // 기부 진행 상황
         const donationProgress = document.createElement('div');
@@ -93,13 +85,7 @@ function createCharacterCard(character) {
             donationProgress.appendChild(step);
         }
         
-        // 메모 표시
-        if (character.memo) {
-            const memoDiv = document.createElement('div');
-            memoDiv.className = 'character-memo';
-            memoDiv.innerHTML = `<i class="fas fa-sticky-note"></i> ${character.memo}`;
-            card.appendChild(memoDiv);
-        }
+        card.appendChild(donationProgress);
         
         // 기부 버튼 영역
         const donationButtons = document.createElement('div');
@@ -127,7 +113,16 @@ function createCharacterCard(character) {
             donationButtons.appendChild(completedMessage);
         }
         
-        // 선택 체크박스는 기존 선택 방식을 유지하고 싶을 경우 포함
+        card.appendChild(donationButtons);
+        
+        // 선택 체크박스와 버튼들을 포함하는 하단 영역
+        const bottomSection = document.createElement('div');
+        bottomSection.style.display = 'flex';
+        bottomSection.style.justifyContent = 'space-between';
+        bottomSection.style.alignItems = 'center';
+        bottomSection.style.marginTop = '8px';
+        
+        // 선택 체크박스
         const charSelect = document.createElement('div');
         charSelect.className = 'char-select';
         
@@ -135,7 +130,6 @@ function createCharacterCard(character) {
         checkbox.type = 'checkbox';
         checkbox.id = `select-${character.id}`;
         checkbox.dataset.id = character.id;
-        // checkbox.disabled = character.donationLevel >= 3; // 3회 기부 완료시 비활성화
         
         const label = document.createElement('label');
         label.htmlFor = `select-${character.id}`;
@@ -144,21 +138,42 @@ function createCharacterCard(character) {
         charSelect.appendChild(checkbox);
         charSelect.appendChild(label);
         
-        // 카드 조립
-        card.appendChild(cardHeader);
-        card.appendChild(donationProgress);
+        // 액션 버튼들
+        const cardActions = document.createElement('div');
+        cardActions.className = 'card-actions';
+        cardActions.style.display = 'flex';
+        cardActions.style.gap = '8px';
         
-        if (character.memo) {
-            const memoDiv = document.createElement('div');
-            memoDiv.className = 'character-memo';
-            memoDiv.innerHTML = `<i class="fas fa-sticky-note"></i> ${character.memo}`;
-            card.appendChild(memoDiv);
-        }
-        ////
-        card.appendChild(donationButtons);
-
-        // 3회기부 조건 없이 항상 체크박스 추가
-        card.appendChild(charSelect);
+        // 수정 버튼 (톱니바퀴 아이콘)
+        const editBtn = document.createElement('button');
+        editBtn.className = 'edit-character-btn';
+        editBtn.innerHTML = '<i class="fas fa-cog"></i>';
+        editBtn.title = '캐릭터 정보 수정';
+        editBtn.addEventListener('click', () => editCharacter(character.id));
+        
+        // 메모 버튼
+        const memoBtn = document.createElement('button');
+        memoBtn.className = 'memo-btn';
+        memoBtn.innerHTML = '<i class="fas fa-sticky-note"></i>';
+        memoBtn.title = '메모 추가';
+        memoBtn.addEventListener('click', () => addCharacterMemo(character.id));
+        
+        // 삭제 버튼
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'delete-btn';
+        deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+        deleteBtn.title = '캐릭터 삭제';
+        deleteBtn.addEventListener('click', () => deleteCharacter(character.id));
+        
+        cardActions.appendChild(editBtn);
+        cardActions.appendChild(memoBtn);
+        cardActions.appendChild(deleteBtn);
+        
+        // 하단 영역에 체크박스와 버튼들 추가
+        bottomSection.appendChild(charSelect);
+        bottomSection.appendChild(cardActions);
+        
+        card.appendChild(bottomSection);
 
         return card;
     } catch (error) {

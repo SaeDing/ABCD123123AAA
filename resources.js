@@ -1,13 +1,20 @@
 // 자원 총합 업데이트
-// 자원 총합 업데이트
 function updateResourceTotals() {
     try {
-        // 이전에 저장된 총 자원 값 보존 (추가)
+        // 이전에 저장된 총 자원 값 보존
         const savedTotalResources = {
             arti: state.resources?.arti || 0,
             coins: state.resources?.coins || 0,
             exp: state.resources?.exp || 0,
             contribution: state.resources?.contribution || 0
+        };
+        
+        // 이전에 계산된 기부 자원값 (없으면 0으로 초기화)
+        const previousCalculatedResources = state.previousCalculatedResources || {
+            arti: 0,
+            coins: 0,
+            exp: 0,
+            contribution: 0
         };
         
         // 소유자별 자원 계산 (기부로 인한 기본 계산값)
@@ -78,14 +85,27 @@ function updateResourceTotals() {
             calculatedTotalContribution += resources.contribution;
         });
         
-        // 변경: 기존에 저장된 자원 값 유지
-        // 새로 계산된 값이 이전 저장값보다 크면 업데이트, 아니면 이전 값 유지
-        let finalTotalArti = Math.max(savedTotalResources.arti, calculatedTotalArti);
-        let finalTotalCoins = Math.max(savedTotalResources.coins, calculatedTotalCoins);
-        let finalTotalExp = Math.max(savedTotalResources.exp, calculatedTotalExp);
-        let finalTotalContribution = Math.max(savedTotalResources.contribution, calculatedTotalContribution);
+        // 새로운 기부분 계산 (현재 계산값 - 이전 계산값)
+        const newDonationArti = Math.max(0, calculatedTotalArti - previousCalculatedResources.arti);
+        const newDonationCoins = Math.max(0, calculatedTotalCoins - previousCalculatedResources.coins);
+        const newDonationExp = Math.max(0, calculatedTotalExp - previousCalculatedResources.exp);
+        const newDonationContribution = Math.max(0, calculatedTotalContribution - previousCalculatedResources.contribution);
         
-        // 전체 자원 상태 업데이트 (계산된 값으로 덮어쓰기)
+        // 기존 값에 새로운 기부분을 더한 최종값 계산
+        let finalTotalArti = savedTotalResources.arti + newDonationArti;
+        let finalTotalCoins = savedTotalResources.coins + newDonationCoins;
+        let finalTotalExp = savedTotalResources.exp + newDonationExp;
+        let finalTotalContribution = savedTotalResources.contribution + newDonationContribution;
+        
+        // 현재 계산값을 다음 계산을 위해 저장
+        state.previousCalculatedResources = {
+            arti: calculatedTotalArti,
+            coins: calculatedTotalCoins,
+            exp: calculatedTotalExp,
+            contribution: calculatedTotalContribution
+        };
+        
+        // 전체 자원 상태 업데이트
         if (!state.resources) state.resources = {};
         state.resources.arti = finalTotalArti;
         state.resources.coins = finalTotalCoins;
