@@ -15,23 +15,23 @@
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
         
         :root {
-            --primary: #7C4DFF;
-            --primary-dark: #5E35B1;
-            --primary-light: #B39DDB;
-            --accent: #FF4081;
-            --accent-dark: #F50057;
+            --primary: #505050;
+            --primary-dark: #303030;
+            --primary-light: #707070;
+            --accent: #404040;
+            --accent-dark: #202020;
             --text-primary: #333333;
             --text-secondary: #757575;
-            --background: #F5F5F5;
+            --background: #f0f0f0;
             --card-bg: #FFFFFF;
-            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            --input-border: #E0E0E0;
-            --success: #4CAF50;
-            --error: #F44336;
-            --warning: #FFC107;
-            --info: #2196F3;
-            --border-radius: 12px;
-            --transition: all 0.3s ease;
+            --card-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            --input-border: #e0e0e0;
+            --success: #4c4c4c;
+            --error: #8c3a3a;
+            --warning: #a09066;
+            --info: #545e6c;
+            --border-radius: 8px;
+            --transition: all 0.2s ease;
         }
 
         * {
@@ -44,67 +44,47 @@
         body {
             background-color: var(--background);
             color: var(--text-primary);
-            line-height: 1.6;
+            line-height: 1.5;
             font-size: 16px;
             overflow-x: hidden;
         }
 
         /* 헤더 스타일 */
         .site-header {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
             color: white;
-            padding: 2rem 0;
+            padding: 1.5rem 0;
             text-align: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             position: relative;
-            overflow: hidden;
         }
 
         .site-header h1 {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             margin-bottom: 0.5rem;
             z-index: 2;
             position: relative;
         }
 
         .site-header p {
-            font-size: 1.1rem;
+            font-size: 1rem;
             opacity: 0.9;
             z-index: 2;
             position: relative;
         }
 
-        .site-header::before {
-            content: '';
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            background: url('./img/back1.png');
-            background-size: cover;
-            opacity: 0.1;
-            top: -50%;
-            left: -50%;
-            animation: rotate 60s linear infinite;
-            z-index: 1;
-        }
-
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
         /* 메인 컨테이너 */
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 1.5rem;
         }
 
         .calculators-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-top: -3rem;
+            gap: 1.5rem;
+            margin-top: -2rem;
         }
 
         /* 카드 공통 스타일 */
@@ -118,68 +98,59 @@
         }
 
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        /* 고기 계산기와 사냥패스 계산기 구분 */
+        .meat-card {
+            background-color: #fcfcfc;
+        }
+        
+        .hunt-card {
+            background-color: #f7f7f7;
         }
 
         .card-header {
-            padding: 1.5rem;
-            background: linear-gradient(45deg, var(--primary-dark), var(--primary));
+            padding: 1.2rem;
+            background: var(--primary);
             color: white;
             position: relative;
-            overflow: hidden;
         }
 
         .card-header h2 {
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
+            font-size: 1.6rem;
+            margin-bottom: 0.3rem;
             position: relative;
             z-index: 1;
         }
 
-        .card-header::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            right: -10px;
-            width: 100px;
-            height: 100px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-        }
-
         .meat-card .card-header {
-            background: linear-gradient(45deg, #FF5722, #FF9800);
-        }
-
-        .meat-card .card-header::after {
-            background: rgba(255, 255, 255, 0.15);
-            width: 120px;
-            height: 120px;
+            background: #505050;
         }
 
         .card-body {
-            padding: 1.5rem;
+            padding: 1.2rem;
         }
 
         /* 입력 필드 스타일 */
         .input-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
         }
 
         .input-group label {
             display: block;
             font-weight: 500;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
             color: var(--text-primary);
         }
 
         .input-group input[type="number"],
         .input-group input[type="text"] {
             width: 100%;
-            padding: 0.8rem 1rem;
-            border: 2px solid var(--input-border);
-            border-radius: 8px;
+            padding: 0.7rem 0.9rem;
+            border: 1px solid var(--input-border);
+            border-radius: 6px;
             font-size: 1rem;
             transition: var(--transition);
             background-color: rgba(255, 255, 255, 0.8);
@@ -188,7 +159,7 @@
         .input-group input:focus {
             border-color: var(--primary);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(124, 77, 255, 0.2);
+            box-shadow: 0 0 0 2px rgba(80, 80, 80, 0.2);
         }
 
         .input-group .tip {
@@ -201,7 +172,7 @@
         .checkbox-container {
             display: flex;
             align-items: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
             cursor: pointer;
         }
 
@@ -216,12 +187,12 @@
         .checkmark {
             position: relative;
             display: inline-block;
-            height: 22px;
-            width: 22px;
+            height: 20px;
+            width: 20px;
             background-color: #f5f5f5;
-            border: 2px solid var(--input-border);
+            border: 1px solid var(--input-border);
             border-radius: 4px;
-            margin-right: 10px;
+            margin-right: 8px;
             transition: var(--transition);
         }
 
@@ -238,8 +209,8 @@
             content: "";
             position: absolute;
             display: none;
-            left: 7px;
-            top: 3px;
+            left: 6px;
+            top: 2px;
             width: 5px;
             height: 10px;
             border: solid white;
@@ -259,8 +230,8 @@
         .radio-group {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 10px;
-            margin-bottom: 1.5rem;
+            gap: 8px;
+            margin-bottom: 1.2rem;
         }
 
         .radio-group.difficulty-buttons {
@@ -284,42 +255,43 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 1rem 0.5rem;
-            border: 2px solid var(--input-border);
-            border-radius: 8px;
+            padding: 0.8rem 0.4rem;
+            border: 1px solid var(--input-border);
+            border-radius: 6px;
             font-size: 0.9rem;
             font-weight: 500;
             text-align: center;
             cursor: pointer;
             transition: var(--transition);
-            height: 70px;
+            height: 60px;
             user-select: none;
         }
 
         .radio-button:hover label {
             border-color: var(--primary-light);
-            background-color: rgba(179, 157, 219, 0.1);
+            background-color: rgba(112, 112, 112, 0.05);
         }
 
         .radio-button input:checked + label {
             background-color: var(--primary);
             color: white;
             border-color: var(--primary);
-            box-shadow: 0 4px 12px rgba(124, 77, 255, 0.3);
+            box-shadow: 0 2px 6px rgba(80, 80, 80, 0.2);
         }
 
         .meat-card .radio-button input:checked + label {
-            background-color: #FF5722;
-            border-color: #FF5722;
-            box-shadow: 0 4px 12px rgba(255, 87, 34, 0.3);
+            background-color: #505050;
+            border-color: #505050;
+            box-shadow: 0 2px 6px rgba(80, 80, 80, 0.2);
         }
 
         /* 결과 영역 스타일 */
         .result-area {
-            margin-top: 1.5rem;
-            background-color: rgba(245, 245, 245, 0.5);
-            border-radius: 10px;
-            padding: 1.2rem;
+            margin-top: 1.2rem;
+            background-color: rgba(240, 240, 240, 0.5);
+            border-radius: 8px;
+            padding: 1rem;
+            position: relative;
         }
 
         .result-section {
@@ -329,7 +301,7 @@
         .result-item {
             display: flex;
             justify-content: space-between;
-            padding: 0.7rem 0;
+            padding: 0.6rem 0;
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
 
@@ -348,7 +320,7 @@
         }
 
         .meat-card .result-value {
-            color: #FF5722;
+            color: #505050;
         }
 
         .error-message {
@@ -357,44 +329,96 @@
             margin-bottom: 1rem;
         }
 
+        /* 복사 버튼 스타일 */
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .copy-button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .apply-button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 3px 6px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: var(--transition);
+        }
+
+        .apply-button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .copy-success {
+            position: absolute;
+            top: 45px;
+            right: 10px;
+            background-color: var(--success);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .copy-success.show {
+            opacity: 1;
+        }
+
         /* 진행 바 스타일 */
         .progress-container {
-            margin: 1.2rem 0;
+            margin: 1rem 0;
         }
 
         .progress-label {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
             font-size: 0.9rem;
             color: var(--text-secondary);
         }
 
         .progress-bar {
-            height: 8px;
+            height: 6px;
             background-color: rgba(0, 0, 0, 0.05);
-            border-radius: 4px;
+            border-radius: 3px;
             overflow: hidden;
         }
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--primary-light), var(--primary));
-            border-radius: 4px;
+            background: var(--primary);
+            border-radius: 3px;
             width: 0;
-            transition: width 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+            transition: width 0.5s ease;
         }
 
         /* 접을 수 있는 섹션 스타일 */
         .collapsible {
-            margin-top: 1.2rem;
+            margin-top: 1rem;
             border: 1px solid rgba(0, 0, 0, 0.05);
-            border-radius: 8px;
+            border-radius: 6px;
             overflow: hidden;
         }
 
         .collapsible-header {
-            padding: 1rem;
+            padding: 0.8rem;
             background-color: rgba(0, 0, 0, 0.02);
             cursor: pointer;
             display: flex;
@@ -418,7 +442,7 @@
 
         .collapsible-content.open {
             max-height: 500px;
-            padding: 1rem;
+            padding: 0.8rem;
         }
 
         /* 아이콘 네비게이션 스타일 */
@@ -427,24 +451,24 @@
             flex-wrap: wrap;
             justify-content: center;
             gap: 1rem;
-            margin-top: 2rem;
+            margin-top: 1.5rem;
         }
 
         .nav-icon {
             position: relative;
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             overflow: hidden;
             background-color: white;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
             cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .nav-icon:hover {
-            transform: scale(1.1);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
         }
 
         .nav-icon img {
@@ -462,51 +486,23 @@
             background: rgba(0, 0, 0, 0.6);
             color: white;
             font-size: 0.7rem;
-            padding: 4px 0;
+            padding: 3px 0;
             text-align: center;
-        }
-
-        /* 애니메이션 */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .card {
-            animation: fadeIn 0.5s ease-out forwards;
-        }
-
-        .meat-card {
-            animation-delay: 0.1s;
-        }
-
-        .hunt-card {
-            animation-delay: 0.2s;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
-        }
-
-        .pulse {
-            animation: pulse 0.3s ease-in-out;
         }
 
         /* 반응형 스타일 */
         @media (max-width: 1024px) {
             .calculators-grid {
                 grid-template-columns: 1fr;
-                gap: 1.5rem;
+                gap: 1.2rem;
             }
 
             .site-header h1 {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
 
             .container {
-                padding: 1.5rem;
+                padding: 1.2rem;
             }
         }
 
@@ -516,23 +512,23 @@
             }
 
             .card-header h2 {
-                font-size: 1.5rem;
+                font-size: 1.4rem;
             }
 
             .radio-group {
-                grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
             }
 
             .radio-button label {
-                padding: 0.8rem 0.3rem;
+                padding: 0.7rem 0.3rem;
                 font-size: 0.8rem;
-                height: 60px;
+                height: 55px;
             }
         }
 
         @media (max-width: 480px) {
             .site-header h1 {
-                font-size: 1.6rem;
+                font-size: 1.5rem;
             }
 
             .site-header p {
@@ -540,7 +536,7 @@
             }
 
             .radio-group {
-                grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(65px, 1fr));
             }
 
             .radio-button label {
@@ -550,8 +546,8 @@
             }
 
             .nav-icon {
-                width: 50px;
-                height: 50px;
+                width: 45px;
+                height: 45px;
             }
         }
 
@@ -570,11 +566,22 @@
 
         /* 푸터 스타일 */
         .footer {
-            margin-top: 3rem;
+            margin-top: 2rem;
             text-align: center;
-            padding: 2rem 0;
+            padding: 1.5rem 0;
             color: var(--text-secondary);
             font-size: 0.9rem;
+        }
+
+        /* 애니메이션 효과 */
+        .pulse {
+            animation: pulse 0.3s ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
         }
     </style>
 </head>
@@ -654,6 +661,8 @@
                     </div>
 
                     <div id="result" class="result-area">
+                        <button id="copy-button" type="button" class="copy-button">결과 복사</button>
+                        <div id="copy-success" class="copy-success">복사 완료!</div>
                         <p id="error-msg" class="error-message" aria-live="assertive"></p>
                         <div class="result-section">
                             <div class="result-item">
@@ -823,6 +832,7 @@
                                 
                                 <div class="result-item">
                                     <span class="result-label">2배 경험치 적용 판수</span>
+                                    <button type="button" id="apply-to-meat" class="apply-button">고기계산기적용</button>
                                     <span class="result-value" id="actualTotalGames">0판</span>
                                 </div>
 
@@ -849,34 +859,127 @@
 
     <script>
         // 유틸리티 함수 모듈
-        const Utils = {
+        var Utils = {
             // 날짜 형식 포맷팅 함수
             formatDate: function(date) {
-                return `${date.getFullYear()}년 ${String(date.getMonth() + 1).padStart(2, '0')}월 ${String(date.getDate()).padStart(2, '0')}일 ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+                try {
+                    return date.getFullYear() + "년 " + 
+                           String(date.getMonth() + 1).padStart(2, '0') + "월 " + 
+                           String(date.getDate()).padStart(2, '0') + "일 " + 
+                           String(date.getHours()).padStart(2, '0') + ":" + 
+                           String(date.getMinutes()).padStart(2, '0');
+                } catch (error) {
+                    console.error("날짜 포맷팅 오류:", error);
+                    return "날짜 계산 오류";
+                }
             },
             
             // 숫자 천 단위 콤마 형식 지정
             formatNumber: function(number) {
-                return number.toLocaleString();
+                try {
+                    if (isNaN(number)) return "0";
+                    return number.toLocaleString();
+                } catch (error) {
+                    console.error("숫자 포맷팅 오류:", error);
+                    return "0";
+                }
             },
             
             // 0으로 나누기 방지
             safeDivide: function(numerator, denominator) {
-                return denominator === 0 ? 0 : numerator / denominator;
+                if (denominator === 0 || isNaN(denominator)) return 0;
+                if (isNaN(numerator)) return 0;
+                return numerator / denominator;
             },
             
             // 요소에 일시적인 강조 효과 추가
             pulseEffect: function(element) {
-                element.classList.add('pulse');
-                setTimeout(() => {
-                    element.classList.remove('pulse');
-                }, 300);
+                if (!element) return;
+                
+                try {
+                    element.classList.add('pulse');
+                    setTimeout(function() {
+                        element.classList.remove('pulse');
+                    }, 300);
+                } catch (error) {
+                    console.error("강조 효과 적용 오류:", error);
+                }
+            },
+            
+            // 계산기 결과 복사 함수
+            copyResultToClipboard: function() {
+                try {
+                    // 복사할 내용 생성
+                    var startTime = document.getElementById('start-time').textContent || "";
+                    var endTime = document.getElementById('end-time').textContent || "";
+                    var rounds = document.getElementById('rounds').textContent || "";
+                    var difficulty = document.querySelector('input[name="difficulty"]:checked');
+                    var difficultyValue = difficulty ? difficulty.value : "";
+                    var estimatedTime = document.getElementById('estimated-time').textContent || "";
+                    var rewards = document.getElementById('rewards').textContent || "";
+                    
+                    var copyText = "[고기 계산]\n" +
+                                   "시작 시간: " + startTime + "\n" +
+                                   "종료 시간: " + endTime + "\n" +
+                                   "게임 판수: " + rounds + "(" + difficultyValue + ")\n" +
+                                   "예상 시간: " + estimatedTime + "\n" +
+                                   "보상: " + rewards.replace(/<br>/g, '\n     ');
+                    
+                    // 클립보드에 복사
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(copyText)
+                            .then(function() {
+                                var copySuccessEl = document.getElementById('copy-success');
+                                if (copySuccessEl) {
+                                    copySuccessEl.classList.add('show');
+                                    setTimeout(function() {
+                                        copySuccessEl.classList.remove('show');
+                                    }, 2000);
+                                }
+                            })
+                            .catch(function(err) {
+                                console.error('클립보드 복사 실패:', err);
+                                alert('결과 복사에 실패했습니다. 권한을 확인해주세요.');
+                            });
+                    } else {
+                        // 클립보드 API를 지원하지 않는 브라우저를 위한 대체 방법
+                        var textarea = document.createElement('textarea');
+                        textarea.value = copyText;
+                        textarea.style.position = 'fixed';
+                        document.body.appendChild(textarea);
+                        textarea.focus();
+                        textarea.select();
+                        
+                        try {
+                            var successful = document.execCommand('copy');
+                            if (successful) {
+                                var copySuccessEl = document.getElementById('copy-success');
+                                if (copySuccessEl) {
+                                    copySuccessEl.classList.add('show');
+                                    setTimeout(function() {
+                                        copySuccessEl.classList.remove('show');
+                                    }, 2000);
+                                }
+                            } else {
+                                alert('결과 복사에 실패했습니다.');
+                            }
+                        } catch (err) {
+                            console.error('클립보드 복사 오류:', err);
+                            alert('결과 복사에 실패했습니다.');
+                        }
+                        
+                        document.body.removeChild(textarea);
+                    }
+                } catch (error) {
+                    console.error("결과 복사 오류:", error);
+                    alert('결과 복사 중 오류가 발생했습니다.');
+                }
             }
         };
 
         // 사냥패스 계산기 스크립트
         // 레벨별 필요 경험치 정의
-        const levelExpTable = {
+        var levelExpTable = {
             1: 300,
             2: 400,
             3: 400,
@@ -892,516 +995,777 @@
         };
 
         // 13레벨부터 80레벨까지는 2400 경험치
-        for (let i = 13; i <= 80; i++) {
+        for (var i = 13; i <= 80; i++) {
             levelExpTable[i] = 2400;
         }
 
         // 사냥패스 최대 레벨
-        const MAX_LEVEL = 80;
+        var MAX_LEVEL = 80;
 
         // 한 판당 기본 경험치
-        const BASE_EXP_PER_GAME = 800;
+        var BASE_EXP_PER_GAME = 800;
 
         // DOM 요소
-        const currentLevelInput = document.getElementById('currentLevel');
-        const currentExpInput = document.getElementById('currentExp');
-        const gamesPerDayInput = document.getElementById('gamesPerDay');
-        const doubleExpCheckbox = document.getElementById('doubleExp');
-        const remainingDoubleExpInput = document.getElementById('remainingDoubleExp');
-        const remainingDoubleExpContainer = document.getElementById('remainingDoubleExpContainer');
-        const resultCard = document.getElementById('resultCard');
-        const nextLevelGames = document.getElementById('nextLevelGames');
-        const totalGames = document.getElementById('totalGames');
-        const actualTotalGames = document.getElementById('actualTotalGames');
-        const remainingExp = document.getElementById('remainingExp');
-        const estimatedDays = document.getElementById('estimatedDays');
-        const progressFill = document.getElementById('progressFill');
-        const progressPercent = document.getElementById('progressPercent');
-        const futureProgressFill = document.getElementById('futureProgressFill');
-        const futureProgressPercent = document.getElementById('futureProgressPercent');
-        const futureLevel = document.getElementById('futureLevel');
-        const futureExp = document.getElementById('futureExp');
-        const maxLevelInfo = document.getElementById('maxLevelInfo');
-        const maxLevelGames = document.getElementById('maxLevelGames');
-        const resetLevel = document.getElementById('resetLevel');
-        const resetExp = document.getElementById('resetExp');
-        const maxLevelHeader = document.getElementById('maxLevelHeader');
-        const detailsHeader = document.getElementById('detailsHeader');
-        const detailsContent = document.getElementById('detailsContent');
+        var currentLevelInput, currentExpInput, gamesPerDayInput, doubleExpCheckbox, 
+            remainingDoubleExpInput, remainingDoubleExpContainer, resultCard, 
+            nextLevelGames, totalGames, actualTotalGames, remainingExp, 
+            estimatedDays, progressFill, progressPercent, futureProgressFill, 
+            futureProgressPercent, futureLevel, futureExp, maxLevelInfo, 
+            maxLevelGames, resetLevel, resetExp, maxLevelHeader, 
+            detailsHeader, detailsContent;
+
+        // DOM 요소 초기화 함수
+        function initializeHuntingPassElements() {
+            try {
+                currentLevelInput = document.getElementById('currentLevel');
+                currentExpInput = document.getElementById('currentExp');
+                gamesPerDayInput = document.getElementById('gamesPerDay');
+                doubleExpCheckbox = document.getElementById('doubleExp');
+                remainingDoubleExpInput = document.getElementById('remainingDoubleExp');
+                remainingDoubleExpContainer = document.getElementById('remainingDoubleExpContainer');
+                resultCard = document.getElementById('resultCard');
+                nextLevelGames = document.getElementById('nextLevelGames');
+                totalGames = document.getElementById('totalGames');
+                actualTotalGames = document.getElementById('actualTotalGames');
+                remainingExp = document.getElementById('remainingExp');
+                estimatedDays = document.getElementById('estimatedDays');
+                progressFill = document.getElementById('progressFill');
+                progressPercent = document.getElementById('progressPercent');
+                futureProgressFill = document.getElementById('futureProgressFill');
+                futureProgressPercent = document.getElementById('futureProgressPercent');
+                futureLevel = document.getElementById('futureLevel');
+                futureExp = document.getElementById('futureExp');
+                maxLevelInfo = document.getElementById('maxLevelInfo');
+                maxLevelGames = document.getElementById('maxLevelGames');
+                resetLevel = document.getElementById('resetLevel');
+                resetExp = document.getElementById('resetExp');
+                maxLevelHeader = document.getElementById('maxLevelHeader');
+                detailsHeader = document.getElementById('detailsHeader');
+                detailsContent = document.getElementById('detailsContent');
+            } catch (error) {
+                console.error("사냥패스 DOM 요소 초기화 오류:", error);
+            }
+        }
 
         // 접을 수 있는 섹션 추가
         function toggleCollapsible(header, content) {
-            header.addEventListener('click', function() {
-                content.classList.toggle('open');
-                const arrow = header.querySelector('span:last-child');
-                arrow.textContent = content.classList.contains('open') ? '▲' : '▼';
-                
-                // 접근성을 위한 aria 속성 업데이트
-                header.setAttribute('aria-expanded', content.classList.contains('open'));
-                
-                // 효과 추가
-                Utils.pulseEffect(content);
-            });
+            if (!header || !content) return;
             
-            // 초기 aria 속성 설정
-            header.setAttribute('aria-expanded', 'false');
-            header.setAttribute('role', 'button');
-            header.setAttribute('tabindex', '0');
-            
-            // 키보드 접근성 추가
-            header.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    this.click();
-                }
-            });
+            try {
+                header.addEventListener('click', function() {
+                    content.classList.toggle('open');
+                    var arrow = header.querySelector('span:last-child');
+                    if (arrow) {
+                        arrow.textContent = content.classList.contains('open') ? '▲' : '▼';
+                    }
+                    
+                    // 접근성을 위한 aria 속성 업데이트
+                    header.setAttribute('aria-expanded', content.classList.contains('open'));
+                    
+                    // 효과 추가
+                    Utils.pulseEffect(content);
+                });
+                
+                // 초기 aria 속성 설정
+                header.setAttribute('aria-expanded', 'false');
+                header.setAttribute('role', 'button');
+                header.setAttribute('tabindex', '0');
+                
+                // 키보드 접근성 추가
+                header.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        this.click();
+                    }
+                });
+            } catch (error) {
+                console.error("접을 수 있는 섹션 설정 오류:", error);
+            }
         }
 
         // 2배 경험치 체크박스 상태에 따라 남은 2배 경험치 판수 입력란 표시/숨김
         function toggleRemainingDoubleExpField() {
-            remainingDoubleExpContainer.style.display = doubleExpCheckbox.checked ? 'block' : 'none';
+            try {
+                if (remainingDoubleExpContainer) {
+                    remainingDoubleExpContainer.style.display = doubleExpCheckbox && doubleExpCheckbox.checked ? 'block' : 'none';
+                }
+            } catch (error) {
+                console.error("2배 경험치 필드 토글 오류:", error);
+            }
         }
 
         // 현재 레벨의 필요 경험치 가져오기
         function getLevelExp(level) {
-            return levelExpTable[level] || 2400; // 정의되지 않은 레벨은 2400 반환
+            try {
+                if (isNaN(level) || level < 1) return levelExpTable[1];
+                return levelExpTable[level] || 2400; // 정의되지 않은 레벨은 2400 반환
+            } catch (error) {
+                console.error("레벨 경험치 계산 오류:", error);
+                return 2400;
+            }
         }
 
         // 총 필요 경험치 계산 (현재 레벨부터 만렙까지)
         function calculateTotalExpNeeded(currentLevel, currentExp) {
-            let totalExp = getLevelExp(currentLevel) - currentExp;
-            
-            for (let level = currentLevel + 1; level < MAX_LEVEL; level++) {
-                totalExp += getLevelExp(level);
+            try {
+                if (isNaN(currentLevel) || currentLevel < 1) currentLevel = 1;
+                if (isNaN(currentExp) || currentExp < 0) currentExp = 0;
+                
+                var totalExp = getLevelExp(currentLevel) - currentExp;
+                
+                for (var level = currentLevel + 1; level < MAX_LEVEL; level++) {
+                    totalExp += getLevelExp(level);
+                }
+                
+                return totalExp;
+            } catch (error) {
+                console.error("총 필요 경험치 계산 오류:", error);
+                return 0;
             }
-            
-            return totalExp;
         }
 
         // 필요한 총 판수 계산 (항상 2배 경험치 미적용)
         function calculateTotalGamesNeeded(totalExp) {
-            // 항상 2배 경험치 미적용으로 계산
-            return Math.ceil(totalExp / BASE_EXP_PER_GAME);
+            try {
+                if (isNaN(totalExp) || totalExp <= 0) return 0;
+                // 항상 2배 경험치 미적용으로 계산
+                return Math.ceil(totalExp / BASE_EXP_PER_GAME);
+            } catch (error) {
+                console.error("총 판수 계산 오류:", error);
+                return 0;
+            }
         }
         
         // 필요한 판수 계산 (하루 플레이 판수 고려)
         function calculateDaysGamesNeeded(totalExp, gamesPerDay, useDoubleExp) {
-            let remainingExp = totalExp;
-            let totalGames = 0;
-            
-            while (remainingExp > 0) {
-                let dailyGames = 0;
-                let dailyMaxGames = gamesPerDay;
+            try {
+                if (isNaN(totalExp) || totalExp <= 0) return 0;
+                if (isNaN(gamesPerDay) || gamesPerDay <= 0) gamesPerDay = 1;
                 
-                // 하루 10판까지 2배 경험치 적용
-                if (useDoubleExp) {
-                    while (dailyGames < 10 && dailyGames < dailyMaxGames && remainingExp > 0) {
-                        remainingExp -= (BASE_EXP_PER_GAME * 2);
+                var remainingExp = totalExp;
+                var totalGames = 0;
+                
+                while (remainingExp > 0) {
+                    var dailyGames = 0;
+                    var dailyMaxGames = gamesPerDay;
+                    
+                    // 하루 10판까지 2배 경험치 적용
+                    if (useDoubleExp) {
+                        while (dailyGames < 10 && dailyGames < dailyMaxGames && remainingExp > 0) {
+                            remainingExp -= (BASE_EXP_PER_GAME * 2);
+                            dailyGames++;
+                            totalGames++;
+                        }
+                    }
+                    
+                    // 나머지 판수는 기본 경험치
+                    while (dailyGames < dailyMaxGames && remainingExp > 0) {
+                        remainingExp -= BASE_EXP_PER_GAME;
                         dailyGames++;
                         totalGames++;
                     }
                 }
                 
-                // 나머지 판수는 기본 경험치
-                while (dailyGames < dailyMaxGames && remainingExp > 0) {
-                    remainingExp -= BASE_EXP_PER_GAME;
-                    dailyGames++;
-                    totalGames++;
-                }
+                return totalGames;
+            } catch (error) {
+                console.error("일일 판수 계산 오류:", error);
+                return 0;
             }
-            
-            return totalGames;
         }
 
         // 다음 레벨까지 필요한 판수 계산
         function calculateNextLevelGames(currentLevel, currentExp, useDoubleExp) {
-            const expNeeded = getLevelExp(currentLevel) - currentExp;
-            
-            if (useDoubleExp) {
-                // 2배 경험치 적용
-                return Math.ceil(expNeeded / (BASE_EXP_PER_GAME * 2));
-            } else {
-                // 기본 경험치 적용
-                return Math.ceil(expNeeded / BASE_EXP_PER_GAME);
+            try {
+                if (isNaN(currentLevel) || currentLevel < 1) currentLevel = 1;
+                if (isNaN(currentExp) || currentExp < 0) currentExp = 0;
+                
+                var expNeeded = getLevelExp(currentLevel) - currentExp;
+                
+                if (expNeeded <= 0) return 0;
+                
+                if (useDoubleExp) {
+                    // 2배 경험치 적용
+                    return Math.ceil(expNeeded / (BASE_EXP_PER_GAME * 2));
+                } else {
+                    // 기본 경험치 적용
+                    return Math.ceil(expNeeded / BASE_EXP_PER_GAME);
+                }
+            } catch (error) {
+                console.error("다음 레벨 판수 계산 오류:", error);
+                return 0;
             }
         }
         
         // 실제 필요한 판수 계산 (2배 경험치 고려)
         function calculateActualGamesNeeded(totalExp, useDoubleExp, remainingDoubleExpGames) {
-            if (!useDoubleExp) {
-                // 2배 경험치 미적용 시 기본 계산
-                return Math.ceil(totalExp / BASE_EXP_PER_GAME);
+            try {
+                if (isNaN(totalExp) || totalExp <= 0) return 0;
+                if (isNaN(remainingDoubleExpGames)) remainingDoubleExpGames = 0;
+                
+                if (!useDoubleExp) {
+                    // 2배 경험치 미적용 시 기본 계산
+                    return Math.ceil(totalExp / BASE_EXP_PER_GAME);
+                }
+                
+                var remainingExp = totalExp;
+                var totalGames = 0;
+                
+                // 남은 2배 경험치 판수로 먼저 계산
+                var doubleExpGames = Math.min(remainingDoubleExpGames, Math.ceil(remainingExp / (BASE_EXP_PER_GAME * 2)));
+                remainingExp -= doubleExpGames * (BASE_EXP_PER_GAME * 2);
+                totalGames += doubleExpGames;
+                
+                // 나머지 경험치는 일반 판수로 계산
+                if (remainingExp > 0) {
+                    totalGames += Math.ceil(remainingExp / BASE_EXP_PER_GAME);
+                }
+                
+                return totalGames;
+            } catch (error) {
+                console.error("실제 판수 계산 오류:", error);
+                return 0;
             }
-            
-            let remainingExp = totalExp;
-            let totalGames = 0;
-            
-            // 남은 2배 경험치 판수로 먼저 계산
-            const doubleExpGames = Math.min(remainingDoubleExpGames, Math.ceil(remainingExp / (BASE_EXP_PER_GAME * 2)));
-            remainingExp -= doubleExpGames * (BASE_EXP_PER_GAME * 2);
-            totalGames += doubleExpGames;
-            
-            // 나머지 경험치는 일반 판수로 계산
-            if (remainingExp > 0) {
-                totalGames += Math.ceil(remainingExp / BASE_EXP_PER_GAME);
-            }
-            
-            return totalGames;
         }
 
         // 전체 진행률 계산
         function calculateProgress(currentLevel, currentExp) {
-            let totalExpToMax = 0;
-            let earnedExp = 0;
-            
-            // 1레벨부터 최대 레벨까지 총 경험치
-            for (let level = 1; level < MAX_LEVEL; level++) {
-                totalExpToMax += getLevelExp(level);
+            try {
+                if (isNaN(currentLevel) || currentLevel < 1) currentLevel = 1;
+                if (isNaN(currentExp) || currentExp < 0) currentExp = 0;
+                
+                var totalExpToMax = 0;
+                var earnedExp = 0;
+                
+                // 1레벨부터 최대 레벨까지 총 경험치
+                for (var level = 1; level < MAX_LEVEL; level++) {
+                    totalExpToMax += getLevelExp(level);
+                }
+                
+                // 현재까지 획득한 경험치
+                for (var level = 1; level < currentLevel; level++) {
+                    earnedExp += getLevelExp(level);
+                }
+                earnedExp += currentExp;
+                
+                // 진행률 계산 및 범위 제한 (0-100%)
+                var progress = Utils.safeDivide(earnedExp, totalExpToMax) * 100;
+                return Math.max(0, Math.min(100, progress));
+            } catch (error) {
+                console.error("진행률 계산 오류:", error);
+                return 0;
             }
-            
-            // 현재까지 획득한 경험치
-            for (let level = 1; level < currentLevel; level++) {
-                earnedExp += getLevelExp(level);
-            }
-            earnedExp += currentExp;
-            
-            return (earnedExp / totalExpToMax) * 100;
         }
 
         // 플레이 후 예상 레벨 및 경험치 계산 (게임별 상세 추적)
         function calculateFutureProgressDetailed(currentLevel, currentExp, gamesToPlay, useDoubleExp, remainingDoubleExpGames) {
-            let level = currentLevel;
-            let exp = currentExp;
-            let gamesPlayed = 0;
-            let maxLevelReached = false;
-            let maxLevelAtGame = 0;
-            let remainingGames = 0;
-            let resetLevelInfo = { level: 1, exp: 0 };
-            
-            // 남은 2배 경험치 판수 추적
-            let availableDoubleExpGames = useDoubleExp ? remainingDoubleExpGames : 0;
-            
-            // 한 게임씩 진행 상황 추적
-            while (gamesPlayed < gamesToPlay) {
-                // 현재 게임 경험치 계산
-                let gameExp = BASE_EXP_PER_GAME;
-                if (availableDoubleExpGames > 0) {
-                    gameExp *= 2;
-                    availableDoubleExpGames--;
-                }
+            try {
+                if (isNaN(currentLevel) || currentLevel < 1) currentLevel = 1;
+                if (isNaN(currentExp) || currentExp < 0) currentExp = 0;
+                if (isNaN(gamesToPlay) || gamesToPlay < 0) gamesToPlay = 0;
+                if (isNaN(remainingDoubleExpGames)) remainingDoubleExpGames = 0;
                 
-                // 경험치 추가 및 레벨업 체크
-                exp += gameExp;
-                gamesPlayed++;
+                var level = currentLevel;
+                var exp = currentExp;
+                var gamesPlayed = 0;
+                var maxLevelReached = false;
+                var maxLevelAtGame = 0;
+                var remainingGames = 0;
+                var resetLevelInfo = { level: 1, exp: 0 };
                 
-                // 레벨업 체크
-                while (exp >= getLevelExp(level) && level < MAX_LEVEL) {
-                    exp -= getLevelExp(level);
-                    level++;
+                // 남은 2배 경험치 판수 추적
+                var availableDoubleExpGames = useDoubleExp ? remainingDoubleExpGames : 0;
+                
+                // 한 게임씩 진행 상황 추적
+                while (gamesPlayed < gamesToPlay) {
+                    // 현재 게임 경험치 계산
+                    var gameExp = BASE_EXP_PER_GAME;
+                    if (availableDoubleExpGames > 0) {
+                        gameExp *= 2;
+                        availableDoubleExpGames--;
+                    }
                     
-                    // 80레벨 도달 체크
-                    if (level === MAX_LEVEL && !maxLevelReached) {
-                        maxLevelReached = true;
-                        maxLevelAtGame = gamesPlayed;
-                        remainingGames = gamesToPlay - gamesPlayed;
+                    // 경험치 추가 및 레벨업 체크
+                    exp += gameExp;
+                    gamesPlayed++;
+                    
+                    // 레벨업 체크
+                    while (exp >= getLevelExp(level) && level < MAX_LEVEL) {
+                        exp -= getLevelExp(level);
+                        level++;
                         
-                        // 리셋 후 새로운 사이클 시작
-                        if (remainingGames > 0) {
-                            let resetLevel = 1;
-                            let resetExp = 0;
-                            let resetGamesPlayed = 0;
-                            let resetAvailableDoubleExpGames = availableDoubleExpGames;
+                        // 80레벨 도달 체크
+                        if (level === MAX_LEVEL && !maxLevelReached) {
+                            maxLevelReached = true;
+                            maxLevelAtGame = gamesPlayed;
+                            remainingGames = gamesToPlay - gamesPlayed;
                             
-                            // 남은 게임으로 다시 1레벨부터 시작
-                            while (resetGamesPlayed < remainingGames) {
-                                let resetGameExp = BASE_EXP_PER_GAME;
-                                if (resetAvailableDoubleExpGames > 0) {
-                                    resetGameExp *= 2;
-                                    resetAvailableDoubleExpGames--;
+                            // 리셋 후 새로운 사이클 시작
+                            if (remainingGames > 0) {
+                                var resetLevel = 1;
+                                var resetExp = 0;
+                                var resetGamesPlayed = 0;
+                                var resetAvailableDoubleExpGames = availableDoubleExpGames;
+                                
+                                // 남은 게임으로 다시 1레벨부터 시작
+                                while (resetGamesPlayed < remainingGames) {
+                                    var resetGameExp = BASE_EXP_PER_GAME;
+                                    if (resetAvailableDoubleExpGames > 0) {
+                                        resetGameExp *= 2;
+                                        resetAvailableDoubleExpGames--;
+                                    }
+                                    
+                                    resetExp += resetGameExp;
+                                    resetGamesPlayed++;
+                                    
+                                    // 리셋 후 레벨업 체크
+                                    while (resetExp >= getLevelExp(resetLevel) && resetLevel < MAX_LEVEL) {
+                                        resetExp -= getLevelExp(resetLevel);
+                                        resetLevel++;
+                                    }
                                 }
                                 
-                                resetExp += resetGameExp;
-                                resetGamesPlayed++;
-                                
-                                // 리셋 후 레벨업 체크
-                                while (resetExp >= getLevelExp(resetLevel) && resetLevel < MAX_LEVEL) {
-                                    resetExp -= getLevelExp(resetLevel);
-                                    resetLevel++;
-                                }
+                                resetLevelInfo = { level: resetLevel, exp: resetExp };
                             }
-                            
-                            resetLevelInfo = { level: resetLevel, exp: resetExp };
                         }
                     }
                 }
+                
+                return { 
+                    level: level, 
+                    exp: exp, 
+                    maxLevelReached: maxLevelReached, 
+                    maxLevelAtGame: maxLevelAtGame, 
+                    remainingGames: remainingGames,
+                    resetLevelInfo: resetLevelInfo
+                };
+            } catch (error) {
+                console.error("미래 진행 계산 오류:", error);
+                return { 
+                    level: currentLevel, 
+                    exp: currentExp, 
+                    maxLevelReached: false, 
+                    maxLevelAtGame: 0, 
+                    remainingGames: 0,
+                    resetLevelInfo: { level: 1, exp: 0 }
+                };
             }
-            
-            return { 
-                level, 
-                exp, 
-                maxLevelReached, 
-                maxLevelAtGame, 
-                remainingGames,
-                resetLevelInfo
-            };
         }
 
         // 계산 실행
         function calculateHuntingPass() {
-            const currentLevel = parseInt(currentLevelInput.value) || 1;
-            const currentExp = parseInt(currentExpInput.value) || 0;
-            const gamesPerDay = parseInt(gamesPerDayInput.value) || 1;
-            const useDoubleExp = doubleExpCheckbox.checked;
-            const remainingDoubleExpGames = useDoubleExp ? (parseInt(remainingDoubleExpInput.value) || 0) : 0;
-            
-            // 입력값 유효성 검사
-            if (currentLevel < 1 || currentLevel >= MAX_LEVEL) {
-                currentLevelInput.value = Math.min(Math.max(1, currentLevel), MAX_LEVEL - 1);
-                return calculateHuntingPass();
-            }
-            
-            if (currentExp < 0 || currentExp >= getLevelExp(currentLevel)) {
-                currentExpInput.value = Math.min(Math.max(0, currentExp), getLevelExp(currentLevel) - 1);
-                return calculateHuntingPass();
-            }
-            
-            if (gamesPerDay < 1) {
-                gamesPerDayInput.value = 1;
-                return calculateHuntingPass();
-            }
-            
-            if (remainingDoubleExpGames < 0 || remainingDoubleExpGames > 10) {
-                remainingDoubleExpInput.value = Math.min(Math.max(0, remainingDoubleExpGames), 10);
-                return calculateHuntingPass();
-            }
-            
-            // 계산 수행
-            const totalExpNeeded = calculateTotalExpNeeded(currentLevel, currentExp);
-            const totalGamesNeeded = calculateTotalGamesNeeded(totalExpNeeded); // 항상 2배 경험치 미적용
-            const daysGamesNeeded = calculateDaysGamesNeeded(totalExpNeeded, gamesPerDay, useDoubleExp);
-            const gamesForNextLevel = calculateNextLevelGames(currentLevel, currentExp, useDoubleExp);
-            const daysEstimated = Math.ceil(daysGamesNeeded / gamesPerDay);
-            const progress = calculateProgress(currentLevel, currentExp);
-            
-            // 실제 필요한 판수 계산 (2배 경험치 고려)
-            const actualGamesNeeded = calculateActualGamesNeeded(totalExpNeeded, useDoubleExp, remainingDoubleExpGames);
-            
-            // 플레이 후 예상 레벨 및 경험치 계산 (상세 추적)
-            const futureDetailed = calculateFutureProgressDetailed(currentLevel, currentExp, gamesPerDay, useDoubleExp, remainingDoubleExpGames);
-            const futureProgress = calculateProgress(futureDetailed.level, futureDetailed.exp);
-            
-            // 결과 표시
-            nextLevelGames.textContent = `${gamesForNextLevel}판`;
-            totalGames.textContent = `${totalGamesNeeded}판`;
-            actualTotalGames.textContent = `${actualGamesNeeded}판`;
-            remainingExp.textContent = Utils.formatNumber(totalExpNeeded);
-            estimatedDays.textContent = `${daysEstimated}일`;
-            
-            progressFill.style.width = `${progress}%`;
-            progressPercent.textContent = `${progress.toFixed(1)}%`;
-            
-            futureProgressFill.style.width = `${futureProgress}%`;
-            futureProgressPercent.textContent = `${futureProgress.toFixed(1)}%`;
-            futureLevel.textContent = `${futureDetailed.level}레벨`;
-            
-            const expNeeded = getLevelExp(futureDetailed.level);
-            futureExp.textContent = `${futureDetailed.exp}/${expNeeded} (${((futureDetailed.exp / expNeeded) * 100).toFixed(1)}%)`;
-            
-            // 80레벨 달성 정보 표시
-            if (futureDetailed.maxLevelReached) {
-                maxLevelHeader.style.display = 'flex';
-                maxLevelGames.textContent = `${futureDetailed.maxLevelAtGame}판`;
+            try {
+                // DOM 요소 확인
+                if (!currentLevelInput || !currentExpInput || !gamesPerDayInput) {
+                    initializeHuntingPassElements();
+                }
                 
-                const resetLevelData = futureDetailed.resetLevelInfo;
-                resetLevel.textContent = `${resetLevelData.level}레벨`;
+                // 값 가져오기
+                var currentLevel = parseInt(currentLevelInput.value) || 1;
+                var currentExp = parseInt(currentExpInput.value) || 0;
+                var gamesPerDay = parseInt(gamesPerDayInput.value) || 1;
+                var useDoubleExp = doubleExpCheckbox.checked;
+                var remainingDoubleExpGames = useDoubleExp ? (parseInt(remainingDoubleExpInput.value) || 0) : 0;
                 
-                const resetExpNeeded = getLevelExp(resetLevelData.level);
-                resetExp.textContent = `${resetLevelData.exp}/${resetExpNeeded} (${((resetLevelData.exp / resetExpNeeded) * 100).toFixed(1)}%)`;
-            } else {
-                maxLevelHeader.style.display = 'none';
+                // 입력값 유효성 검사 및 값 조정
+                if (currentLevel < 1 || currentLevel >= MAX_LEVEL || isNaN(currentLevel)) {
+                    currentLevelInput.value = Math.min(Math.max(1, isNaN(currentLevel) ? 1 : currentLevel), MAX_LEVEL - 1);
+                    return calculateHuntingPass();
+                }
+                
+                if (currentExp < 0 || currentExp >= getLevelExp(currentLevel) || isNaN(currentExp)) {
+                    currentExpInput.value = Math.min(Math.max(0, isNaN(currentExp) ? 0 : currentExp), getLevelExp(currentLevel) - 1);
+                    return calculateHuntingPass();
+                }
+                
+                if (gamesPerDay < 1 || isNaN(gamesPerDay)) {
+                    gamesPerDayInput.value = Math.max(1, isNaN(gamesPerDay) ? 1 : gamesPerDay);
+                    return calculateHuntingPass();
+                }
+                
+                if (remainingDoubleExpGames < 0 || remainingDoubleExpGames > 10 || isNaN(remainingDoubleExpGames)) {
+                    remainingDoubleExpInput.value = Math.min(Math.max(0, isNaN(remainingDoubleExpGames) ? 0 : remainingDoubleExpGames), 10);
+                    return calculateHuntingPass();
+                }
+                
+                // 계산 수행
+                var totalExpNeeded = calculateTotalExpNeeded(currentLevel, currentExp);
+                var totalGamesNeeded = calculateTotalGamesNeeded(totalExpNeeded); // 항상 2배 경험치 미적용
+                var daysGamesNeeded = calculateDaysGamesNeeded(totalExpNeeded, gamesPerDay, useDoubleExp);
+                var gamesForNextLevel = calculateNextLevelGames(currentLevel, currentExp, useDoubleExp);
+                var daysEstimated = Math.ceil(Utils.safeDivide(daysGamesNeeded, gamesPerDay));
+                var progress = calculateProgress(currentLevel, currentExp);
+                
+                // 실제 필요한 판수 계산 (2배 경험치 고려)
+                var actualGamesNeeded = calculateActualGamesNeeded(totalExpNeeded, useDoubleExp, remainingDoubleExpGames);
+                
+                // 플레이 후 예상 레벨 및 경험치 계산 (상세 추적)
+                var futureDetailed = calculateFutureProgressDetailed(currentLevel, currentExp, gamesPerDay, useDoubleExp, remainingDoubleExpGames);
+                var futureProgress = calculateProgress(futureDetailed.level, futureDetailed.exp);
+                
+                // 결과 표시
+                if (nextLevelGames) nextLevelGames.textContent = gamesForNextLevel + "판";
+                if (totalGames) totalGames.textContent = totalGamesNeeded + "판";
+                if (actualTotalGames) actualTotalGames.textContent = actualGamesNeeded + "판";
+                if (remainingExp) remainingExp.textContent = Utils.formatNumber(totalExpNeeded);
+                if (estimatedDays) estimatedDays.textContent = daysEstimated + "일";
+                
+                if (progressFill) progressFill.style.width = progress + "%";
+                if (progressPercent) progressPercent.textContent = progress.toFixed(1) + "%";
+                
+                if (futureProgressFill) futureProgressFill.style.width = futureProgress + "%";
+                if (futureProgressPercent) futureProgressPercent.textContent = futureProgress.toFixed(1) + "%";
+                if (futureLevel) futureLevel.textContent = futureDetailed.level + "레벨";
+                
+                // 다음 레벨 경험치 표시
+                try {
+                    var expNeeded = getLevelExp(futureDetailed.level);
+                    if (futureExp) {
+                        var percentage = (Utils.safeDivide(futureDetailed.exp, expNeeded) * 100).toFixed(1);
+                        futureExp.textContent = futureDetailed.exp + "/" + expNeeded + " (" + percentage + "%)";
+                    }
+                } catch (error) {
+                    console.error("경험치 표시 오류:", error);
+                    if (futureExp) futureExp.textContent = "계산 오류";
+                }
+                
+                // 80레벨 달성 정보 표시
+                try {
+                    if (maxLevelHeader && maxLevelGames && resetLevel && resetExp) {
+                        if (futureDetailed.maxLevelReached) {
+                            maxLevelHeader.style.display = 'flex';
+                            maxLevelGames.textContent = futureDetailed.maxLevelAtGame + "판";
+                            
+                            var resetLevelData = futureDetailed.resetLevelInfo;
+                            resetLevel.textContent = resetLevelData.level + "레벨";
+                            
+                            var resetExpNeeded = getLevelExp(resetLevelData.level);
+                            var resetPercentage = (Utils.safeDivide(resetLevelData.exp, resetExpNeeded) * 100).toFixed(1);
+                            resetExp.textContent = resetLevelData.exp + "/" + resetExpNeeded + " (" + resetPercentage + "%)";
+                        } else {
+                            maxLevelHeader.style.display = 'none';
+                        }
+                    }
+                } catch (error) {
+                    console.error("최대 레벨 정보 표시 오류:", error);
+                    if (maxLevelHeader) maxLevelHeader.style.display = 'none';
+                }
+                
+                // 변경된 결과 영역에 효과 추가
+                Utils.pulseEffect(resultCard);
+            } catch (error) {
+                console.error("사냥패스 계산 오류:", error);
             }
-            
-            // 변경된 결과 영역에 효과 추가
-            Utils.pulseEffect(resultCard);
         }
 
         // 고기 계산기 스크립트
         // 보상 데이터
-        const rewardsData = {
-            "SS": { "마족 소환권": 6, "잡동사니 소환권": 6, 다이아: 480, 골드: 9600, 경험치: 3200, 잼: 80, 뺑뺑이: 240 },
-            "어려움": { "마족 소환권": 6, "잡동사니 소환권": 6, 다이아: 480, 골드: 20000, 경험치: 3200, 잼: 80, 뺑뺑이: 240 },
-            "매우 어려움": { "마족 소환권": 7, "잡동사니 소환권": 7, 다이아: 480, 골드: 30000, 경험치: 3200, 잼: 80, 뺑뺑이: 240 },
-            "쉬움": { "마족 소환권": 2, "잡동사니 소환권": 2, 다이아: 160, 골드: 3200, 경험치: 3200, 잼: 80, 뺑뺑이: 240 },
-            "불지옥": { "마족 소환권": 7, "잡동사니 소환권": 7, 다이아: 480, 골드: 40000, 경험치: 3200, 잼: 80, 뺑뺑이: 240 }
+        var rewardsData = {
+            "SS": { "마족 소환권": 6, "잡동사니 소환권": 6, "다이아": 480, "골드": 9600, "경험치": 3200, "잼": 80, "뺑뺑이": 240 },
+            "어려움": { "마족 소환권": 6, "잡동사니 소환권": 6, "다이아": 480, "골드": 20000, "경험치": 3200, "잼": 80, "뺑뺑이": 240 },
+            "매우 어려움": { "마족 소환권": 7, "잡동사니 소환권": 7, "다이아": 480, "골드": 30000, "경험치": 3200, "잼": 80, "뺑뺑이": 240 },
+            "쉬움": { "마족 소환권": 2, "잡동사니 소환권": 2, "다이아": 160, "골드": 3200, "경험치": 3200, "잼": 80, "뺑뺑이": 240 },
+            "불지옥": { "마족 소환권": 7, "잡동사니 소환권": 7, "다이아": 480, "골드": 40000, "경험치": 3200, "잼": 80, "뺑뺑이": 240 }
         };
 
         // 고기 계산 함수
         function calculateMeat() {
-            const meatInput = document.getElementById('meat-input');
-            const meatCount = parseInt(meatInput.value, 10);
-            const difficulty = document.querySelector('input[name="difficulty"]:checked').value;
-            const inputType = document.querySelector('input[name="inputType"]:checked').value;
-            
-            const errorMsgEl = document.getElementById('error-msg');
-            const rewardsEl = document.getElementById('rewards');
-            const startTimeEl = document.getElementById('start-time');
-            const endTimeEl = document.getElementById('end-time');
-            const roundsEl = document.getElementById('rounds');
-            const estimatedTimeEl = document.getElementById('estimated-time');
-            const resultArea = document.querySelector('.result-area');
-            
-            errorMsgEl.textContent = '';
-            startTimeEl.textContent = '';
-            endTimeEl.textContent = '';
-            roundsEl.textContent = '';
-            estimatedTimeEl.textContent = '';
-            rewardsEl.innerHTML = '';
-        
-            if (isNaN(meatCount) || meatCount <= 0) {
-                errorMsgEl.textContent = '정수를 입력하세요!';
-                meatInput.classList.add('invalid');
-                return;
-            } else {
-                meatInput.classList.remove('invalid');
-            }
-            
-            let rounds;
-            if (inputType === "meat") {
-                const adjustedMeatCount = Math.floor(meatCount / 10) * 10;
-                rounds = adjustedMeatCount / 10;
-            } else if (inputType === "round") {
-                rounds = meatCount;
-            } else if (inputType === "마족 소환권" || inputType === "골드" || inputType === "다이아") {
-                // 0으로 나누기 방지
-                const divisor = rewardsData[difficulty][inputType] || 1;
-                rounds = Math.ceil(meatCount / divisor);
-            }
-            
-            const estimatedTime = rounds * 11;
-            let estimatedTimeText = `${estimatedTime}분`;
-            if (estimatedTime > 60) {
-                const hours = Math.floor(estimatedTime / 60);
-                const minutes = estimatedTime % 60;
-                estimatedTimeText += ` (${hours}시간 ${minutes}분)`;
-            }
-            
-            const startTime = new Date();
-            const endTime = new Date(startTime.getTime() + estimatedTime * 60000);
-            
-            startTimeEl.textContent = `${Utils.formatDate(startTime)}`;
-            endTimeEl.textContent = `${Utils.formatDate(endTime)}`;
-            roundsEl.textContent = `${rounds}판`;
-            estimatedTimeEl.textContent = `${estimatedTimeText}`;
-            
-            const rewards = rewardsData[difficulty];
-            // 원하는 그룹 설정: [그룹1, 그룹2, 그룹3, 그룹4]
-            const groups = [
-                ["마족 소환권", "잡동사니 소환권"],
-                ["다이아", "골드"],
-                ["경험치", "잼"],
-                ["뺑뺑이"]
-            ];
-        
-            let rewardsHtml = '';
-            
-            groups.forEach((group, index) => {
-                let groupHtml = '';
-                group.forEach(key => {
-                    if (groupHtml) groupHtml += ' / ';
-                    groupHtml += `${key}: ${Utils.formatNumber(rewards[key] * rounds)}`;
-                });
+            try {
+                var meatInput = document.getElementById('meat-input');
+                var meatValue = meatInput.value.trim();
+                var meatCount = parseInt(meatValue, 10);
                 
-                if (index > 0) rewardsHtml += '<br>';
-                rewardsHtml += groupHtml;
-            });
-        
-            rewardsEl.innerHTML = rewardsHtml;
+                var difficultyEl = document.querySelector('input[name="difficulty"]:checked');
+                var inputTypeEl = document.querySelector('input[name="inputType"]:checked');
+                
+                if (!difficultyEl || !inputTypeEl) {
+                    throw new Error("라디오 버튼을 선택하세요");
+                }
+                
+                var difficulty = difficultyEl.value;
+                var inputType = inputTypeEl.value;
+                
+                var errorMsgEl = document.getElementById('error-msg');
+                var rewardsEl = document.getElementById('rewards');
+                var startTimeEl = document.getElementById('start-time');
+                var endTimeEl = document.getElementById('end-time');
+                var roundsEl = document.getElementById('rounds');
+                var estimatedTimeEl = document.getElementById('estimated-time');
+                var resultArea = document.querySelector('.result-area');
+                
+                if (errorMsgEl) errorMsgEl.textContent = '';
+                if (startTimeEl) startTimeEl.textContent = '';
+                if (endTimeEl) endTimeEl.textContent = '';
+                if (roundsEl) roundsEl.textContent = '';
+                if (estimatedTimeEl) estimatedTimeEl.textContent = '';
+                if (rewardsEl) rewardsEl.innerHTML = '';
             
-            // 결과 영역에 효과 추가
-            Utils.pulseEffect(resultArea);
+                if (meatValue === '' || isNaN(meatCount) || meatCount <= 0) {
+                    if (errorMsgEl) errorMsgEl.textContent = '유효한 정수를 입력하세요!';
+                    if (meatInput) meatInput.classList.add('invalid');
+                    return;
+                } else {
+                    if (meatInput) meatInput.classList.remove('invalid');
+                }
+                
+                var rounds;
+                if (inputType === "meat") {
+                    var adjustedMeatCount = Math.floor(meatCount / 10) * 10;
+                    rounds = adjustedMeatCount / 10;
+                } else if (inputType === "round") {
+                    rounds = meatCount;
+                } else if (inputType === "마족 소환권" || inputType === "골드" || inputType === "다이아") {
+                    // 0으로 나누기 방지
+                    var divisor = (rewardsData[difficulty] && rewardsData[difficulty][inputType]) || 1;
+                    rounds = Math.ceil(meatCount / divisor);
+                } else {
+                    // 기본값 설정
+                    rounds = meatCount;
+                }
+                
+                var estimatedTime = rounds * 11;
+                var estimatedTimeText = estimatedTime + "분";
+                if (estimatedTime > 60) {
+                    var hours = Math.floor(estimatedTime / 60);
+                    var minutes = estimatedTime % 60;
+                    estimatedTimeText += " (" + hours + "시간 " + minutes + "분)";
+                }
+                
+                var startTime = new Date();
+                var endTime = new Date(startTime.getTime() + estimatedTime * 60000);
+                
+                if (startTimeEl) startTimeEl.textContent = Utils.formatDate(startTime);
+                if (endTimeEl) endTimeEl.textContent = Utils.formatDate(endTime);
+                if (roundsEl) roundsEl.textContent = rounds + "판";
+                if (estimatedTimeEl) estimatedTimeEl.textContent = estimatedTimeText;
+                
+                // 난이도 정보 저장 (결과 복사용)
+                if (roundsEl) roundsEl.setAttribute('data-difficulty', difficulty);
+                
+                var rewards = rewardsData[difficulty] || {};
+                // 원하는 그룹 설정: [그룹1, 그룹2, 그룹3, 그룹4]
+                var groups = [
+                    ["마족 소환권", "잡동사니 소환권"],
+                    ["다이아", "골드"],
+                    ["경험치", "잼"],
+                    ["뺑뺑이"]
+                ];
+            
+                var rewardsHtml = '';
+                
+                for (var i = 0; i < groups.length; i++) {
+                    var group = groups[i];
+                    var groupHtml = '';
+                    
+                    for (var j = 0; j < group.length; j++) {
+                        var key = group[j];
+                        if (!rewards[key]) continue;
+                        
+                        if (groupHtml) groupHtml += ' / ';
+                        groupHtml += key + ": " + Utils.formatNumber(rewards[key] * rounds);
+                    }
+                    
+                    if (groupHtml) {
+                        if (i > 0) rewardsHtml += '<br>';
+                        rewardsHtml += groupHtml;
+                    }
+                }
+            
+                if (rewardsEl) rewardsEl.innerHTML = rewardsHtml;
+                
+                // 결과 영역에 효과 추가
+                Utils.pulseEffect(resultArea);
+            } catch (error) {
+                console.error("고기 계산 오류:", error);
+                var errorMsgEl = document.getElementById('error-msg');
+                if (errorMsgEl) errorMsgEl.textContent = '계산 중 오류가 발생했습니다.';
+            }
         }
 
         function navigate(page) {
-            window.location.href = page;
+            try {
+                window.location.href = page;
+            } catch (error) {
+                console.error("페이지 이동 오류:", error);
+                alert('페이지 이동 중 오류가 발생했습니다.');
+            }
         }
 
-        // 이벤트 리스너 등록 - 사냥패스 계산기
+        // 이벤트 리스너 등록
         document.addEventListener('DOMContentLoaded', function() {
-            // 접을 수 있는 섹션 설정
-            toggleCollapsible(maxLevelHeader, maxLevelInfo);
-            toggleCollapsible(detailsHeader, detailsContent);
-            
-            // 2배 경험치 체크박스 상태에 따라 남은 2배 경험치 판수 입력란 표시/숨김
-            toggleRemainingDoubleExpField();
-            
-            // 입력값 변경 시 자동 계산 - 사냥패스 계산기
-            currentLevelInput.addEventListener('input', calculateHuntingPass);
-            currentExpInput.addEventListener('input', calculateHuntingPass);
-            gamesPerDayInput.addEventListener('input', calculateHuntingPass);
-            doubleExpCheckbox.addEventListener('change', function() {
-                toggleRemainingDoubleExpField();
-                calculateHuntingPass();
-            });
-            remainingDoubleExpInput.addEventListener('input', calculateHuntingPass);
-            
-            // 입력값 변경 시 자동 계산 - 고기 계산기
-            document.getElementById('meat-input').addEventListener('input', calculateMeat);
-            document.getElementById('meat-input').addEventListener('keydown', function(event) {
-                if (event.key === 'Enter') calculateMeat();
-            });
-            
-            // 입력 타입 라디오 버튼 실시간 업데이트
-            document.querySelectorAll('input[name="inputType"]').forEach(button => {
-                button.addEventListener('change', calculateMeat);
-            });
-            
-            // 난이도 라디오 버튼 실시간 업데이트
-            document.querySelectorAll('input[name="difficulty"]').forEach(button => {
-                button.addEventListener('change', calculateMeat);
-            });
-            
-            // 페이지 로드 시 자동 계산
-            calculateHuntingPass();
-            calculateMeat();
-            
-            // URL 파라미터 처리 (계산 결과 공유 위한 기능)
             try {
-                const urlParams = new URLSearchParams(window.location.search);
-                if (urlParams.has('level')) {
-                    currentLevelInput.value = urlParams.get('level');
-                }
-                if (urlParams.has('exp')) {
-                    currentExpInput.value = urlParams.get('exp');
-                }
-                if (urlParams.has('games')) {
-                    gamesPerDayInput.value = urlParams.get('games');
-                }
-                if (urlParams.has('double')) {
-                    doubleExpCheckbox.checked = urlParams.get('double') === '1';
-                    toggleRemainingDoubleExpField();
-                }
-                if (urlParams.has('remaining')) {
-                    remainingDoubleExpInput.value = urlParams.get('remaining');
-                }
-                if (urlParams.has('meat')) {
-                    document.getElementById('meat-input').value = urlParams.get('meat');
-                }
-                if (urlParams.has('inputType')) {
-                    const inputType = urlParams.get('inputType');
-                    document.querySelector(`input[name="inputType"][value="${inputType}"]`).checked = true;
-                }
-                if (urlParams.has('difficulty')) {
-                    const difficulty = urlParams.get('difficulty');
-                    document.querySelector(`input[name="difficulty"][value="${difficulty}"]`).checked = true;
+                // DOM 요소 초기화
+                initializeHuntingPassElements();
+                
+                // 복사 버튼 이벤트 리스너
+                var copyButton = document.getElementById('copy-button');
+                if (copyButton) {
+                    copyButton.addEventListener('click', Utils.copyResultToClipboard);
                 }
                 
-                // URL 파라미터가 있으면 자동으로 계산 실행
-                if (urlParams.toString()) {
-                    calculateHuntingPass();
-                    calculateMeat();
+                // 고기계산기 적용 버튼 이벤트 리스너
+                var applyToMeatButton = document.getElementById('apply-to-meat');
+                if (applyToMeatButton) {
+                    applyToMeatButton.addEventListener('click', function() {
+                        try {
+                            var totalGamesElement = document.getElementById('actualTotalGames');
+                            if (totalGamesElement) {
+                                var gamesText = totalGamesElement.textContent;
+                                var gamesCount = parseInt(gamesText.replace(/[^0-9]/g, '')) || 0;
+                                
+                                var meatInput = document.getElementById('meat-input');
+                                if (meatInput) {
+                                    meatInput.value = gamesCount;
+                                    
+                                    // 판수 입력 타입으로 설정
+                                    var roundRadio = document.getElementById('type-round');
+                                    if (roundRadio) {
+                                        roundRadio.checked = true;
+                                    }
+                                    
+                                    // 계산 실행
+                                    calculateMeat();
+                                    
+                                    // 화면을 고기 계산기로 스크롤
+                                    var meatCard = document.querySelector('.meat-card');
+                                    if (meatCard) {
+                                        meatCard.scrollIntoView({ behavior: 'smooth' });
+                                    }
+                                    
+                                    // 효과 추가
+                                    Utils.pulseEffect(meatInput);
+                                }
+                            }
+                        } catch (error) {
+                            console.error("고기 계산기 적용 오류:", error);
+                        }
+                    });
                 }
-            } catch (e) {
-                console.error('URL 파라미터 처리 중 오류:', e);
+                
+                // 접을 수 있는 섹션 설정
+                if (maxLevelHeader && maxLevelInfo) {
+                    toggleCollapsible(maxLevelHeader, maxLevelInfo);
+                }
+                
+                if (detailsHeader && detailsContent) {
+                    toggleCollapsible(detailsHeader, detailsContent);
+                }
+                
+                // 2배 경험치 체크박스 상태에 따라 남은 2배 경험치 판수 입력란 표시/숨김
+                toggleRemainingDoubleExpField();
+                
+                // 입력값 변경 시 자동 계산 - 사냥패스 계산기
+                if (currentLevelInput) {
+                    currentLevelInput.addEventListener('input', calculateHuntingPass);
+                }
+                
+                if (currentExpInput) {
+                    currentExpInput.addEventListener('input', calculateHuntingPass);
+                }
+                
+                if (gamesPerDayInput) {
+                    gamesPerDayInput.addEventListener('input', calculateHuntingPass);
+                }
+                
+                if (doubleExpCheckbox) {
+                    doubleExpCheckbox.addEventListener('change', function() {
+                        toggleRemainingDoubleExpField();
+                        calculateHuntingPass();
+                    });
+                }
+                
+                if (remainingDoubleExpInput) {
+                    remainingDoubleExpInput.addEventListener('input', calculateHuntingPass);
+                }
+                
+                // 입력값 변경 시 자동 계산 - 고기 계산기
+                var meatInput = document.getElementById('meat-input');
+                if (meatInput) {
+                    meatInput.addEventListener('input', calculateMeat);
+                    meatInput.addEventListener('keydown', function(event) {
+                        if (event.key === 'Enter') calculateMeat();
+                    });
+                }
+                
+                // 입력 타입 라디오 버튼 실시간 업데이트
+                var inputTypeButtons = document.querySelectorAll('input[name="inputType"]');
+                for (var i = 0; i < inputTypeButtons.length; i++) {
+                    inputTypeButtons[i].addEventListener('change', calculateMeat);
+                }
+                
+                // 난이도 라디오 버튼 실시간 업데이트
+                var difficultyButtons = document.querySelectorAll('input[name="difficulty"]');
+                for (var i = 0; i < difficultyButtons.length; i++) {
+                    difficultyButtons[i].addEventListener('change', calculateMeat);
+                }
+                
+                // 페이지 로드 시 자동 계산
+                calculateHuntingPass();
+                calculateMeat();
+                
+                // URL 파라미터 처리 (계산 결과 공유 위한 기능)
+                try {
+                    var urlParams = new URLSearchParams(window.location.search);
+                    var paramsFound = false;
+                    
+                    if (urlParams.has('level') && currentLevelInput) {
+                        currentLevelInput.value = urlParams.get('level');
+                        paramsFound = true;
+                    }
+                    
+                    if (urlParams.has('exp') && currentExpInput) {
+                        currentExpInput.value = urlParams.get('exp');
+                        paramsFound = true;
+                    }
+                    
+                    if (urlParams.has('games') && gamesPerDayInput) {
+                        gamesPerDayInput.value = urlParams.get('games');
+                        paramsFound = true;
+                    }
+                    
+                    if (urlParams.has('double') && doubleExpCheckbox) {
+                        doubleExpCheckbox.checked = urlParams.get('double') === '1';
+                        toggleRemainingDoubleExpField();
+                        paramsFound = true;
+                    }
+                    
+                    if (urlParams.has('remaining') && remainingDoubleExpInput) {
+                        remainingDoubleExpInput.value = urlParams.get('remaining');
+                        paramsFound = true;
+                    }
+                    
+                    if (urlParams.has('meat') && meatInput) {
+                        meatInput.value = urlParams.get('meat');
+                        paramsFound = true;
+                    }
+                    
+                    if (urlParams.has('inputType')) {
+                        var inputType = urlParams.get('inputType');
+                        var inputTypeEl = document.querySelector('input[name="inputType"][value="' + inputType + '"]');
+                        if (inputTypeEl) {
+                            inputTypeEl.checked = true;
+                            paramsFound = true;
+                        }
+                    }
+                    
+                    if (urlParams.has('difficulty')) {
+                        var difficulty = urlParams.get('difficulty');
+                        var difficultyEl = document.querySelector('input[name="difficulty"][value="' + difficulty + '"]');
+                        if (difficultyEl) {
+                            difficultyEl.checked = true;
+                            paramsFound = true;
+                        }
+                    }
+                    
+                    // URL 파라미터가 있으면 자동으로 계산 실행
+                    if (paramsFound) {
+                        calculateHuntingPass();
+                        calculateMeat();
+                    }
+                } catch (e) {
+                    console.error('URL 파라미터 처리 중 오류:', e);
+                }
+            } catch (error) {
+                console.error("초기화 오류:", error);
             }
         });
     </script>
