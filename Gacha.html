@@ -7,27 +7,30 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
   <style>
     :root {
-      --primary-color: #555555;
-      --secondary-color: #666666;
-      --accent-color: #444444;
-      --highlight-color: #777777;
-      --text-light: #E0E0E0;
-      --text-dark: #212529;
-      --background-color: #212121;
-      --card-bg: rgba(42, 42, 42, 0.95);
-      --legendary-color: #999999;
-      --epic-color: #808080;
-      --rare-color: #707070;
-      --uncommon-color: #606060;
-      --common-color: #505050;
-      --shadow-color: rgba(0, 0, 0, 0.25);
+      --primary-color: #4b7cd8;
+      --primary-dark: #3355C7;
+      --secondary-color: #556CD6;
+      --accent-color: #9a34df;
+      --background-color: #161A23;
+      --card-bg: #1E2433;
+      --text-light: #FFFFFF;
+      --surface-1: #252C3A;
+      --surface-2: #323846;
+      --text-secondary: #A7A7A7;
+      --border-color: #2C334A;
+      --legendary-color: #F59E0B;
+      --epic-color: #9C59DB;
+      --rare-color: #3B82F6;
+      --uncommon-color: #10B981;
+      --common-color: #8B8B8B;
+      --shadow-color: rgba(0, 0, 0, 0.2);
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     }
 
     body {
@@ -54,61 +57,35 @@
       max-height: 100vh;
       background-color: var(--card-bg);
       border-radius: 0;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
       overflow: hidden;
       display: flex;
       flex-direction: column;
     }
 
-    #app-background {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
-      opacity: 0.05;
-      z-index: -1;
-    }
-
     header {
-      background-color: var(--accent-color);
+      background-color: var(--primary-color);
       color: var(--text-light);
-      padding: 15px 10px;
+      padding: 16px;
       text-align: center;
-      border-radius: 0;
-      box-shadow: 0 2px 8px var(--shadow-color);
+      box-shadow: 0 1px 3px var(--shadow-color);
       position: relative;
-      overflow: visible;
     }
 
     header h1 {
       font-size: 1.4rem;
       font-weight: 700;
       margin: 0;
-      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-      z-index: 2;
-      position: relative;
-      white-space: nowrap;
-      overflow: visible;
-    }
-
-    header::after {
-      content: '';
-      position: absolute;
-      top: -20px;
-      right: -20px;
-      width: 100px;
-      height: 100px;
-      background-color: rgba(80, 80, 80, 0.1);
-      border-radius: 50%;
+      letter-spacing: -0.01em;
     }
 
     .controls-section {
-      padding: 15px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
+      background-color: var(--surface-1);
+      border-bottom: 1px solid var(--border-color);
     }
 
     .controls-row {
@@ -116,7 +93,6 @@
       gap: 8px;
       justify-content: center;
       flex-wrap: wrap;
-      margin-bottom: 8px;
     }
 
     .pull-btn {
@@ -124,12 +100,12 @@
       color: white;
       border: none;
       border-radius: 8px;
-      padding: 8px 10px;
+      padding: 10px;
       font-size: 0.85rem;
       font-weight: 500;
       cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 2px 4px var(--shadow-color);
+      transition: all 0.15s ease;
+      box-shadow: 0 1px 2px var(--shadow-color);
       flex: 1;
       min-width: 65px;
       display: flex;
@@ -138,21 +114,25 @@
     }
 
     .pull-btn:hover {
-      background-color: var(--secondary-color);
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+      background-color: var(--primary-dark);
+      transform: translateY(-1px);
     }
 
     .pull-btn:active {
       transform: translateY(1px);
-      box-shadow: 0 1px 2px var(--shadow-color);
+      box-shadow: 0 0 0 var(--shadow-color);
     }
 
     .pull-btn.highlight {
-      background-color: var(--highlight-color);
+      background-color: var(--accent-color);
+    }
+
+    .pull-btn.highlight:hover {
+      background-color: #439A46;
     }
 
     .pull-btn:disabled {
-      opacity: 0.5;
+      opacity: 0.6;
       cursor: not-allowed;
     }
 
@@ -165,82 +145,87 @@
     #customCount {
       flex: 1;
       border-radius: 8px;
-      border: 2px solid var(--primary-color);
-      background-color: rgba(60, 60, 60, 0.9);
-      padding: 10px 15px;
+      border: 1px solid var(--border-color);
+      background-color: var(--surface-2);
+      padding: 10px 14px;
       font-size: 0.9rem;
       color: var(--text-light);
       outline: none;
-      box-shadow: 0 2px 4px var(--shadow-color);
+      transition: border-color 0.2s;
     }
 
     #customCount:focus {
-      border-color: var(--highlight-color);
-      box-shadow: 0 0 0 2px rgba(119, 119, 119, 0.25);
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(62, 99, 221, 0.2);
+    }
+
+    #customCount::placeholder {
+      color: var(--text-secondary);
     }
 
     #pullNN {
-      padding: 10px 20px;
+      padding: 10px 16px;
     }
 
     .select-container {
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 10px;
-      background-color: rgba(60, 60, 60, 0.3);
-      border-radius: 12px;
-      box-shadow: 0 2px 8px var(--shadow-color);
+      padding: 12px;
+      background-color: var(--surface-2);
+      border-radius: 8px;
     }
 
     .select-label {
       font-size: 0.9rem;
-      font-weight: 600;
+      font-weight: 500;
       white-space: nowrap;
       color: var(--text-light);
     }
 
     #special {
       flex: 1;
-      padding: 8px 12px;
+      padding: 10px 14px;
       border-radius: 8px;
-      border: 2px solid var(--primary-color);
-      background-color: rgba(60, 60, 60, 0.9);
+      border: 1px solid var(--border-color);
+      background-color: var(--surface-1);
       color: var(--text-light);
       font-size: 0.9rem;
       outline: none;
       cursor: pointer;
       appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23E0E0E0' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23FFFFFF' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: calc(100% - 8px) center;
-      padding-right: 28px;
-      box-shadow: 0 2px 5px var(--shadow-color);
+      background-position: calc(100% - 12px) center;
+      padding-right: 32px;
+      transition: border-color 0.2s;
     }
 
     #special:focus {
-      border-color: var(--highlight-color);
-      box-shadow: 0 0 8px rgba(119, 119, 119, 0.4);
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(62, 99, 221, 0.2);
     }
 
     .log-section {
       flex: 1;
-      margin: 10px 15px;
-      border-radius: 15px;
-      background-color: rgba(30, 30, 30, 0.6);
-      box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+      margin: 16px;
+      border-radius: 10px;
+      background-color: var(--surface-1);
       position: relative;
       display: flex;
       flex-direction: column;
       min-height: 250px;
+      border: 1px solid var(--border-color);
+      overflow: hidden;
     }
 
     .log-header {
       display: flex;
-      padding: 10px;
-      border-bottom: 1px solid rgba(80, 80, 80, 0.3);
+      padding: 12px 16px;
+      background-color: var(--surface-2);
       align-items: center;
       justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
     }
 
     .log-title {
@@ -249,63 +234,51 @@
       color: var(--text-light);
     }
 
-    .log-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .log-action-btn {
-      background-color: rgba(80, 80, 80, 0.3);
-      color: var(--text-light);
-      border: none;
-      border-radius: 8px;
-      padding: 6px 10px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .log-action-btn:hover {
-      background-color: rgba(100, 100, 100, 0.4);
-    }
-
-    .log-action-btn.primary {
-      background-color: var(--primary-color);
-    }
-
-    .log-action-btn.primary:hover {
-      background-color: var(--highlight-color);
-    }
-
     #logContent {
       flex: 1;
       overflow-y: auto;
-      padding: 10px;
+      padding: 12px;
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 6px;
       max-height: 300px;
     }
 
+    /* 스크롤바 스타일링 */
+    #logContent::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #logContent::-webkit-scrollbar-track {
+      background: var(--surface-2);
+      border-radius: 10px;
+    }
+
+    #logContent::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 10px;
+    }
+
+    #logContent::-webkit-scrollbar-thumb:hover {
+      background: var(--text-secondary);
+    }
+
     .log-entry {
-      padding: 8px 10px;
+      padding: 10px 12px;
       border-radius: 6px;
-      background-color: rgba(60, 60, 60, 0.2);
-      font-size: 0.85rem;
-      animation: fadeIn 0.3s ease;
+      background-color: var(--surface-2);
+      font-size: 0.9rem;
+      animation: fadeIn 0.2s ease;
       border-left: 3px solid transparent;
-      transition: background-color 0.2s;
+      transition: transform 0.15s;
     }
 
     .log-entry:hover {
-      background-color: rgba(70, 70, 70, 0.3);
+      transform: translateX(2px);
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(5px); }
+      from { opacity: 0; transform: translateY(4px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
@@ -330,14 +303,14 @@
     }
 
     .summary-section {
-      margin: 10px 15px 15px 15px;
-      padding: 12px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, rgba(60, 60, 60, 0.2), rgba(50, 50, 50, 0.15));
-      box-shadow: 0 4px 15px var(--shadow-color);
+      margin: 0 16px 16px;
+      padding: 16px;
+      border-radius: 10px;
+      background-color: var(--surface-1);
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
+      border: 1px solid var(--border-color);
     }
 
     .summary-title {
@@ -349,14 +322,14 @@
 
     .summary-content {
       font-size: 0.9rem;
-      line-height: 1.4;
+      line-height: 1.5;
       color: var(--text-light);
     }
 
     .progress-bar-container {
       width: 100%;
       height: 8px;
-      background-color: rgba(40, 40, 40, 0.5);
+      background-color: var(--surface-2);
       border-radius: 4px;
       overflow: hidden;
       margin-top: 5px;
@@ -364,23 +337,24 @@
 
     .progress-bar {
       height: 100%;
-      background: linear-gradient(90deg, var(--primary-color), var(--highlight-color));
+      background-color: var(--accent-color);
       width: 0%;
       transition: width 0.5s ease;
     }
 
     .statistics-section {
-      padding: 12px;
-      margin: 0 15px 15px;
-      border-radius: 12px;
-      background-color: rgba(60, 60, 60, 0.2);
+      padding: 16px;
+      margin: 0 16px 16px;
+      border-radius: 10px;
+      background-color: var(--surface-1);
       display: none;
+      border: 1px solid var(--border-color);
     }
 
     .statistics-title {
       font-size: 0.85rem;
       font-weight: 600;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
       color: var(--text-light);
       text-align: center;
     }
@@ -388,31 +362,31 @@
     .statistics-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
+      gap: 10px;
     }
 
     .stat-card {
-      background-color: rgba(30, 30, 30, 0.3);
+      background-color: var(--surface-2);
       border-radius: 8px;
-      padding: 8px;
+      padding: 12px;
       text-align: center;
-      transition: background-color 0.2s;
+      transition: transform 0.15s;
     }
 
     .stat-card:hover {
-      background-color: rgba(50, 50, 50, 0.4);
+      transform: translateY(-2px);
     }
 
     .stat-value {
-      font-size: 0.95rem;
+      font-size: 1rem;
       font-weight: 700;
-      color: var(--highlight-color);
-      margin-bottom: 3px;
+      color: var(--primary-color);
+      margin-bottom: 5px;
     }
 
     .stat-label {
       font-size: 0.75rem;
-      color: rgba(224, 224, 224, 0.7);
+      color: var(--text-secondary);
     }
 
     /* Media Queries */
@@ -434,7 +408,7 @@
       }
       
       .controls-section {
-        padding: 8px 10px;
+        padding: 12px;
       }
       
       .controls-row {
@@ -444,12 +418,12 @@
 
       .pull-btn {
         font-size: 0.75rem;
-        padding: 5px 6px;
+        padding: 8px 6px;
       }
       
       .log-section {
         min-height: 170px;
-        margin: 5px 10px;
+        margin: 8px 12px;
       }
       
       #logContent {
@@ -457,8 +431,8 @@
       }
       
       .summary-section, .statistics-section {
-        margin: 5px 10px;
-        padding: 6px;
+        margin: 8px 12px;
+        padding: 12px;
       }
       
       .statistics-section {
@@ -466,7 +440,7 @@
       }
       
       header {
-        padding: 10px 8px;
+        padding: 12px;
       }
       
       header h1 {
@@ -476,12 +450,12 @@
       .statistics-grid {
         display: flex;
         flex-direction: column;
-        gap: 3px;
+        gap: 8px;
       }
       
       .stat-card {
         flex: 1;
-        padding: 4px;
+        padding: 8px;
         margin-bottom: 0;
       }
       
@@ -495,14 +469,14 @@
       }
       
       .statistics-title {
-        margin-bottom: 3px;
+        margin-bottom: 6px;
         font-size: 0.8rem;
       }
       
       .summary-section {
-        gap: 3px;
-        padding: 6px;
-        margin-bottom: 5px;
+        gap: 6px;
+        padding: 10px;
+        margin-bottom: 8px;
       }
       
       .summary-title {
@@ -523,7 +497,7 @@
     @media (max-width: 374px) {
       .pull-btn {
         font-size: 0.65rem;
-        padding: 4px 5px;
+        padding: 6px 4px;
         min-width: 45px;
       }
       
@@ -559,7 +533,7 @@
         height: auto;
         min-height: 600px;
         margin: 20px auto;
-        border-radius: 16px;
+        border-radius: 12px;
         overflow: visible;
         display: grid;
         grid-template-columns: 300px 1fr;
@@ -568,28 +542,29 @@
           "header header"
           "controls log"
           "stats summary";
-        gap: 15px;
-        padding: 15px;
+        gap: 16px;
+        padding: 16px;
       }
       
       header {
         grid-area: header;
-        border-radius: 12px;
-        margin-bottom: 15px;
+        border-radius: 8px;
+        margin-bottom: 16px;
       }
       
       .controls-section {
         grid-area: controls;
-        padding: 15px;
-        background-color: rgba(40, 40, 40, 0.4);
-        border-radius: 12px;
+        padding: 16px;
+        background-color: var(--surface-1);
+        border-radius: 10px;
         height: auto;
+        border: 1px solid var(--border-color);
       }
       
       .log-section {
         grid-area: log;
         margin: 0;
-        border-radius: 12px;
+        border-radius: 10px;
       }
       
       .summary-section {
@@ -604,20 +579,18 @@
       }
       
       header h1 {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
       }
       
       .pull-btn {
         font-size: 0.9rem;
-        padding: 8px 12px;
+        padding: 10px 12px;
       }
     }
   </style>
 </head>
 <body>
   <div id="app-container">
-    <div id="app-background"></div>
-    
     <header>
       <h1>군단장 뽑기 시뮬레이터</h1>
     </header>
@@ -645,7 +618,7 @@
         </select>
       </div>
       
-      <div class="log-actions" style="margin-top: 10px;">
+      <div class="controls-row" style="margin-top: 4px;">
         <button id="pickupMax" class="pull-btn highlight" style="flex: 1;">만렙까지 뽑기</button>
         <button id="reset" class="pull-btn" style="flex: 1;">초기화</button>
       </div>
