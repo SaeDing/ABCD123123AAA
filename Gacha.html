@@ -7,18 +7,20 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
   <style>
     :root {
-      --primary-color: #007AFF;
-      --secondary-color: #5AC8FA;
-      --accent-color: #34C759;
-      --text-light: #F8F9FA;
+      --primary-color: #555555;
+      --secondary-color: #666666;
+      --accent-color: #444444;
+      --highlight-color: #777777;
+      --text-light: #E0E0E0;
       --text-dark: #212529;
-      --background-color: #121212;
-      --card-bg: rgba(30, 30, 30, 0.8);
-      --legendary-color: #FFD700;
-      --epic-color: #9370DB;
-      --rare-color: #4EA8DE;
-      --uncommon-color: #60D394;
-      --common-color: #A0A0A0;
+      --background-color: #212121;
+      --card-bg: rgba(42, 42, 42, 0.95);
+      --legendary-color: #999999;
+      --epic-color: #808080;
+      --rare-color: #707070;
+      --uncommon-color: #606060;
+      --common-color: #505050;
+      --shadow-color: rgba(0, 0, 0, 0.25);
     }
 
     * {
@@ -41,7 +43,7 @@
       padding: 0;
       margin: 0;
       position: fixed;
-      font-size: 14px; /* 기본 폰트 크기 조정 */
+      font-size: 14px;
     }
 
     #app-container {
@@ -52,7 +54,7 @@
       max-height: 100vh;
       background-color: var(--card-bg);
       border-radius: 0;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -65,17 +67,17 @@
       width: 100%;
       height: 100%;
       background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
-      opacity: 0.1;
+      opacity: 0.05;
       z-index: -1;
     }
 
     header {
-      background-color: var(--primary-color);
+      background-color: var(--accent-color);
       color: var(--text-light);
       padding: 15px 10px;
       text-align: center;
       border-radius: 0;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 8px var(--shadow-color);
       position: relative;
       overflow: visible;
     }
@@ -84,7 +86,7 @@
       font-size: 1.4rem;
       font-weight: 700;
       margin: 0;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
       z-index: 2;
       position: relative;
       white-space: nowrap;
@@ -98,7 +100,7 @@
       right: -20px;
       width: 100px;
       height: 100px;
-      background-color: rgba(255, 255, 255, 0.1);
+      background-color: rgba(80, 80, 80, 0.1);
       border-radius: 50%;
     }
 
@@ -122,12 +124,12 @@
       color: white;
       border: none;
       border-radius: 8px;
-      padding: 6px 8px;
-      font-size: 0.8rem;
+      padding: 8px 10px;
+      font-size: 0.85rem;
       font-weight: 500;
       cursor: pointer;
       transition: all 0.2s ease;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 4px var(--shadow-color);
       flex: 1;
       min-width: 65px;
       display: flex;
@@ -136,17 +138,22 @@
     }
 
     .pull-btn:hover {
-      opacity: 0.9;
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+      background-color: var(--secondary-color);
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
     }
 
     .pull-btn:active {
       transform: translateY(1px);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 1px 2px var(--shadow-color);
     }
 
     .pull-btn.highlight {
-      background-color: var(--accent-color);
+      background-color: var(--highlight-color);
+    }
+
+    .pull-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
 
     #pull-custom-container {
@@ -157,19 +164,19 @@
 
     #customCount {
       flex: 1;
-      border-radius: 50px;
+      border-radius: 8px;
       border: 2px solid var(--primary-color);
-      background-color: rgba(255, 255, 255, 0.9);
+      background-color: rgba(60, 60, 60, 0.9);
       padding: 10px 15px;
       font-size: 0.9rem;
-      color: var(--text-dark);
+      color: var(--text-light);
       outline: none;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 4px var(--shadow-color);
     }
 
     #customCount:focus {
-      border-color: var(--accent-color);
-      box-shadow: 0 0 0 2px rgba(247, 37, 133, 0.25);
+      border-color: var(--highlight-color);
+      box-shadow: 0 0 0 2px rgba(119, 119, 119, 0.25);
     }
 
     #pullNN {
@@ -181,9 +188,9 @@
       align-items: center;
       gap: 10px;
       padding: 10px;
-      background-color: rgba(255, 255, 255, 0.1);
+      background-color: rgba(60, 60, 60, 0.3);
       border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 8px var(--shadow-color);
     }
 
     .select-label {
@@ -198,31 +205,29 @@
       padding: 8px 12px;
       border-radius: 8px;
       border: 2px solid var(--primary-color);
-      background-color: rgba(255, 255, 255, 0.9);
-      color: var(--text-dark);
+      background-color: rgba(60, 60, 60, 0.9);
+      color: var(--text-light);
       font-size: 0.9rem;
       outline: none;
       cursor: pointer;
       appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23007AFF' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23E0E0E0' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: calc(100% - 8px) center;
       padding-right: 28px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 2px 5px var(--shadow-color);
     }
 
     #special:focus {
-      border-color: var(--accent-color);
-      box-shadow: 0 0 8px rgba(52, 199, 89, 0.4);
+      border-color: var(--highlight-color);
+      box-shadow: 0 0 8px rgba(119, 119, 119, 0.4);
     }
-
-    /* 제거된 status-labels 스타일 */
 
     .log-section {
       flex: 1;
       margin: 10px 15px;
       border-radius: 15px;
-      background-color: rgba(0, 0, 0, 0.4);
+      background-color: rgba(30, 30, 30, 0.6);
       box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
       position: relative;
       display: flex;
@@ -233,7 +238,7 @@
     .log-header {
       display: flex;
       padding: 10px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid rgba(80, 80, 80, 0.3);
       align-items: center;
       justify-content: space-between;
     }
@@ -250,7 +255,7 @@
     }
 
     .log-action-btn {
-      background-color: rgba(255, 255, 255, 0.1);
+      background-color: rgba(80, 80, 80, 0.3);
       color: var(--text-light);
       border: none;
       border-radius: 8px;
@@ -264,7 +269,7 @@
     }
 
     .log-action-btn:hover {
-      background-color: rgba(255, 255, 255, 0.2);
+      background-color: rgba(100, 100, 100, 0.4);
     }
 
     .log-action-btn.primary {
@@ -272,7 +277,7 @@
     }
 
     .log-action-btn.primary:hover {
-      background-color: var(--accent-color);
+      background-color: var(--highlight-color);
     }
 
     #logContent {
@@ -286,12 +291,17 @@
     }
 
     .log-entry {
-      padding: 6px 8px;
+      padding: 8px 10px;
       border-radius: 6px;
-      background-color: rgba(255, 255, 255, 0.05);
+      background-color: rgba(60, 60, 60, 0.2);
       font-size: 0.85rem;
       animation: fadeIn 0.3s ease;
       border-left: 3px solid transparent;
+      transition: background-color 0.2s;
+    }
+
+    .log-entry:hover {
+      background-color: rgba(70, 70, 70, 0.3);
     }
 
     @keyframes fadeIn {
@@ -323,8 +333,8 @@
       margin: 10px 15px 15px 15px;
       padding: 12px;
       border-radius: 12px;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      background: linear-gradient(135deg, rgba(60, 60, 60, 0.2), rgba(50, 50, 50, 0.15));
+      box-shadow: 0 4px 15px var(--shadow-color);
       display: flex;
       flex-direction: column;
       gap: 8px;
@@ -334,7 +344,7 @@
       font-size: 0.85rem;
       font-weight: 600;
       color: var(--text-light);
-      opacity: 0.8;
+      opacity: 0.9;
     }
 
     .summary-content {
@@ -346,7 +356,7 @@
     .progress-bar-container {
       width: 100%;
       height: 8px;
-      background-color: rgba(255, 255, 255, 0.1);
+      background-color: rgba(40, 40, 40, 0.5);
       border-radius: 4px;
       overflow: hidden;
       margin-top: 5px;
@@ -354,18 +364,16 @@
 
     .progress-bar {
       height: 100%;
-      background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+      background: linear-gradient(90deg, var(--primary-color), var(--highlight-color));
       width: 0%;
       transition: width 0.5s ease;
     }
-
-    /* 애니메이션 오버레이 제거 */
 
     .statistics-section {
       padding: 12px;
       margin: 0 15px 15px;
       border-radius: 12px;
-      background-color: rgba(255, 255, 255, 0.05);
+      background-color: rgba(60, 60, 60, 0.2);
       display: none;
     }
 
@@ -384,55 +392,30 @@
     }
 
     .stat-card {
-      background-color: rgba(0, 0, 0, 0.2);
+      background-color: rgba(30, 30, 30, 0.3);
       border-radius: 8px;
       padding: 8px;
       text-align: center;
+      transition: background-color 0.2s;
+    }
+
+    .stat-card:hover {
+      background-color: rgba(50, 50, 50, 0.4);
     }
 
     .stat-value {
       font-size: 0.95rem;
       font-weight: 700;
-      color: var(--accent-color);
+      color: var(--highlight-color);
       margin-bottom: 3px;
     }
 
     .stat-label {
       font-size: 0.75rem;
-      color: rgba(255, 255, 255, 0.7);
+      color: rgba(224, 224, 224, 0.7);
     }
-
-    /* Sound Effect Button */
-    .sound-toggle {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: none;
-      border: none;
-      color: rgba(255, 255, 255, 0.6);
-      font-size: 1.2rem;
-      cursor: pointer;
-      z-index: 10;
-      width: 30px;
-      height: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      background-color: rgba(0, 0, 0, 0.2);
-    }
-
-    .sound-toggle:hover {
-      color: rgba(255, 255, 255, 0.9);
-      background-color: rgba(0, 0, 0, 0.4);
-    }
-
-    /* 다크모드 토글 제거 */
-
-    /* 라이트 테마 제거 - 항상 다크모드 */
 
     /* Media Queries */
-    /* 미디어 쿼리 - 모바일 vs 데스크탑 */
     @media (max-width: 767px) {
       /* 모바일 세로 모드 */
       body {
@@ -451,62 +434,60 @@
       }
       
       .controls-section {
-        padding: 8px 10px; /* 패딩 상단 줄임 */
+        padding: 8px 10px;
       }
       
       .controls-row {
-        margin-bottom: 6px; /* 여백 줄임 */
-        gap: 6px; /* 간격 줄임 */
+        margin-bottom: 6px;
+        gap: 6px;
       }
 
       .pull-btn {
         font-size: 0.75rem;
-        padding: 5px 6px; /* 패딩 줄임 */
+        padding: 5px 6px;
       }
       
       .log-section {
-        min-height: 170px; /* 크게 줄임 */
+        min-height: 170px;
         margin: 5px 10px;
       }
       
       #logContent {
-        max-height: 170px; /* 크게 줄임 */
+        max-height: 170px;
       }
       
       .summary-section, .statistics-section {
         margin: 5px 10px;
-        padding: 6px; /* 패딩 더 줄임 */
+        padding: 6px;
       }
       
       .statistics-section {
         display: block;
       }
       
-      /* 헤더 높이 줄임 */
       header {
-        padding: 10px 8px; /* 패딩 줄임 */
+        padding: 10px 8px;
       }
       
       header h1 {
-        font-size: 1.3rem; /* 폰트 크기 줄임 */
+        font-size: 1.3rem;
       }
       
-      /* 360 x 740 해상도 대응 */
       .statistics-grid {
         display: flex;
-        flex-direction: column; /* 세로로 배치하여 공간 확보 */
-        gap: 3px; /* 간격 더 줄임 */
+        flex-direction: column;
+        gap: 3px;
       }
       
       .stat-card {
         flex: 1;
-        padding: 4px; /* 패딩 줄임 */
+        padding: 4px;
         margin-bottom: 0;
       }
       
       .stat-value {
         font-size: 0.9rem;
-        margin-bottom: 1px; /* 여백 줄임 */
+        margin-bottom: 1px;
       }
       
       .stat-label {
@@ -514,15 +495,14 @@
       }
       
       .statistics-title {
-        margin-bottom: 3px; /* 여백 줄임 */
+        margin-bottom: 3px;
         font-size: 0.8rem;
       }
       
-      /* 진행도 섹션 여백 줄임 */
       .summary-section {
         gap: 3px;
-        padding: 6px; /* 패딩 줄임 */
-        margin-bottom: 5px; /* 여백 줄임 */
+        padding: 6px;
+        margin-bottom: 5px;
       }
       
       .summary-title {
@@ -531,16 +511,15 @@
       
       .summary-content {
         font-size: 0.8rem;
-        line-height: 1.3; /* 줄 간격 줄임 */
+        line-height: 1.3;
       }
       
       .progress-bar-container {
-        height: 6px; /* 높이 줄임 */
-        margin-top: 3px; /* 여백 줄임 */
+        height: 6px;
+        margin-top: 3px;
       }
     }
     
-    /* 작은 모바일 화면에 대한 추가 조정 */
     @media (max-width: 374px) {
       .pull-btn {
         font-size: 0.65rem;
@@ -549,11 +528,11 @@
       }
       
       .log-section {
-        min-height: 160px; /* 더 줄임 */
+        min-height: 160px;
       }
       
       #logContent {
-        max-height: 160px; /* 더 줄임 */
+        max-height: 160px;
       }
       
       .stat-value {
@@ -602,7 +581,7 @@
       .controls-section {
         grid-area: controls;
         padding: 15px;
-        background-color: rgba(0, 0, 0, 0.2);
+        background-color: rgba(40, 40, 40, 0.4);
         border-radius: 12px;
         height: auto;
       }
@@ -638,8 +617,6 @@
 <body>
   <div id="app-container">
     <div id="app-background"></div>
-    
-    <button class="sound-toggle" id="soundToggle">🔊</button>
     
     <header>
       <h1>군단장 뽑기 시뮬레이터</h1>
@@ -708,12 +685,7 @@
     </section>
   </div>
 
-  <!-- 애니메이션 오버레이 제거 -->
-
   <script>
-    // 소리 효과 활성화 변수
-    let soundEnabled = true;
-    
     // 전역 진행도 변수
     let globalPickupCount = 0;
     
@@ -733,13 +705,7 @@
       pickupCount: 0
     };
 
-    // 소리 효과 로드
-    const sounds = {
-      common: new Audio("data:audio/wav;base64,UklGRlQFAABXQVZFZm10IBiIiIiIiIiIiIiIiIiI"),
-      legendary: new Audio("data:audio/wav;base64,UklGRiQTAABXQVZFZm10IBAAd3eHh4eHh4")
-    };
-
-    // 각 등급별 유닛 배열 (군단장은 아래 배열로 변경)
+    // 각 등급별 유닛 배열
     const units = {
       "하급 마족": ["새싹이", "스리슬쩍냥", "샤키", "미라씨", "식빵 복서", "해골 궁수"],
       "중급 마족": ["캔드리", "포크몬", "돌팔이", "꼬꼬질라", "역병 의사", "악마 토끼"],
@@ -770,14 +736,12 @@
     const logContent = document.getElementById('logContent');
     const finalSummaryDiv = document.getElementById('finalSummary');
     const levelProgressBar = document.getElementById('levelProgress');
-    const soundToggleBtn = document.getElementById('soundToggle');
     const specialSelect = document.getElementById('special'); // 픽업 선택 요소
     
     // 통계 요소
     const totalPullsStat = document.getElementById('totalPullsStat');
     const legendaryRateStat = document.getElementById('legendaryRateStat');
     const pickupRateStat = document.getElementById('pickupRateStat');
-    const averageCostStat = document.getElementById('averageCostStat');
     
     // 군단장 픽업 옵션 채우기
     // 옵션 초기화 (중복 방지)
@@ -796,23 +760,6 @@
       option.textContent = unit;
       specialSelect.appendChild(option);
     });
-
-    // 소리 토글 기능
-    soundToggleBtn.addEventListener('click', () => {
-      soundEnabled = !soundEnabled;
-      soundToggleBtn.textContent = soundEnabled ? '🔊' : '🔇';
-    });
-
-    // 소리만 재생하는 함수 (애니메이션 제거)
-    function playSound(rarity) {
-      if (!soundEnabled) return;
-      
-      if (rarity === "군단장") {
-        sounds.legendary.play();
-      } else {
-        sounds.common.play();
-      }
-    }
 
     // 로그 추가 함수
     function addLog(message, rarity) {
@@ -887,7 +834,7 @@
         sum += probabilities[key];
         if (rand < sum) return key;
       }
-      return null;
+      return "하급 마족"; // 기본 값 반환 (예외 처리)
     }
 
     // 등급에 따른 유닛 결정 함수
@@ -915,7 +862,7 @@
       for (let key in units) {
         if (units[key].includes(unit)) return key;
       }
-      return "";
+      return "하급 마족"; // 기본 값 반환 (예외 처리)
     }
 
     // 누적 카드 수를 기준으로 픽업 캐릭터 레벨 계산 함수
@@ -980,7 +927,7 @@
       totalStats.legendaryCount += legendaryCount;
       totalStats.pickupCount += pickupCount;
       
-      totalPullsStat.textContent = totalStats.totalPulls;
+      totalPullsStat.textContent = totalStats.totalPulls.toLocaleString();
       
       // 군단장 확률
       if (totalStats.totalPulls > 0) {
@@ -995,235 +942,253 @@
 
     // 일반 뽑기 시뮬레이션 함수
     function simulate(count) {
-      const desired = document.getElementById('special').value;
-      let pickupCount = globalPickupCount; // 전역 변수에서 현재 픽업 카운트 가져오기
-      let legendaryCount = 0; // 이번 시뮬레이션에서의 군단장 개수
-      
-      // 이번 뽑기 결과 저장용 임시 객체
-      let currentPullResults = {
-        "군단장": {},
-        "마계 공작": {},
-        "상급 마족": {},
-        "중급 마족": {},
-        "하급 마족": {}
-      };
-      
-      if (count >= 11) {
-        for (let i = 0; i < count; i++) {
-          const rarity = drawRarity();
-          const unit = drawUnit(rarity);
-          
-          // 군단장 소리는 마지막 1개만 재생
-          if (rarity === "군단장" && i === count - 1) {
-            playSound(rarity);
-          }
-          
-          if (rarity === "군단장") {
-            currentPullResults[rarity][unit] = (currentPullResults[rarity][unit] || 0) + 2;
-            legendaryCount++;
-            if (unit === desired && desired !== "none") {
-              pickupCount += 2;
-            }
-          } else {
-            currentPullResults[rarity][unit] = (currentPullResults[rarity][unit] || 0) + 1;
-          }
+      try {
+        // 입력값 검증
+        count = Math.floor(Number(count));
+        if (isNaN(count) || count <= 0) {
+          addLogAtTop("유효한 뽑기 횟수를 입력해주세요.", "");
+          return;
         }
         
-        // 결과 로그 표시 전에 로그 영역 비우기
-        logContent.innerHTML = "";
-        
-        // 누적 결과와 현재 결과 합쳐서 표시
-        updateAndDisplayResults(currentPullResults);
-      } else {
-        for (let i = 0; i < count; i++) {
-          const rarity = drawRarity();
-          const unit = drawUnit(rarity);
-          
-          // 소리 재생
-          playSound(rarity);
-          
-          if (rarity === "군단장") {
-            currentPullResults[rarity][unit] = (currentPullResults[rarity][unit] || 0) + 2;
-            legendaryCount++;
-            if (unit === desired && desired !== "none") {
-              pickupCount += 2;
-            }
-          } else {
-            currentPullResults[rarity][unit] = (currentPullResults[rarity][unit] || 0) + 1;
-          }
+        if (count > 10000) {
+          addLogAtTop("한 번에 최대 10,000회까지 뽑기가 가능합니다.", "");
+          return;
         }
         
-        // 결과 로그 표시 전에 로그 영역 비우기
-        logContent.innerHTML = "";
+        const desired = document.getElementById('special').value;
+        let pickupCount = globalPickupCount; // 전역 변수에서 현재 픽업 카운트 가져오기
+        let legendaryCount = 0; // 이번 시뮬레이션에서의 군단장 개수
         
-        // 누적 결과와 현재 결과 합쳐서 표시
-        updateAndDisplayResults(currentPullResults);
+        // 이번 뽑기 결과 저장용 임시 객체
+        let currentPullResults = {
+          "군단장": {},
+          "마계 공작": {},
+          "상급 마족": {},
+          "중급 마족": {},
+          "하급 마족": {}
+        };
+        
+        if (count >= 11) {
+          for (let i = 0; i < count; i++) {
+            const rarity = drawRarity();
+            const unit = drawUnit(rarity);
+            
+            if (rarity === "군단장") {
+              currentPullResults[rarity][unit] = (currentPullResults[rarity][unit] || 0) + 2;
+              legendaryCount++;
+              if (unit === desired && desired !== "none") {
+                pickupCount += 2;
+              }
+            } else {
+              currentPullResults[rarity][unit] = (currentPullResults[rarity][unit] || 0) + 1;
+            }
+          }
+          
+          // 결과 로그 표시 전에 로그 영역 비우기
+          logContent.innerHTML = "";
+          
+          // 누적 결과와 현재 결과 합쳐서 표시
+          updateAndDisplayResults(currentPullResults);
+        } else {
+          for (let i = 0; i < count; i++) {
+            const rarity = drawRarity();
+            const unit = drawUnit(rarity);
+            
+            if (rarity === "군단장") {
+              currentPullResults[rarity][unit] = (currentPullResults[rarity][unit] || 0) + 2;
+              legendaryCount++;
+              if (unit === desired && desired !== "none") {
+                pickupCount += 2;
+              }
+            } else {
+              currentPullResults[rarity][unit] = (currentPullResults[rarity][unit] || 0) + 1;
+            }
+          }
+          
+          // 결과 로그 표시 전에 로그 영역 비우기
+          logContent.innerHTML = "";
+          
+          // 누적 결과와 현재 결과 합쳐서 표시
+          updateAndDisplayResults(currentPullResults);
+        }
+        
+        updateFinalSummary(pickupCount);
+        updateStatistics(count, legendaryCount, pickupCount);
+        
+        // 스크롤을 맨 위로 올림
+        logContent.scrollTop = 0;
+      } catch (error) {
+        console.error("시뮬레이션 오류:", error);
+        addLogAtTop("뽑기 처리 중 오류가 발생했습니다. 다시 시도해주세요.", "");
       }
-      
-      updateFinalSummary(pickupCount);
-      updateStatistics(count, legendaryCount, pickupCount);
-      
-      // 스크롤을 맨 위로 올림
-      logContent.scrollTop = 0;
     }
     
     // 누적 결과와 현재 결과를 합쳐서 표시하는 함수
     function updateAndDisplayResults(currentResults) {
-      // 등급 순서 (군단장이 먼저 표시되도록)
-      const rarityOrder = ["군단장", "마계 공작", "상급 마족", "중급 마족", "하급 마족"];
-      const desired = document.getElementById('special').value;
-      
-      // 결과 배열 준비
-      let resultArray = [];
-      
-      // 모든 등급에 대해 처리
-      rarityOrder.forEach(rarity => {
-        // 먼저 현재 결과 업데이트
-        for (let unit in currentResults[rarity]) {
-          const currentCount = currentResults[rarity][unit] || 0;
-          const prevCount = cumulativeResults[rarity][unit] || 0;
-          cumulativeResults[rarity][unit] = prevCount + currentCount;
-        }
+      try {
+        // 등급 순서 (군단장이 먼저 표시되도록)
+        const rarityOrder = ["군단장", "마계 공작", "상급 마족", "중급 마족", "하급 마족"];
+        const desired = document.getElementById('special').value;
         
-        // 그 다음 누적 결과에 있는 모든 유닛 표시
-        for (let unit in cumulativeResults[rarity]) {
-          const totalCount = cumulativeResults[rarity][unit];
-          // 현재 뽑기에서 얻은 수량 (없으면 0)
-          const currentCount = currentResults[rarity][unit] || 0;
+        // 결과 배열 준비
+        let resultArray = [];
+        
+        // 모든 등급에 대해 처리
+        rarityOrder.forEach(rarity => {
+          // 먼저 현재 결과 업데이트
+          for (let unit in currentResults[rarity]) {
+            const currentCount = currentResults[rarity][unit] || 0;
+            const prevCount = cumulativeResults[rarity][unit] || 0;
+            cumulativeResults[rarity][unit] = prevCount + currentCount;
+          }
           
-          resultArray.push({
-            unit: unit,
-            rarity: rarity,
-            currentCount: currentCount,
-            totalCount: totalCount,
-            isPickup: (unit === desired && desired !== "none")
-          });
-        }
-      });
-      
-      // 결과 정렬 (픽업 캐릭터를 최우선, 그 다음 군단장)
-      resultArray.sort((a, b) => {
-        // 픽업 캐릭터가 항상 최우선 (맨 위)
-        if (a.isPickup && !b.isPickup) return -1;
-        if (!a.isPickup && b.isPickup) return 1;
+          // 그 다음 누적 결과에 있는 모든 유닛 표시
+          for (let unit in cumulativeResults[rarity]) {
+            const totalCount = cumulativeResults[rarity][unit];
+            // 현재 뽑기에서 얻은 수량 (없으면 0)
+            const currentCount = currentResults[rarity][unit] || 0;
+            
+            resultArray.push({
+              unit: unit,
+              rarity: rarity,
+              currentCount: currentCount,
+              totalCount: totalCount,
+              isPickup: (unit === desired && desired !== "none")
+            });
+          }
+        });
         
-        // 둘 다 픽업이 아니면 등급별로 정렬
-        const aIndex = rarityOrder.indexOf(a.rarity);
-        const bIndex = rarityOrder.indexOf(b.rarity);
-        if (aIndex !== bIndex) return aIndex - bIndex;
+        // 결과 정렬 (픽업 캐릭터를 최우선, 그 다음 군단장)
+        resultArray.sort((a, b) => {
+          // 픽업 캐릭터가 항상 최우선 (맨 위)
+          if (a.isPickup && !b.isPickup) return -1;
+          if (!a.isPickup && b.isPickup) return 1;
+          
+          // 둘 다 픽업이 아니면 등급별로 정렬
+          const aIndex = rarityOrder.indexOf(a.rarity);
+          const bIndex = rarityOrder.indexOf(b.rarity);
+          if (aIndex !== bIndex) return aIndex - bIndex;
+          
+          // 같은 등급 내에서는 이름순
+          return a.unit.localeCompare(b.unit);
+        });
         
-        // 같은 등급 내에서는 이름순
-        return a.unit.localeCompare(b.unit);
-      });
-      
-      // 결과 표시
-      resultArray.forEach(item => {
-        let displayText = item.unit + " " + item.totalCount + "개";
-        if (item.currentCount > 0) {
-          displayText += " (+" + item.currentCount + ")";
-        }
-        addLog(displayText, item.rarity);
-      });
+        // 결과 표시
+        resultArray.forEach(item => {
+          let displayText = item.unit + " " + item.totalCount + "개";
+          if (item.currentCount > 0) {
+            displayText += " (+" + item.currentCount + ")";
+          }
+          addLog(displayText, item.rarity);
+        });
+      } catch (error) {
+        console.error("결과 표시 오류:", error);
+        addLogAtTop("결과 표시 중 오류가 발생했습니다.", "");
+      }
     }
 
     // 픽업 군단장 만렙까지 뽑기 시뮬레이션 함수
     function simulateUntilMax() {
-      clearLog(); // resetLog가 아닌 clearLog를 사용 (통계는 누적)
-      const pickupButton = document.getElementById('pickupMax');
-      pickupButton.disabled = true;
-      const desired = document.getElementById('special').value;
-      
-      if (desired === "none") {
-        addLogAtTop("원하는 군단장을 선택하세요.", "");
-        pickupButton.disabled = false;
-        return;
-      }
-      
-      let countDesired = globalPickupCount; // 전역 변수에서 현재 픽업 카운트 가져오기
-      let totalPulls = 0;   // 전체 뽑은 횟수
-      let legendaryCount = 0; // 전체 군단장 개수
-      let lastDesiredLine = "";
-      let aggregate = {
-        "군단장": {},
-        "마계 공작": {},
-        "상급 마족": {},
-        "중급 마족": {},
-        "하급 마족": {}
-      };
-
-      // 이미 만렙인 경우 체크
-      if (countDesired >= 67) {
-        addLog("이미 만렙입니다! 초기화 후 다시 시도하세요.", "군단장");
-        pickupButton.disabled = false;
-        return;
-      }
-
-      // 만렙까지 뽑기 시뮬레이션
-      while (true) {
-        const rarity = drawRarity();
-        const unit = drawUnit(rarity);
-        totalPulls++;
-
-        if (rarity === "군단장") {
-          aggregate["군단장"][unit] = (aggregate["군단장"][unit] || 0) + 2;
-          legendaryCount++;
-          if (unit === desired) {
-            countDesired += 2;
-            lastDesiredLine = "[" + rarity + "] " + unit + " (x2) 뽑혔습니다. (누적 " + countDesired + ")";
-          }
-        } else {
-          aggregate[rarity][unit] = (aggregate[rarity][unit] || 0) + 1;
+      try {
+        clearLog(); // resetLog가 아닌 clearLog를 사용 (통계는 누적)
+        const pickupButton = document.getElementById('pickupMax');
+        pickupButton.disabled = true;
+        const desired = document.getElementById('special').value;
+        
+        if (desired === "none") {
+          addLogAtTop("원하는 군단장을 선택하세요.", "");
+          pickupButton.disabled = false;
+          return;
         }
         
-        // 종료 조건 체크
-        if (totalPulls >= 5000 && countDesired < 67) break;
-        if (countDesired >= 67) break;
-      }
+        let countDesired = globalPickupCount; // 전역 변수에서 현재 픽업 카운트 가져오기
+        let totalPulls = 0;   // 전체 뽑은 횟수
+        let legendaryCount = 0; // 전체 군단장 개수
+        let lastDesiredLine = "";
+        let aggregate = {
+          "군단장": {},
+          "마계 공작": {},
+          "상급 마족": {},
+          "중급 마족": {},
+          "하급 마족": {}
+        };
 
-      if (countDesired < 67) {
-        addLog("5천회를 전부 뽑았습니다.", "군단장");
-        addLog("만렙에 실패했습니다.", "군단장");
-        addLog("현재 뽑은 개수 (" + countDesired + ") 필요한 개수 (67)", "군단장");
-      } else {
-        addLog("총 " + totalPulls + "회 뽑아서 만렙이 되었습니다.", "군단장");
-        
-        // 만렙 달성 소리
-        playSound("군단장");
-      }
-      
-      // 결과 정렬 및 표시
-      const summaryOrder = ["군단장", "마계 공작", "상급 마족", "중급 마족", "하급 마족"];
-      summaryOrder.forEach(category => {
-        let line = "뽑은 " + category + ": ";
-        let unitNames = [];
-        
-        for (let name in aggregate[category]) {
-          // 픽업 캐릭터를 맨 앞으로
-          const isPickup = (name === desired && desired !== "none");
-          const unitText = name + " " + aggregate[category][name] + "개";
-          
-          if (isPickup) {
-            unitNames.unshift(unitText); // 픽업 캐릭터는 맨 앞으로
+        // 이미 만렙인 경우 체크
+        if (countDesired >= 67) {
+          addLog("이미 만렙입니다! 초기화 후 다시 시도하세요.", "군단장");
+          pickupButton.disabled = false;
+          return;
+        }
+
+        // 만렙까지 뽑기 시뮬레이션
+        const MAX_PULLS = 20000; // 무한 루프 방지
+        while (totalPulls < MAX_PULLS) {
+          const rarity = drawRarity();
+          const unit = drawUnit(rarity);
+          totalPulls++;
+
+          if (rarity === "군단장") {
+            aggregate["군단장"][unit] = (aggregate["군단장"][unit] || 0) + 2;
+            legendaryCount++;
+            if (unit === desired) {
+              countDesired += 2;
+              lastDesiredLine = "[" + rarity + "] " + unit + " (x2) 뽑혔습니다. (누적 " + countDesired + ")";
+            }
           } else {
-            unitNames.push(unitText); // 나머지는 그대로 추가
+            aggregate[rarity][unit] = (aggregate[rarity][unit] || 0) + 1;
           }
+          
+          // 종료 조건 체크
+          if (totalPulls >= 5000 && countDesired < 67) break;
+          if (countDesired >= 67) break;
         }
-        
-        if (unitNames.length > 0) {
-          line += unitNames.join(", ");
+
+        if (countDesired < 67) {
+          addLog("5천회를 전부 뽑았습니다.", "군단장");
+          addLog("만렙에 실패했습니다.", "군단장");
+          addLog("현재 뽑은 개수 (" + countDesired + ") 필요한 개수 (67)", "군단장");
         } else {
-          line += "없음";
+          addLog("총 " + totalPulls + "회 뽑아서 만렙이 되었습니다.", "군단장");
         }
         
-        addLog(line, category);
-      });
-      
-      updateFinalSummary(countDesired);
-      updateStatistics(totalPulls, legendaryCount, countDesired);
-      pickupButton.disabled = false;
-      
-      // 스크롤을 맨 위로 올림
-      logContent.scrollTop = 0;
+        // 결과 정렬 및 표시
+        const summaryOrder = ["군단장", "마계 공작", "상급 마족", "중급 마족", "하급 마족"];
+        summaryOrder.forEach(category => {
+          let line = "뽑은 " + category + ": ";
+          let unitNames = [];
+          
+          for (let name in aggregate[category]) {
+            // 픽업 캐릭터를 맨 앞으로
+            const isPickup = (name === desired && desired !== "none");
+            const unitText = name + " " + aggregate[category][name] + "개";
+            
+            if (isPickup) {
+              unitNames.unshift(unitText); // 픽업 캐릭터는 맨 앞으로
+            } else {
+              unitNames.push(unitText); // 나머지는 그대로 추가
+            }
+          }
+          
+          if (unitNames.length > 0) {
+            line += unitNames.join(", ");
+          } else {
+            line += "없음";
+          }
+          
+          addLog(line, category);
+        });
+        
+        updateFinalSummary(countDesired);
+        updateStatistics(totalPulls, legendaryCount, countDesired);
+        pickupButton.disabled = false;
+        
+        // 스크롤을 맨 위로 올림
+        logContent.scrollTop = 0;
+      } catch (error) {
+        console.error("만렙 뽑기 오류:", error);
+        addLogAtTop("만렙 뽑기 처리 중 오류가 발생했습니다.", "");
+        document.getElementById('pickupMax').disabled = false;
+      }
     }
 
     // 이벤트 연결
@@ -1235,12 +1200,28 @@
     document.getElementById('pullNN').addEventListener('click', () => {
       const count = parseInt(document.getElementById('customCount').value);
       if (!isNaN(count) && count > 0) simulate(count);
+      else addLogAtTop("유효한 숫자를 입력해주세요.", "");
     });
+    
+    // 엔터 키로 커스텀 뽑기 실행
+    document.getElementById('customCount').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        const count = parseInt(document.getElementById('customCount').value);
+        if (!isNaN(count) && count > 0) simulate(count);
+        else addLogAtTop("유효한 숫자를 입력해주세요.", "");
+      }
+    });
+    
     document.getElementById('pickupMax').addEventListener('click', simulateUntilMax);
     document.getElementById('reset').addEventListener('click', resetLog);
     
     // 픽업 변경 이벤트 추가 - 픽업이 변경되면 자동으로 초기화
     specialSelect.addEventListener('change', () => {
+      resetLog();
+    });
+    
+    // 페이지 로드 시 초기화
+    window.addEventListener('load', () => {
       resetLog();
     });
   </script>
