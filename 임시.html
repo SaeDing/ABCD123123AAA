@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <!-- 확대/축소를 막기 위한 meta viewport 설정 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>재능던전</title>
+  <title>일반 배치 템플릿</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
  /* 화면 전체 컨테이너 */
@@ -44,6 +44,7 @@
     z-index: 1100;
     gap: 0; /* 버튼 사이 간격 제거 */
 }
+
 
   
   .nav-title {
@@ -102,8 +103,8 @@
   }
   
   
-  /* 메인 영역: 네비게이션 아래부터, 하단 컨트롤 위까지 꽉 채움 */
-  main {
+   /* 메인 영역: 네비게이션 아래부터, 하단 컨트롤 위까지 꽉 채움 */
+   main {
     position: absolute;
     top: 100px;      /* nav-container 높이만큼 아래로 */
     bottom: 10px;   /* 하단 컨트롤 영역(60px) 피해서 */
@@ -116,7 +117,6 @@
     padding: 0;
   }
 
-  
   /* 내부 컨테이너: 맵 + 유닛 리스트를 세로로 배치 */
   .container {
     flex: 1;               /* 세로 공간 전부 사용 */
@@ -150,8 +150,8 @@
 
   /* 드롭존 스타일 (기존과 동일) */
   .drop-zone {
-    width: 32px;
-    height: 32px;
+    width: 25px;
+    height: 25px;
     position: absolute;
     border: 1px dashed rgba(102, 102, 102, 0.6);
     display: flex;
@@ -209,18 +209,12 @@
     border-radius: 4px;
     object-fit: cover;
     cursor: grab;
-    transition: transform 0.2s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
   }
   
   .image-container img:hover {
     transform: scale(1.1);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-  }
-  
-  /* 사용된 유닛 스타일 */
-  .image-container img.used {
-    opacity: 0.4;
-    cursor: not-allowed;
   }
   
   /* 하단 컨트롤 버튼 영역 */
@@ -237,6 +231,7 @@
     background-color: #fff;
     border-top: 1px solid #ddd;
   }
+
   
   .controls .input-container {
     display: flex;
@@ -302,7 +297,6 @@
     position: relative;  /* 🔥 PNG 저장에서 제외되도록 */
 
 }
-
 .title-text {
       position: absolute;
       bottom: 15px;
@@ -316,7 +310,6 @@
 
 
 
-
   </style>
 </head>
 <body>
@@ -325,36 +318,32 @@
         <!-- 상단 네비게이션 버튼 (가로 배열) -->
         <div class="nav-container">
           <button class="round-btn" id="btn1" onclick="navigate('roundsindex.html')">
-            <img src="./img/a.png" alt="A">
+            <img src="https://github.com/SaeDing/NoInvadePls/blob/main/img/a.PNG?raw=true" alt="A">
             <span>고기</span>
           </button>
           <button class="round-btn" id="btn2" onclick="navigate('길드대전.html')">
-            <img src="./img/1.png" alt="B">
+            <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/1.png?raw=true" alt="B">
             <span>길드</span>
           </button>
           <button class="round-btn" id="btn3" onclick="navigate('월드보스1.html')">
-            <img src="./img/1m.png" alt="C">
+            <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/1m.png?raw=true" alt="C">
             <span>보스1</span>
           </button>
           <button class="round-btn" id="btn4" onclick="navigate('월드보스2.html')">
-            <img src="./img/4m.png" alt="E">
+            <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/4m.png?raw=true" alt="E">
             <span>보스2</span>
           </button>
           <button class="round-btn" id="btn4" onclick="navigate('월드보스3.html')">
-            <img src="./img/5m.png" alt="F">
+            <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/5m.png?raw=true" alt="F">
             <span>보스3</span>
           </button>
           <button class="round-btn" id="btn4" onclick="navigate('일반.html')">
-            <img src="./img/2m.png" alt="G">
+            <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/2m.png?raw=true" alt="G">
             <span>일반</span>
           </button>
           <button class="round-btn" id="btn4" onclick="navigate('어려움.html')">
-            <img src="./img/3m.png" alt="H">
+            <img src="https://github.com/SaeDing/ABCD123123AAA/blob/main/img/3m.png?raw=true" alt="H">
             <span>어려움</span>
-          </button>
-          <button class="round-btn" id="btn4" onclick="navigate('재능던전.html')">
-            <img src="./img/tm.png" alt="H">
-            <span>재능</span>
           </button>
         </div>
       <!-- 상단 타이틀 -->
@@ -366,40 +355,69 @@
 
       <div class="container">
         <div class="map-container" id="map-container">
-            <img id="mapImage" src="./img/tm.png" alt="Map Background">
+            <img id="mapImage" src="./img/2m.png" alt="Map Background">
 
           <div id="wave-gold-display"></div>
           <!-- 드롭존 (360x360 맵 기준 좌표 재조정 예시) -->
-          <div class="drop-zone" style="top:185px; left:65px;"></div>
-          <div class="drop-zone" style="top:220px; left:65px;"></div>
-          <div class="drop-zone" style="top:255px; left:65px;"></div>
-
-          <div class="drop-zone" style="top:185px; left:102px;"></div>
-          <div class="drop-zone" style="top:220px; left:102px;"></div>
-          <div class="drop-zone" style="top:255px; left:102px;"></div>
-
-          <div class="drop-zone" style="top:185px; left:139px;"></div>
-          <div class="drop-zone" style="top:220px; left:139px;"></div>
-          <div class="drop-zone" style="top:255px; left:139px;"></div>
-
-          <div class="drop-zone" style="top:185px; left:176px;"></div>
-          <div class="drop-zone" style="top:220px; left:176px;"></div>
-          <div class="drop-zone" style="top:255px; left:176px;"></div>
-
-          <div class="drop-zone" style="top:185px; left:213px;"></div>
-          <div class="drop-zone" style="top:220px; left:213px;"></div>
-          <div class="drop-zone" style="top:255px; left:213px;"></div>
-
-          <div class="drop-zone" style="top:185px; left:250px;"></div>
-          <div class="drop-zone" style="top:220px; left:250px;"></div>
-          <div class="drop-zone" style="top:255px; left:250px;"></div>
+          <div class="drop-zone" style="top:70px; left:66.5px;"></div>
+          <div class="drop-zone" style="top:100px; left:66.5px;"></div>
+          <div class="drop-zone" style="top:130px; left:66.5px;"></div>
           
-
-    
-                    
+          <div class="drop-zone" style="top:70px; left:101.5px;"></div>
+          <div class="drop-zone" style="top:100px; left:101.5px;"></div>
+          <div class="drop-zone" style="top:130px; left:101.5px;"></div>
+          
+          <div class="drop-zone" style="top:70px; left:136.5px;"></div>
+          <div class="drop-zone" style="top:100px; left:136.5px;"></div>
+          <div class="drop-zone" style="top:130px; left:136.5px;"></div>
+          
+          <div class="drop-zone" style="top:70px; left:171.5px;"></div>
+          <div class="drop-zone" style="top:100px; left:171.5px;"></div>
+          <div class="drop-zone" style="top:130px; left:171.5px;"></div>
+          
+          <div class="drop-zone" style="top:70px; left:206.5px;"></div>
+          <div class="drop-zone" style="top:100px; left:206.5px;"></div>
+          <div class="drop-zone" style="top:130px; left:206.5px;"></div>
+          
+          <div class="drop-zone" style="top:70px; left:241.5px;"></div>
+          <div class="drop-zone" style="top:100px; left:241.5px;"></div>
+          <div class="drop-zone" style="top:130px; left:241.5px;"></div>
+          
+          <div class="drop-zone" style="top:70px; left:276.5px;"></div>
+          <div class="drop-zone" style="top:100px; left:276.5px;"></div>
+          <div class="drop-zone" style="top:130px; left:276.5px;"></div>
           
           
- 
+      <!-- 밑에줄 -->
+      <div class="drop-zone" style="top:205px; left:66.5px;"></div>
+      <div class="drop-zone" style="top:235px; left:66.5px;"></div>
+      <div class="drop-zone" style="top:265px; left:66.5px;"></div>
+      
+      <div class="drop-zone" style="top:205px; left:101.5px;"></div>
+      <div class="drop-zone" style="top:235px; left:101.5px;"></div>
+      <div class="drop-zone" style="top:265px; left:101.5px;"></div>
+      
+      <div class="drop-zone" style="top:205px; left:136.5px;"></div>
+      <div class="drop-zone" style="top:235px; left:136.5px;"></div>
+      <div class="drop-zone" style="top:265px; left:136.5px;"></div>
+      
+      <div class="drop-zone" style="top:205px; left:171.5px;"></div>
+      <div class="drop-zone" style="top:235px; left:171.5px;"></div>
+      <div class="drop-zone" style="top:265px; left:171.5px;"></div>
+      
+      <div class="drop-zone" style="top:205px; left:206.5px;"></div>
+      <div class="drop-zone" style="top:235px; left:206.5px;"></div>
+      <div class="drop-zone" style="top:265px; left:206.5px;"></div>
+      
+      <div class="drop-zone" style="top:205px; left:241.5px;"></div>
+      <div class="drop-zone" style="top:235px; left:241.5px;"></div>
+      <div class="drop-zone" style="top:265px; left:241.5px;"></div>
+      
+      <div class="drop-zone" style="top:205px; left:276.5px;"></div>
+      <div class="drop-zone" style="top:235px; left:276.5px;"></div>
+      <div class="drop-zone" style="top:265px; left:276.5px;"></div>
+      
+      
         </div>
         <!-- 유닛 리스트 -->
 
@@ -423,17 +441,10 @@
     </div>
     
   </div>
-  <div class="title-text">재능 던전 배치표<br>[두 번 누르면 취소 가능]<br>(넣은 유닛 더블클릭으로 제거 가능)</div>
+  <div class="title-text">일반 배치표<br>[두 번 누르면 취소 가능]<br>(넣은 유닛 더블클릭으로 제거 가능)</div>
   <script>
-      // img 폴더에 있는 파일명 리스트
-
-      function navigate(page) {
-      window.location.href = page;
-    }
-    
-
+// img 폴더에 있는 파일명 리스트
 const imageFiles = [
-  "요요.png",
   "우주인 3단 마딜.png",
   "보루 변신 물딜.png",
   "라이양 변신 마딜.png",
@@ -494,29 +505,220 @@ const dropZones = document.querySelectorAll(".drop-zone");
 const resetButton = document.getElementById("reset-button");
 const saveButton = document.getElementById("save-button");
 
-let selectedImage = null;
-let selectedElement = null;
+function navigate(page) {
+  window.location.href = page;
+}
 
-// 추가: page3 전용 드롭존 상태 저장 객체 및 기존 데이터 불러오기
+let selectedImage = null;
+
+// 드래그 관련 변수 추가
+let draggedElement = null;
+let sourceDropZone = null;
+let isDragging = false; // 드래그 상태 추적
+
+// 중요: 전체 문서의 dragstart 이벤트 리스너 제거
+// 이미 존재하는 이벤트 리스너를 제거하기 위한 명명된 함수
+function preventDragStart(e) {
+  e.preventDefault();
+}
+// 기존 이벤트 리스너 제거
+document.removeEventListener('dragstart', preventDragStart);
+
+// 추가: 드롭존 상태 저장 객체 및 기존 데이터 불러오기
 let dropData = {};
-const savedDropData = localStorage.getItem('dropData_pagetm');
+const savedDropData = localStorage.getItem('dropData_page2');
 if (savedDropData) {
   dropData = JSON.parse(savedDropData);
 }
 
-// 페이지 로딩 시 저장된 dropData로 드롭존 복원 (page3 전용)
+// 드래그 시작시 모든 드롭존을 보이게 만드는 함수
+function showAllDropZones() {
+  dropZones.forEach(zone => {
+    zone.style.visibility = "visible";
+    zone.style.border = "1px dashed rgba(150, 150, 150, 0.8)";
+    zone.style.backgroundColor = "rgba(255, 255, 255, 0.8)";
+  });
+}
+
+// 드래그 종료시 비어있는 드롭존을 다시 숨기는 함수
+function hideEmptyDropZones() {
+  dropZones.forEach(zone => {
+    if (!zone.querySelector('img')) {
+      zone.style.visibility = "hidden";
+    } else {
+      zone.style.border = "none";
+      zone.style.backgroundColor = "rgba(0, 0, 0, 0)";
+    }
+  });
+}
+
+// 드롭존에 있는 이미지에 드래그 기능 추가하는 함수
+function makeDraggable(img, zone) {
+  // 드래그 가능 속성 명시적 설정
+  img.setAttribute('draggable', 'true');
+  
+  // 기존 이벤트 리스너 제거 (중복 방지)
+  img.removeEventListener('dragstart', handleDragStart);
+  img.removeEventListener('dragend', handleDragEnd);
+  img.removeEventListener('touchstart', handleTouchStart);
+  img.removeEventListener('touchmove', handleTouchMove);
+  img.removeEventListener('touchend', handleTouchEnd);
+  
+  // 드래그 시작 핸들러
+  function handleDragStart(e) {
+    e.stopPropagation(); // 이벤트 전파 중지
+    
+    console.log("드래그 시작됨!");
+    isDragging = true;
+    
+    // 이미지를 드래그 시작할 때 정보 저장
+    draggedElement = img;
+    sourceDropZone = zone;
+    
+    // 모든 드롭존 보이게 설정
+    showAllDropZones();
+    
+    // 드래그 이미지 설정
+    if (e.dataTransfer) {
+      e.dataTransfer.setData('text/plain', '');
+      e.dataTransfer.effectAllowed = 'move';
+    }
+    
+    // 드래그 중인 이미지에 스타일 적용
+    setTimeout(() => {
+      img.style.opacity = '0.4';
+    }, 0);
+  }
+  
+  // 드래그 종료 핸들러
+  function handleDragEnd(e) {
+    e.stopPropagation();
+    // 드래그가 끝나면 스타일 복원
+    img.style.opacity = '1';
+    draggedElement = null;
+    sourceDropZone = null;
+    isDragging = false;
+    
+    // 비어있는 드롭존 숨기기
+    setTimeout(hideEmptyDropZones, 100);
+  }
+  
+  // 터치 시작 핸들러
+  function handleTouchStart(e) {
+    e.stopPropagation();
+    
+    isDragging = true;
+    
+    // 이미지 상태 저장
+    draggedElement = img;
+    sourceDropZone = zone;
+    
+    // 모든 드롭존 보이게 설정
+    showAllDropZones();
+    
+    // 스크롤 방지 (드래그 중 스크롤 방지)
+    e.preventDefault();
+  }
+  
+  // 터치 이동 핸들러
+  function handleTouchMove(e) {
+    if (!draggedElement) return;
+    
+    e.stopPropagation();
+    
+    // 원본 이미지는 약간 투명하게
+    img.style.opacity = '0.4';
+    
+    // 스크롤 방지
+    e.preventDefault();
+  }
+  
+  // 터치 종료 핸들러
+  function handleTouchEnd(e) {
+    if (!draggedElement) return;
+    
+    e.stopPropagation();
+    
+    // 터치 종료 위치
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    // 모든 드롭존을 확인하여 터치가 끝난 위치에 있는 드롭존 찾기
+    let targetZone = null;
+    dropZones.forEach(zone => {
+      const rect = zone.getBoundingClientRect();
+      if (
+        touchEndX >= rect.left && 
+        touchEndX <= rect.right &&
+        touchEndY >= rect.top && 
+        touchEndY <= rect.bottom
+      ) {
+        targetZone = zone;
+      }
+    });
+    
+    // 드롭존을 찾았으면 이미지 이동
+    if (targetZone && targetZone !== sourceDropZone) {
+      // 이미 타겟 드롭존에 이미지가 있으면 제거
+      if (targetZone.querySelector('img')) {
+        targetZone.querySelector('img').remove();
+      }
+      
+      // 이미지 이동
+      sourceDropZone.removeChild(draggedElement);
+      targetZone.appendChild(draggedElement);
+      
+      // 이미지에 드래그 기능 다시 적용
+      makeDraggable(draggedElement, targetZone);
+      
+      // 로컬 스토리지 업데이트
+      const sourceIndex = Array.from(dropZones).indexOf(sourceDropZone);
+      const targetIndex = Array.from(dropZones).indexOf(targetZone);
+      
+      delete dropData[sourceIndex];
+      dropData[targetIndex] = draggedElement.src;
+      localStorage.setItem('dropData_page2', JSON.stringify(dropData));
+      
+      // 원본 드롭존에서 이미지가 제거되었으면 스타일 업데이트
+      if (!sourceDropZone.querySelector('img')) {
+        sourceDropZone.style.visibility = "visible"; // 드래그 중엔 보이게 유지
+      }
+    }
+    
+    // 스타일 원복
+    img.style.opacity = '1';
+    draggedElement = null;
+    sourceDropZone = null;
+    isDragging = false;
+    
+    // 비어있는 드롭존 숨기기
+    setTimeout(hideEmptyDropZones, 100);
+  }
+  
+  // 이벤트 리스너 등록
+  img.addEventListener('dragstart', handleDragStart);
+  img.addEventListener('dragend', handleDragEnd);
+  img.addEventListener('touchstart', handleTouchStart);
+  img.addEventListener('touchmove', handleTouchMove);
+  img.addEventListener('touchend', handleTouchEnd);
+}
+
+// 페이지 로딩 시 저장된 dropData로 드롭존 복원
 dropZones.forEach((zone, index) => {
   if (dropData[index]) {
     const img = document.createElement("img");
     img.src = dropData[index];
     img.alt = "dropped-image";
-    img.style.width = "150%";
-    img.style.height = "150%";
+    img.style.width = "162%";
+    img.style.height = "162%";
     zone.appendChild(img);
     zone.style.visibility = "visible";
-    // 이미지가 있으면 테두리와 배경 제거
+    // 이미지가 있으면 테두리와 배경을 제거하여 원래 배치 상태와 동일하게 보이도록 함
     zone.style.border = "none";
     zone.style.backgroundColor = "rgba(0, 0, 0, 0)";
+    
+    // 드래그 가능하게 설정
+    makeDraggable(img, zone);
   }
 });
 
@@ -526,12 +728,10 @@ imageFiles.forEach(file => {
   img.src = `img/${file}`;
   img.alt = file;
   img.draggable = false;
-  
   img.addEventListener("click", () => {
     if (img.style.backgroundColor === "lightpink") {
       img.style.backgroundColor = "";
       selectedImage = null;
-      selectedElement = null;
       dropZones.forEach(zone => {
         const zoneImage = zone.querySelector("img");
         zone.style.border = "none";
@@ -542,61 +742,44 @@ imageFiles.forEach(file => {
       });
       return;
     }
-    
     document.querySelectorAll(".image-container img").forEach(image => {
       image.style.backgroundColor = "";
     });
-    
     img.style.backgroundColor = "lightpink";
     selectedImage = img.src;
-    selectedElement = img;
-    
     dropZones.forEach(zone => {
       zone.style.visibility = "visible";
       zone.style.border = "1px dashed rgba(150, 150, 150, 0.8)";
       zone.style.backgroundColor = "rgba(255, 255, 255, 0.8)";
     });
   });
-  
   imageContainer.appendChild(img);
 });
 
-// 드롭존 이벤트: 클릭 시 이미지 추가, 더블클릭/더블탭 시 이미지 제거 (page3 전용)
+// 드롭존 이벤트: 클릭 시 이미지 추가, 더블클릭/더블탭 시 이미지 제거
 dropZones.forEach((zone, index) => {
   zone.addEventListener("click", () => {
     if (selectedImage) {
-      // 기존에 이미지가 있었다면 제거
-      const existingImg = zone.querySelector("img");
-      if (existingImg) {
-        existingImg.remove();
-        
-        // dropData에서 제거
-        delete dropData[index];
+      if (zone.querySelector("img")) {
+        zone.querySelector("img").remove();
       }
-      
-      // 새 이미지 추가
       const img = document.createElement("img");
       img.src = selectedImage;
       img.alt = "dropped-image";
-      img.style.width = "150%";
-      img.style.height = "150%";
+      img.style.width = "162%";
+      img.style.height = "162%";
       zone.appendChild(img);
       
-      if (selectedElement) {
-        selectedElement.style.backgroundColor = "";
-      }
+      // 추가된 이미지에 드래그 기능 적용
+      makeDraggable(img, zone);
       
-      // dropData 업데이트 및 localStorage 저장 (page3 전용)
+      // 추가: dropData 업데이트 및 localStorage 저장
       dropData[index] = selectedImage;
-      localStorage.setItem('dropData_pagetm', JSON.stringify(dropData));
-      
+      localStorage.setItem('dropData_page2', JSON.stringify(dropData));
       document.querySelectorAll(".image-container img").forEach(image => {
         image.style.backgroundColor = "";
       });
-      
       selectedImage = null;
-      selectedElement = null;
-      
       dropZones.forEach(zone => {
         zone.style.border = "none";
         zone.style.backgroundColor = "rgba(0, 0, 0, 0)";
@@ -604,13 +787,15 @@ dropZones.forEach((zone, index) => {
     }
   });
   
-  // 데스크톱: 더블클릭 시 이미지 제거 및 localStorage 업데이트 (page3 전용)
+  // 데스크톱: 더블클릭 시 이미지 제거 및 localStorage 업데이트
   zone.addEventListener("dblclick", () => {
     const img = zone.querySelector("img");
     if (img) {
       img.remove();
       delete dropData[index];
-      localStorage.setItem('dropData_pagetm', JSON.stringify(dropData));
+      localStorage.setItem('dropData_page2', JSON.stringify(dropData));
+      // 이미지가 제거된 후 드롭존 스타일 업데이트
+      zone.style.visibility = "hidden";
     }
   });
   
@@ -623,7 +808,9 @@ dropZones.forEach((zone, index) => {
       if (img) {
         img.remove();
         delete dropData[index];
-        localStorage.setItem('dropData_pagetm', JSON.stringify(dropData));
+        localStorage.setItem('dropData_page2', JSON.stringify(dropData));
+        // 이미지가 제거된 후 드롭존 스타일 업데이트
+        zone.style.visibility = "hidden";
       }
       zone.lastTap = 0;
       e.preventDefault();
@@ -632,6 +819,86 @@ dropZones.forEach((zone, index) => {
       zone.lastTap = currentTime;
     }
   });
+  
+  // 드롭존에 드래그 이벤트 설정
+  zone.addEventListener('dragover', function(e) {
+    // 기본 동작 방지 (필수)
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // 드롭 허용 표시
+    if (e.dataTransfer) {
+      e.dataTransfer.dropEffect = 'move';
+    }
+    
+    // 드래그 중일 때 스타일 변경
+    zone.style.backgroundColor = 'rgba(255, 165, 0, 0.5)';
+  });
+  
+  // dragleave 이벤트 (드래그한 요소가 드롭존을 벗어날 때)
+  zone.addEventListener('dragleave', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // 원래 스타일로 복원
+    zone.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+  });
+  
+  // drop 이벤트 (드래그한 요소를 드롭존에 놓을 때)
+  zone.addEventListener('drop', function(e) {
+    // 기본 동작 방지
+    e.preventDefault();
+    e.stopPropagation();
+    
+    console.log("드롭 이벤트 발생!", zone);
+    
+    // 원래 스타일로 복원
+    zone.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+    
+    // 드래그된 이미지가 있고, 현재 드롭존이 시작 드롭존과 다른 경우에만 처리
+    if (draggedElement && sourceDropZone && sourceDropZone !== zone) {
+      console.log("이미지 이동 처리 중...");
+      
+      // 이미 타겟 드롭존에 이미지가 있으면 제거
+      if (zone.querySelector('img')) {
+        zone.querySelector('img').remove();
+      }
+      
+      // 이미지 이동
+      sourceDropZone.removeChild(draggedElement);
+      zone.appendChild(draggedElement);
+      
+      // 이미지에 드래그 가능 속성 다시 설정
+      makeDraggable(draggedElement, zone);
+      
+      // dropData 업데이트
+      const sourceIndex = Array.from(dropZones).indexOf(sourceDropZone);
+      const targetIndex = Array.from(dropZones).indexOf(zone);
+      
+      delete dropData[sourceIndex];
+      dropData[targetIndex] = draggedElement.src;
+      localStorage.setItem('dropData_page2', JSON.stringify(dropData));
+      
+      // 스타일 설정
+      zone.style.border = "none";
+      zone.style.backgroundColor = "rgba(0, 0, 0, 0)";
+      
+      // 원본 드롭존 스타일 업데이트
+      sourceDropZone.style.visibility = "visible"; // 드래그 중에는 보이게 유지
+    }
+  });
+});
+
+// 전체 문서에 드래그 이벤트 추가
+document.addEventListener('dragover', function(e) {
+  // 드래그 중일 때 드롭존이 모두 보이도록 유지
+  if (isDragging) {
+    dropZones.forEach(zone => {
+      if (zone.style.visibility !== "visible") {
+        zone.style.visibility = "visible";
+      }
+    });
+  }
 });
 
 resetButton.addEventListener("click", () => {
@@ -646,9 +913,7 @@ resetButton.addEventListener("click", () => {
   document.querySelectorAll(".image-container img").forEach(image => {
     image.style.backgroundColor = "";
   });
-  
   selectedImage = null;
-  selectedElement = null;
 
   // wave와 gold 입력값 초기화
   const waveInput = document.getElementById("wave");
@@ -660,9 +925,9 @@ resetButton.addEventListener("click", () => {
   const waveGoldDisplay = document.getElementById("wave-gold-display");
   waveGoldDisplay.textContent = "";
 
-  // page3 전용 캐시 데이터 초기화
+  // 추가: 캐시 데이터 초기화
   dropData = {};
-  localStorage.removeItem('dropData_pagetm');
+  localStorage.removeItem('dropData_page2');
 });
 
 saveButton.addEventListener("click", () => {
@@ -694,17 +959,27 @@ saveButton.addEventListener("click", () => {
   waveGoldDisplay.style.padding = "5px 10px";
   waveGoldDisplay.style.borderRadius = "5px";
 
-  // 100ms 대기 후 캡처 실행 (텍스트 업데이트 반영)
+  // 캡처 중에는 드롭존 테두리 숨기기
+  dropZones.forEach(zone => {
+    if (zone.querySelector('img')) {
+      zone.style.border = "none";
+      zone.style.backgroundColor = "rgba(0, 0, 0, 0)";
+    } else {
+      zone.style.visibility = "hidden";
+    }
+  });
+
+  // 📌 100ms 대기 후 캡처 실행 (텍스트 업데이트 반영)
   setTimeout(() => {
     const mapImageElement = document.getElementById("mapImage");
-    const imageHeight = mapImageElement.clientHeight;
+    const imageHeight = mapImageElement.clientHeight; // 실제 이미지 높이 (예: 360px)
     html2canvas(document.getElementById("map-container"), {
       scrollX: 0,
       scrollY: 0,
-      height: imageHeight,
+      height: imageHeight,  // 캡처 영역 높이를 이미지 높이로 제한
       windowWidth: document.documentElement.offsetWidth,
       windowHeight: document.documentElement.offsetHeight,
-      scale: 10,
+      scale: 10,  // 🔥 기존 6 → 8로 더 고해상도 설정
       useCORS: true,
       allowTaint: true,
       backgroundColor: null
@@ -726,11 +1001,14 @@ const mapImage = document.getElementById("mapImage");
 
 // mapImage의 실제 표시 영역 계산 후 드롭존 위치 보정
 mapImage.onload = () => {
+  // mapImage의 실제 영역 정보
   const imageRect = mapImage.getBoundingClientRect();
   const containerRect = mapContainer.getBoundingClientRect();
+  // container 내 이미지의 offset 계산
   const offsetX = imageRect.left - containerRect.left;
   const offsetY = imageRect.top - containerRect.top;
 
+  // 각 드롭존 위치 보정
   dropZones.forEach(zone => {
     const origTop = parseInt(zone.style.top, 10);
     const origLeft = parseInt(zone.style.left, 10);
@@ -739,9 +1017,29 @@ mapImage.onload = () => {
   });
 };
 
-document.addEventListener('dragstart', function(e) {
-  e.preventDefault();
-});
+// CSS를 통해 유닛 이미지를 드래그 가능하게 설정
+document.head.insertAdjacentHTML('beforeend', `
+  <style>
+    .drop-zone img {
+      -webkit-user-drag: element;
+      user-select: none;
+      cursor: move;
+    }
+    
+    /* 모바일 터치 최적화 */
+    @media (pointer: coarse) {
+      .drop-zone img {
+        touch-action: none;
+      }
+    }
+    
+    /* 빈 드롭존 스타일 */
+    .drop-zone:empty {
+      min-width: 25px;
+      min-height: 25px;
+    }
+  </style>
+`);
     </script>
     
 </body>
