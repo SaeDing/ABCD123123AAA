@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>4칸 합계 시뮬레이터</title>
+  <style>
+    :root {
+      --primary-color: #4a90e2;
+      --bg-color: #f5f7fa;
+      --text-color: #333;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      display: flex; justify-content: center; align-items: flex-start;
+      min-height: 100vh; padding: 20px;
+    }
+    .container {
+      max-width: 500px; width: 100%; background: #fff;
+      padding: 20px; border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h1 { text-align: center; margin-bottom: 20px; }
+    .slots { display: flex; justify-content: space-between; margin-bottom: 20px; }
+    .slot {
+      flex: 1; margin: 0 5px; height: 60px;
+      display: flex; justify-content: center; align-items: center;
+      background: #fff; border: 2px solid #ddd;
+      border-radius: 6px; font-size: 1.4rem; font-weight: bold;
+    }
+    .buttons {
+      display: flex; justify-content: center; align-items: center; gap: 10px;
+      margin-bottom: 20px; flex-wrap: wrap;
+    }
+    button, select {
+      padding: 10px 15px; font-size: 1rem;
+      border-radius: 6px; border: 1px solid #ccc;
+      cursor: pointer; transition: background 0.2s;
+    }
+    button { border: none; }
+    #drawBtn { background: var(--primary-color); color: #fff; }
+    #drawBtn:hover { background: #357ab8; }
+    #resetBtn { background: #eee; color: var(--text-color); }
+    #resetBtn:hover { background: #ddd; }
+    #autoBtn { background: #8aca6c; color: #fff; }
+    #autoBtn:hover { background: #6fa94f; }
+    select { background: #fff; color: var(--text-color); }
+    .info { text-align: center; margin-bottom: 20px; font-size: 1.1rem; }
+    #history {
+      max-height: 200px; overflow-y: auto;
+      border-top: 1px solid #eee; padding-top: 10px;
+    }
+    #history h2 { margin: 0 0 10px; font-size: 1rem; }
+    #historyList { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+    #historyList li {
+      margin-bottom: 6px; border-bottom: 1px dotted #ccc; padding-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>4칸 합계 시뮬레이터</h1>
+    <div id="slots" class="slots">
+      <div class="slot">?</div>
+      <div class="slot">?</div>
+      <div class="slot">?</div>
+      <div class="slot">?</div>
+    </div>
+    <div class="buttons">
+      <button id="drawBtn">뽑기</button>
+      <button id="resetBtn">초기화</button>
+      <select id="targetSelect">
+        <option value="">목표 합계 선택</option>
+      </select>
+      <button id="autoBtn">자동 뽑기</button>
+    </div>
+    <div class="info">
+      <div id="sumDisplay">합계: -</div>
+      <div id="costDisplay">누적 비용: 0원</div>
+    </div>
+    <div id="history">
+      <h2>히스토리</h2>
+      <ul id="historyList"></ul>
+    </div>
+  </div>
+
+  <script>
+    const values = [-2, -1, 0, 1, 2, 3, 4, 5];
+    const costPerDraw = 1000;
+    let cumulativeCost = 0;
+    let drawCount = 0;
+
+    const slotsEl = document.querySelectorAll('.slot');
+    const drawBtn = document.getElementById('drawBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const autoBtn = document.getElementById('autoBtn');
+    const selectEl = document.getElementById('targetSelect');
+    const sumDisplay = document.getElementById('sumDisplay');
+    const costDisplay = document.getElementById('costDisplay');
+    const historyList = document.getElementById('historyList');
+
+    // 목표 합계 옵션 동적 생성
+    for (let v = -8; v <= 20; v++) {
+      const opt = document.createElement('option');
+      opt.value = v;
+      opt.textContent = v;
+      selectEl.appendChild(opt);
+    }
+
+    // 단일 뽑기 로직
+    function doDraw() {
+      const drawn = [];
+      slotsEl.forEach(el => {
+        const val = values[Math.floor(Math.random() * values.length)];
+        drawn.push(val);
+        el.textContent = val;
+      });
+      const sum = drawn.reduce((a, b) => a + b, 0);
+      cumulativeCost += costPerDraw;
+      drawCount++;
+      sumDisplay.textContent = `합계: ${sum}`;
+      costDisplay.textContent = `누적 비용: ${cumulativeCost.toLocaleString()}원`;
+
+      const li = document.createElement('li');
+      li.textContent = `#${drawCount}: [${drawn.join(', ')}] → 합계 ${sum}, 비용 ${cumulativeCost.toLocaleString()}원`;
+      historyList.prepend(li);
+      return sum;
+    }
+
+    drawBtn.addEventListener('click', () => doDraw());
+
+    resetBtn.addEventListener('click', () => {
+      cumulativeCost = 0;
+      drawCount = 0;
+      slotsEl.forEach(el => el.textContent = '?');
+      sumDisplay.textContent = '합계: -';
+      costDisplay.textContent = '누적 비용: 0원';
+      historyList.innerHTML = '';
+    });
+
+    // 자동 뽑기
+    autoBtn.addEventListener('click', async () => {
+      const target = parseInt(selectEl.value, 10);
+      if (isNaN(target)) {
+        alert('목표 합계를 선택해주세요.');
+        return;
+      }
+      // 자동 뽑기마다 로그 초기화
+      resetBtn.click();
+
+      [drawBtn, resetBtn, autoBtn, selectEl].forEach(el => el.disabled = true);
+      let currentSum;
+      let iterations = 0;
+      try {
+        do {
+          currentSum = doDraw();
+          iterations++;
+          if (iterations % 500 === 0) await new Promise(r => setTimeout(r, 0));
+          if (iterations > 1000000) {
+            alert('최대 시도 횟수를 초과하여 중단됩니다.');
+            break;
+          }
+        } while (currentSum !== target);
+        if (currentSum === target) {
+          alert(`목표 합계 ${target} 도달! 총 ${iterations}회 시도, 비용 ${cumulativeCost.toLocaleString()}원`);
+        }
+      } catch (e) {
+        console.error(e);
+        alert('자동 뽑기 중 오류가 발생했습니다. 콘솔을 확인하세요.');
+      } finally {
+        [drawBtn, resetBtn, autoBtn, selectEl].forEach(el => el.disabled = false);
+      }
+    });
+  </script>
+</body>
+</html>
